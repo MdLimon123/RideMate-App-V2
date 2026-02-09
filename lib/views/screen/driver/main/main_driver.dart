@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/views/screen/driver/home/earn/driver_earn_screen.dart';
 import 'package:flutter_extension/views/screen/driver/home/home_driver.dart';
+import 'package:flutter_extension/views/screen/driver/profile/driver_profile_screen.dart';
+import 'package:flutter_extension/views/screen/driver/rides/driver_ride_history_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MainDriver extends StatefulWidget {
@@ -12,10 +15,10 @@ class MainDriver extends StatefulWidget {
 class _MainDriverState extends State<MainDriver> {
   var selectedIndex = 0;
   var pages = [
-    HomeDriver(),
-    const Text("Rides Screen"),
-    const Text("Earn Screen"),
-    const Text("Profile Screen"),
+    const HomeDriver(),
+    const DriverRideHistoryScreen(),
+    const DriverEarnScreen(),
+    const DriverProfileScreen(),
   ];
   @override
   Widget build(BuildContext context) {

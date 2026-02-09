@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/driver/home_controller.dart';
 import 'package:flutter_extension/views/screen/driver/home/finding_request.dart';
 import 'package:flutter_extension/views/screen/driver/home/payment_orver_view.dart';
-import 'package:flutter_extension/views/screen/driver/home/trip/requested_trip.dart';
 import 'package:flutter_extension/views/screen/driver/home/trip/waiting_for_payment.dart';
 import 'package:get/get.dart';
-import 'package:get/state_manager.dart';
 
 class HomeDriver extends StatefulWidget {
   const HomeDriver({super.key});
@@ -21,7 +19,7 @@ class _HomeDriverState extends State<HomeDriver> {
   Widget build(BuildContext context) {
     ever(_homeController.tripStatus, (TripStatus status) {
       switch (status) {
-        case TripStatus.ACCEPTED:
+        case TripStatus.REQUESTED:
           Get.to(() => const WaitingForPayment());
           break;
         case TripStatus.COMPLETED:

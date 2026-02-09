@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_extension/controller/splash_controller.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../controller/driver/home_controller.dart';
 import '../controller/localization_controller.dart';
 import '../controller/theme_controller.dart';
 import '../data/model/language_model.dart';
