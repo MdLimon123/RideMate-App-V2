@@ -3,6 +3,7 @@ import 'package:flutter_extension/controller/splash_controller.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_snackbar.dart';
 import 'package:flutter_extension/views/screen/driver/auth/driver_selected_languge_screen.dart';
+import 'package:flutter_extension/views/screen/user/auth/user_selected_language_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -65,6 +66,7 @@ class _LocationEnableScreenState extends State<LocationEnableScreen> {
                 }
 
                 if (widget.role == "USER") {
+                  Get.offAll(() => const UserSelectedLanguageScreen());
                 } else if (widget.role == "DRIVER") {
                   Get.offAll(() => const DriverSelectedLangugeScreen());
                 }

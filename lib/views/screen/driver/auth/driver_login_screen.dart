@@ -1,14 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/helper/route_helper.dart';
-import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
 import 'package:flutter_extension/views/screen/driver/auth/driver_forget_screen.dart';
-import 'package:flutter_extension/views/screen/driver/home/home_driver.dart';
 import 'package:flutter_extension/views/screen/driver/main/main_driver.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class DriverLoginScreen extends StatefulWidget {
@@ -19,6 +16,7 @@ class DriverLoginScreen extends StatefulWidget {
 }
 
 class _DriverLoginScreenState extends State<DriverLoginScreen> {
+  
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
 

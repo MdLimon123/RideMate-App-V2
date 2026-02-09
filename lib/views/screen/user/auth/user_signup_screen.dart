@@ -5,18 +5,17 @@ import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
-import 'package:flutter_extension/views/screen/driver/auth/driver_terms_condition_screen.dart';
+import 'package:flutter_extension/views/screen/user/auth/user_terms_comdition_screen.dart';
 import 'package:get/get.dart';
 
-class DriverSignupScreen extends StatefulWidget {
-  const DriverSignupScreen({super.key});
+class UserSignupScreen extends StatefulWidget {
+  const UserSignupScreen({super.key});
 
   @override
-  State<DriverSignupScreen> createState() => _DriverSignupScreenState();
+  State<UserSignupScreen> createState() => _UserSignupScreenState();
 }
 
-class _DriverSignupScreenState extends State<DriverSignupScreen> {
-
+class _UserSignupScreenState extends State<UserSignupScreen> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -93,7 +92,7 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                 const Spacer(),
                 CustomButton(
                   onTap: () {
-                    Get.to(() => const DriverTermsConditionScreen());
+                    Get.offAll(() => const UserTermsComditionScreen());
                   },
                   text: "signup".tr,
                 ),
@@ -118,7 +117,7 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              Get.offAllNamed(AppRoutes.driverLoginScreen);
+                              Get.offAllNamed(AppRoutes.userLoginScreen);
                             },
                         ),
                       ],
@@ -132,6 +131,4 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
       ),
     );
   }
-
-
 }

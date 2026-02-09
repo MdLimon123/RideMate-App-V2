@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
-import 'package:flutter_extension/views/screen/driver/auth/setUpProfile/driver_get_start_screen.dart';
+import 'package:flutter_extension/views/screen/user/setUpProfile/user_get_start_screen.dart';
 import 'package:get/get.dart';
 
-class DriverTermsConditionScreen extends StatefulWidget {
-  const DriverTermsConditionScreen({super.key});
+class UserTermsComditionScreen extends StatefulWidget {
+  const UserTermsComditionScreen({super.key});
 
   @override
-  State<DriverTermsConditionScreen> createState() =>
-      _DriverTermsConditionScreenState();
+  State<UserTermsComditionScreen> createState() =>
+      _UserTermsComditionScreenState();
 }
 
-class _DriverTermsConditionScreenState
-    extends State<DriverTermsConditionScreen> {
-
+class _UserTermsComditionScreenState extends State<UserTermsComditionScreen> {
   bool isCheck = false;
 
   @override
@@ -119,7 +117,7 @@ class _DriverTermsConditionScreenState
 
               CustomButton(
                 onTap: () {
-                  Get.to(() => const DriverGetStartScreen());
+                  Get.to(() => const UserGetStartScreen());
                 },
                 text: "start".tr,
               ),
@@ -129,6 +127,4 @@ class _DriverTermsConditionScreenState
       ),
     );
   }
-
-
 }

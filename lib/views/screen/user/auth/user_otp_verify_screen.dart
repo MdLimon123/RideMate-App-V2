@@ -3,21 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
-import 'package:flutter_extension/views/screen/driver/auth/reset_password_screen.dart';
+import 'package:flutter_extension/views/screen/user/auth/user_reset_password_screen.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-import 'package:get/route_manager.dart';
-import 'package:get/utils.dart';
+import 'package:get/get.dart';
 
-class DriverOtpVerifyScreen extends StatefulWidget {
-  const DriverOtpVerifyScreen({super.key});
+class UserOtpVerifyScreen extends StatefulWidget {
+  const UserOtpVerifyScreen({super.key});
 
   @override
-  State<DriverOtpVerifyScreen> createState() => _DriverOtpVerifyScreenState();
+  State<UserOtpVerifyScreen> createState() => _UserOtpVerifyScreenState();
 }
 
-class _DriverOtpVerifyScreenState extends State<DriverOtpVerifyScreen> {
-  @override
-
+class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppbar2(),
@@ -87,7 +84,7 @@ class _DriverOtpVerifyScreenState extends State<DriverOtpVerifyScreen> {
             const Spacer(),
             CustomButton(
               onTap: () {
-                Get.to(() => const ResetPasswordScreen());
+                Get.to(() => const UserResetPasswordScreen());
               },
               text: "verify".tr,
             ),
@@ -96,6 +93,4 @@ class _DriverOtpVerifyScreenState extends State<DriverOtpVerifyScreen> {
       ),
     );
   }
-
-
 }

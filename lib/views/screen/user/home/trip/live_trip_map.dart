@@ -5,16 +5,16 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class LiveTrip extends StatefulWidget {
-  const LiveTrip({super.key});
+class LiveTripMap extends StatefulWidget {
+  const LiveTripMap({super.key});
 
   @override
-  State<LiveTrip> createState() => _LiveTripState();
+  State<LiveTripMap> createState() => _LiveTripMapState();
 }
 
-class _LiveTripState extends State<LiveTrip> {
+class _LiveTripMapState extends State<LiveTripMap> {
 
-  
+ 
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
 

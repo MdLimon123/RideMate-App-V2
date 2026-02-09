@@ -1,25 +1,24 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/helper/route_helper.dart';
-import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
-import 'package:flutter_extension/views/screen/driver/auth/driver_terms_condition_screen.dart';
+import 'package:flutter_extension/views/screen/user/auth/user_forget_screen.dart';
+import 'package:flutter_extension/views/screen/user/home/user_home.dart';
 import 'package:get/get.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
-class DriverSignupScreen extends StatefulWidget {
-  const DriverSignupScreen({super.key});
+class UserLoginScreen extends StatefulWidget {
+  const UserLoginScreen({super.key});
 
   @override
-  State<DriverSignupScreen> createState() => _DriverSignupScreenState();
+  State<UserLoginScreen> createState() => _UserLoginScreenState();
 }
 
-class _DriverSignupScreenState extends State<DriverSignupScreen> {
-
+class _UserLoginScreenState extends State<UserLoginScreen> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
 
   final _fromKey = GlobalKey<FormState>();
 
@@ -33,22 +32,23 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 50),
+
                 Text(
-                  "signup".tr,
-                  style: TextStyle(
+                  "login".tr,
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textColor,
+                    color: Color(0xFF333333),
                   ),
                 ),
+
                 const SizedBox(height: 24),
+
                 CustomTextField(
                   controller: emailTextController,
-
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -59,11 +59,13 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                   isEmail: true,
                   hintText: "Enter your email",
                 ),
+
                 const SizedBox(height: 12),
+
                 CustomTextField(
                   controller: passwordTextController,
-                  keyboardType: TextInputType.number,
                   isPassword: true,
+                  keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Please enter your password";
@@ -74,35 +76,41 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                   },
                   hintText: "Enter Password",
                 ),
+
                 const SizedBox(height: 12),
-                CustomTextField(
-                  controller: confirmPasswordController,
-                  keyboardType: TextInputType.number,
-                  isPassword: true,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return "Please enter your password";
-                    } else if (value.length < 6) {
-                      return "Password must be at least 6 characters";
-                    }
-                    return null;
-                  },
-                  hintText: "Confirm Password",
+
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: InkWell(
+                    onTap: () {
+                      Get.to(() => const UserForgetScreen());
+                    },
+                    child: Text(
+                      "forget".tr,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF345983),
+                      ),
+                    ),
+                  ),
                 ),
 
                 const Spacer(),
+
                 CustomButton(
+                  text: "login".tr,
                   onTap: () {
-                    Get.to(() => const DriverTermsConditionScreen());
+                    Get.offAll(() => const UserHome());
                   },
-                  text: "signup".tr,
                 ),
 
                 const SizedBox(height: 20),
+
                 Center(
                   child: RichText(
                     text: TextSpan(
-                      text: "alreadyHaveAndAccount".tr,
+                      text: "dontHaveAccount".tr,
                       style: const TextStyle(
                         color: Color(0xFF5A5A5A),
                         fontSize: 16,
@@ -110,7 +118,7 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                       ),
                       children: [
                         TextSpan(
-                          text: "login".tr,
+                          text: "signup".tr,
                           style: const TextStyle(
                             color: Color(0xFF145788),
                             fontSize: 16,
@@ -118,13 +126,15 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              Get.offAllNamed(AppRoutes.driverLoginScreen);
+                              Get.toNamed(AppRoutes.userSignupScreen);
                             },
                         ),
                       ],
                     ),
                   ),
                 ),
+
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -132,6 +142,4 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
       ),
     );
   }
-
-
 }

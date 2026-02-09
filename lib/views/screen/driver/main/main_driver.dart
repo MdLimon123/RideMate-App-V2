@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_extension/views/screen/driver/home/earn/driver_earn_screen.dart';
+import 'package:flutter_extension/views/screen/driver/earn/driver_earn_screen.dart';
 import 'package:flutter_extension/views/screen/driver/home/home_driver.dart';
 import 'package:flutter_extension/views/screen/driver/profile/driver_profile_screen.dart';
 import 'package:flutter_extension/views/screen/driver/rides/driver_ride_history_screen.dart';

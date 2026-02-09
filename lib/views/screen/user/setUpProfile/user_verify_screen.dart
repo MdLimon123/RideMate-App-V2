@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 
-class DriverVerifyScreen extends StatefulWidget {
-  const DriverVerifyScreen({super.key});
+class UserVerifyScreen extends StatefulWidget {
+  const UserVerifyScreen({super.key});
 
   @override
-  State<DriverVerifyScreen> createState() => _DriverVerifyScreenState();
+  State<UserVerifyScreen> createState() => _UserVerifyScreenState();
 }
 
-class _DriverVerifyScreenState extends State<DriverVerifyScreen> with SingleTickerProviderStateMixin{
-
-
+class _UserVerifyScreenState extends State<UserVerifyScreen>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
@@ -31,14 +30,12 @@ class _DriverVerifyScreenState extends State<DriverVerifyScreen> with SingleTick
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: const CustomAppbar2(),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
-          const SizedBox(height: 50,),
+          const SizedBox(height: 50),
           Center(
             child: RotationTransition(
               turns: _controller,
@@ -66,7 +63,5 @@ class _DriverVerifyScreenState extends State<DriverVerifyScreen> with SingleTick
         ],
       ),
     );
-  
-  
   }
 }

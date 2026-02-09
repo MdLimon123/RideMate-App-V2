@@ -70,6 +70,7 @@ class DriverProfileSetupController extends GetxController {
     }
   }
 
+
   Future<void> pickNIDFrontImage({bool fromCamera = false}) async {
     final pickedFile = await ImageUtils.pickAndCropImage(
       fromCamera: fromCamera,

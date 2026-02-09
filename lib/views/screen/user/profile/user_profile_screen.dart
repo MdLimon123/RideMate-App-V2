@@ -3,26 +3,20 @@ import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/screen/driver/profile/about_us_screen.dart';
 import 'package:flutter_extension/views/screen/driver/profile/change_password_screen.dart';
 import 'package:flutter_extension/views/screen/driver/profile/edit_profile_screen.dart';
-import 'package:flutter_extension/views/screen/driver/profile/privacy_policy_screen.dart';
 import 'package:flutter_extension/views/screen/driver/profile/support_screen.dart';
-import 'package:flutter_extension/views/screen/driver/profile/terms_service_screen.dart';
 import 'package:flutter_extension/views/screen/driver/profile/wallet_screen.dart';
+import 'package:flutter_extension/views/screen/user/profile/trip_history_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class DriverProfileScreen extends StatefulWidget {
-  const DriverProfileScreen({super.key});
+class UserProfileScreen extends StatefulWidget {
+  const UserProfileScreen({super.key});
 
   @override
-  State<DriverProfileScreen> createState() => _DriverProfileScreenState();
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
 }
 
-class _DriverProfileScreenState extends State<DriverProfileScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +28,15 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
               children: [
                 Row(
                   children: [
+                    InkWell(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Color(0xFF676769),
+                      ),
+                    ),
                     const Text(
                       "Profile",
                       style: TextStyle(
@@ -151,33 +154,19 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                   title: 'RADEEF Wallet',
                 ),
 
-                // _customTile(
-                //     onTap: (){
-                //       Get.to(()=> TripHistoryScreen());
-                //     },
-                //     image: "assets/icons/cycle.svg",
-                //     title: "Trip History"),
+                _customTile(
+                  onTap: () {
+                    Get.to(() => const TripHistoryScreen());
+                  },
+                  image: "assets/icons/cycle.svg",
+                  title: "Trip History",
+                ),
                 _customTile(
                   onTap: () {
                     Get.to(() => const ChangePasswordScreen());
                   },
                   image: "assets/icons/lock.svg",
                   title: "Change Password",
-                ),
-
-                _customTile(
-                  onTap: () {
-                    Get.to(() => const TermsServiceScreen());
-                  },
-                  image: "assets/icons/about.svg",
-                  title: "Terms & Service",
-                ),
-                _customTile(
-                  onTap: () {
-                    Get.to(() => const PrivacyPolicyScreen());
-                  },
-                  image: "assets/icons/about.svg",
-                  title: "Privacy & Policy",
                 ),
 
                 _customTile(
@@ -248,7 +237,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 33),
+                                const SizedBox(width: 33),
                                 Expanded(
                                   child: CustomButton(
                                     onTap: () {
@@ -293,6 +282,4 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
       ),
     );
   }
-
-
 }

@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
-import 'package:flutter_extension/views/screen/driver/auth/setUpProfile/driver_personal_info_screen.dart';
+import 'package:flutter_extension/views/screen/user/setUpProfile/user_personal_info_screen.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/route_manager.dart';
+import 'package:get/get.dart';
 
-class DriverGetStartScreen extends StatefulWidget {
-  const DriverGetStartScreen({super.key});
+class UserGetStartScreen extends StatefulWidget {
+  const UserGetStartScreen({super.key});
 
   @override
-  State<DriverGetStartScreen> createState() => _DriverGetStartScreenState();
+  State<UserGetStartScreen> createState() => _UserGetStartScreenState();
 }
 
-class _DriverGetStartScreenState extends State<DriverGetStartScreen> {
-  
+class _UserGetStartScreenState extends State<UserGetStartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +23,7 @@ class _DriverGetStartScreenState extends State<DriverGetStartScreen> {
           children: [
             Image.asset('assets/images/logo.png'),
             const Text(
-              "1 Of 4",
+              "1 Of 3",
               style: TextStyle(
                 color: Color(0xFF012F64),
                 fontSize: 16,
@@ -68,7 +67,7 @@ class _DriverGetStartScreenState extends State<DriverGetStartScreen> {
             const Spacer(),
             CustomButton(
               onTap: () {
-                Get.to(() => const DriverPersonalInfoScreen());
+                Get.to(() => const UserPersonalInfoScreen());
               },
               text: "Next",
             ),
@@ -77,6 +76,4 @@ class _DriverGetStartScreenState extends State<DriverGetStartScreen> {
       ),
     );
   }
-
-
 }

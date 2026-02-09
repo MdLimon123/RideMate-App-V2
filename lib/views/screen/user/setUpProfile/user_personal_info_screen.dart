@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_extension/controller/driver/driver_setu_profile_controller.dart';
+import 'package:flutter_extension/controller/user/user_setup_profile_controller.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_dropdown.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
-import 'package:flutter_extension/views/screen/driver/auth/setUpProfile/vehicle_setup_screen.dart';
+import 'package:flutter_extension/views/screen/user/setUpProfile/user_capture_image_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class DriverPersonalInfoScreen extends StatefulWidget {
-  const DriverPersonalInfoScreen({super.key});
+class UserPersonalInfoScreen extends StatefulWidget {
+  const UserPersonalInfoScreen({super.key});
 
   @override
-  State<DriverPersonalInfoScreen> createState() =>
-      _DriverPersonalInfoScreenState();
+  State<UserPersonalInfoScreen> createState() => _UserPersonalInfoScreenState();
 }
 
-class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
-  final _driverSetupController = Get.put(DriverProfileSetupController());
+class _UserPersonalInfoScreenState extends State<UserPersonalInfoScreen> {
+  final _userSetupController = Get.put(UserSetupProfileController());
   final nameController = TextEditingController();
   final dateOfBirthController = TextEditingController();
 
@@ -31,7 +30,7 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
             Image.asset('assets/images/logo.png'),
             const Spacer(),
             const Text(
-              "2 Of 3",
+              "2 Of 4",
               style: TextStyle(
                 color: Color(0xFF012F64),
                 fontSize: 16,
@@ -41,9 +40,8 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
           ],
         ),
       ),
-
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
           const Text(
             "Personal ",
@@ -64,11 +62,9 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                      image:
-                          _driverSetupController.driverProfileImage.value !=
-                              null
+                      image: _userSetupController.userProfileImage.value != null
                           ? FileImage(
-                              _driverSetupController.driverProfileImage.value!,
+                              _userSetupController.userProfileImage.value!,
                             )
                           : const AssetImage('assets/images/demo.png'),
                       fit: BoxFit.cover,
@@ -81,7 +77,7 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
                 right: 100,
                 child: InkWell(
                   onTap: () {
-                    _driverSetupController.pickDriverImage();
+                    _userSetupController.pickUserImage();
                   },
                   child: Container(
                     height: 34,
@@ -130,9 +126,9 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
           const SizedBox(height: 12),
           CustomDropdown(
             title: "Gender",
-            options: _driverSetupController.genderMap.values.toList(),
+            options: _userSetupController.genderMap.values.toList(),
             onChanged: (val) {
-              _driverSetupController.selectedGender.value = val!;
+              _userSetupController.selectedGender.value = val!;
             },
           ),
           const SizedBox(height: 12),
@@ -184,10 +180,10 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
                             children: [
                               Obx(() {
                                 final image =
-                                    _driverSetupController.nIdfrontImage.value;
+                                    _userSetupController.nIdfrontImage.value;
                                 return InkWell(
                                   onTap: () {
-                                    _driverSetupController.pickNIDFrontImage();
+                                    _userSetupController.pickNIDFrontImage();
                                   },
                                   child: Container(
                                     height: 48,
@@ -220,14 +216,14 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
                               }),
 
                               Obx(() {
-                                return _driverSetupController
+                                return _userSetupController
                                             .nIdfrontImage
                                             .value ==
                                         null
                                     ? Positioned(
                                         child: InkWell(
                                           onTap: () {
-                                            _driverSetupController
+                                            _userSetupController
                                                 .pickNIDFrontImage();
                                           },
                                           child: Padding(
@@ -263,10 +259,10 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
                             children: [
                               Obx(() {
                                 final image =
-                                    _driverSetupController.nIdbackImage.value;
+                                    _userSetupController.nIdbackImage.value;
                                 return InkWell(
                                   onTap: () {
-                                    _driverSetupController.pickNIDBackImage();
+                                    _userSetupController.pickNIDBackImage();
                                   },
                                   child: Container(
                                     height: 48,
@@ -299,14 +295,14 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
                               }),
 
                               Obx(() {
-                                return _driverSetupController
+                                return _userSetupController
                                             .nIdbackImage
                                             .value ==
                                         null
                                     ? Positioned(
                                         child: InkWell(
                                           onTap: () {
-                                            _driverSetupController
+                                            _userSetupController
                                                 .pickNIDBackImage();
                                           },
                                           child: Padding(
@@ -330,207 +326,10 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
               ],
             ),
           ),
-
-          const SizedBox(height: 8),
-
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE6E6E6),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Driving License (Optional)",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF545454),
-                  ),
-                ),
-                const SizedBox(height: 10),
-
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Upload (Front Side)",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF545454),
-                            ),
-                          ),
-
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Obx(() {
-                                final image =
-                                    _driverSetupController.frontImage.value;
-                                return InkWell(
-                                  onTap: () {
-                                    _driverSetupController.pickFrontImage();
-                                  },
-                                  child: Container(
-                                    height: 48,
-                                    width: 48,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(
-                                        color: image != null
-                                            ? const Color(0xFF11DF7F)
-                                            : const Color(0xFF012F64),
-                                        width: 0.5,
-                                      ),
-                                      color: image == null
-                                          ? const Color(0xFFE6E6E6)
-                                          : null,
-                                    ),
-                                    child: image != null
-                                        ? ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              4,
-                                            ),
-                                            child: Image.file(
-                                              image,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          )
-                                        : null,
-                                  ),
-                                );
-                              }),
-
-                              Obx(() {
-                                return _driverSetupController
-                                            .frontImage
-                                            .value ==
-                                        null
-                                    ? Positioned(
-                                        child: InkWell(
-                                          onTap: () {
-                                            _driverSetupController
-                                                .pickFrontImage();
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: SvgPicture.asset(
-                                              'assets/icons/camera.svg',
-                                              color: const Color(0xFF012F64),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : const SizedBox.shrink();
-                              }),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Upload (Back Side)",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF545454),
-                            ),
-                          ),
-
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Obx(() {
-                                final image =
-                                    _driverSetupController.backImage.value;
-                                return InkWell(
-                                  onTap: () {
-                                    _driverSetupController.pickBackImage();
-                                  },
-                                  child: Container(
-                                    height: 48,
-                                    width: 48,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(
-                                        color: image != null
-                                            ? const Color(0xFF11DF7F)
-                                            : const Color(0xFF012F64),
-                                        width: 0.5,
-                                      ),
-                                      color: image == null
-                                          ? const Color(0xFFE6E6E6)
-                                          : null,
-                                    ),
-                                    child: image != null
-                                        ? ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              4,
-                                            ),
-                                            child: Image.file(
-                                              image,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          )
-                                        : null,
-                                  ),
-                                );
-                              }),
-
-                              Obx(() {
-                                return _driverSetupController.backImage.value ==
-                                        null
-                                    ? Positioned(
-                                        child: InkWell(
-                                          onTap: () {
-                                            _driverSetupController
-                                                .pickBackImage();
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: SvgPicture.asset(
-                                              'assets/icons/camera.svg',
-                                              color: const Color(0xFF012F64),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : const SizedBox.shrink();
-                              }),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-            
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 40),
+          const SizedBox(height: 110),
           CustomButton(
             onTap: () {
-              Get.to(() => const VehicleSetupScreen());
+              Get.offAll(() => const UserCaptureImageScreen());
             },
             text: "Save Now",
           ),

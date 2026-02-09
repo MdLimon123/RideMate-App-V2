@@ -2,29 +2,26 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_extension/controller/driver/driver_setu_profile_controller.dart';
+import 'package:flutter_extension/controller/user/user_setup_profile_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_loading.dart';
-import 'package:flutter_extension/views/screen/driver/auth/setUpProfile/driver_verify_screen.dart';
+import 'package:flutter_extension/views/screen/user/setUpProfile/user_verify_screen.dart';
 import 'package:get/get.dart';
 
-class DriverCaptureImageScreen extends StatefulWidget {
-  const DriverCaptureImageScreen({super.key});
+class UserCaptureImageScreen extends StatefulWidget {
+  const UserCaptureImageScreen({super.key});
 
   @override
-  State<DriverCaptureImageScreen> createState() =>
-      _DriverCaptureImageScreenState();
+  State<UserCaptureImageScreen> createState() => _UserCaptureImageScreenState();
 }
 
-class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
-
-  
-  final _driverSetupController = Get.put(DriverProfileSetupController());
+class _UserCaptureImageScreenState extends State<UserCaptureImageScreen> {
+  final _userSetupController = Get.put(UserSetupProfileController());
 
   @override
   void initState() {
-    _driverSetupController.requestCameraPermission();
+    _userSetupController.requestCameraPermission();
     super.initState();
   }
 
@@ -40,7 +37,7 @@ class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
             Image.asset('assets/images/logo.png'),
             const Spacer(),
             const Text(
-              "4 Of 4",
+              "3 Of 3",
               style: TextStyle(
                 color: Color(0xFF012F64),
                 fontSize: 16,
@@ -64,7 +61,7 @@ class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
           // }
 
           // Camera initializing
-          if (_driverSetupController.isCameraInitialized.value) {
+          if (_userSetupController.isCameraInitialized.value) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -72,12 +69,12 @@ class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
                   child: Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
-                      CameraPreview(_driverSetupController.cameraController!),
+                      CameraPreview(_userSetupController.cameraController!),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20.0),
                         child: FloatingActionButton(
                           backgroundColor: Colors.white,
-                          onPressed: _driverSetupController.captureSelfie,
+                          onPressed: _userSetupController.captureSelfie,
                           child: const Icon(
                             Icons.camera_alt,
                             color: Colors.black,
@@ -91,7 +88,7 @@ class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
                 const SizedBox(height: 20),
               ],
             );
-          } else if (_driverSetupController.capturedImage != null) {
+          } else if (_userSetupController.capturedImage != null) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -102,7 +99,7 @@ class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       image: FileImage(
-                        File(_driverSetupController.capturedImage!.path),
+                        File(_userSetupController.capturedImage!.path),
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -130,9 +127,8 @@ class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
                 const SizedBox(height: 240),
 
                 CustomButton(
-                  loading: _driverSetupController.isLoading.value,
                   onTap: () {
-                    Get.to(() => const DriverVerifyScreen());
+                    Get.offAll(() => const UserVerifyScreen());
                   },
                   text: "Confirm & Continue",
                 ),
@@ -140,7 +136,7 @@ class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
                 const SizedBox(height: 16),
 
                 TextButton(
-                  onPressed: _driverSetupController.retakeSelfie,
+                  onPressed: _userSetupController.retakeSelfie,
                   child: const Text(
                     "Retake Selfie",
                     style: TextStyle(

@@ -3,18 +3,17 @@ import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
-import 'package:flutter_extension/views/screen/driver/auth/driver_otp_verify_screen.dart';
+import 'package:flutter_extension/views/screen/user/auth/user_otp_verify_screen.dart';
 import 'package:get/get.dart';
 
-class DriverForgetScreen extends StatefulWidget {
-  const DriverForgetScreen({super.key});
+class UserForgetScreen extends StatefulWidget {
+  const UserForgetScreen({super.key});
 
   @override
-  State<DriverForgetScreen> createState() => _DriverForgetScreenState();
+  State<UserForgetScreen> createState() => _UserForgetScreenState();
 }
 
-class _DriverForgetScreenState extends State<DriverForgetScreen> {
-  
+class _UserForgetScreenState extends State<UserForgetScreen> {
   final emailTextController = TextEditingController();
 
   @override
@@ -46,14 +45,15 @@ class _DriverForgetScreenState extends State<DriverForgetScreen> {
 
             const Spacer(),
 
-            CustomButton(onTap: () {
-              Get.to(()=> const DriverOtpVerifyScreen());
-            }, text: "sendOTP".tr),
+            CustomButton(
+              onTap: () {
+                Get.to(() => const UserOtpVerifyScreen());
+              },
+              text: "sendOTP".tr,
+            ),
           ],
         ),
       ),
     );
   }
-
-
 }

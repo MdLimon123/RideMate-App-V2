@@ -3,18 +3,18 @@ import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
-import 'package:flutter_extension/views/screen/driver/auth/driver_login_screen.dart';
+import 'package:flutter_extension/views/screen/user/auth/user_login_screen.dart';
 import 'package:get/get.dart';
 
-class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key});
+class UserResetPasswordScreen extends StatefulWidget {
+  const UserResetPasswordScreen({super.key});
 
   @override
-  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+  State<UserResetPasswordScreen> createState() =>
+      _UserResetPasswordScreenState();
 }
 
-class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
-
+class _UserResetPasswordScreenState extends State<UserResetPasswordScreen> {
   final newPasswordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
@@ -69,9 +69,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 const Spacer(),
                 CustomButton(
                   onTap: () {
-                    if (_fromKey.currentState!.validate()) {
-                      Get.to(() => const DriverLoginScreen());
-                    }
+                
+                      Get.to(() => const UserLoginScreen());
+              
                   },
                   text: "changeNow".tr,
                 ),
@@ -82,7 +82,4 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       ),
     );
   }
-
-
-
 }
