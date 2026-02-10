@@ -10,7 +10,7 @@ class FindingRequest extends StatefulWidget {
 }
 
 class _FindingRequestState extends State<FindingRequest> {
-  DriverHomeController _homeController = Get.put(DriverHomeController());
+  final DriverHomeController _homeController = Get.put(DriverHomeController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +23,7 @@ class _FindingRequestState extends State<FindingRequest> {
               _homeController.setActiveStatus(ActiveStatus.TRIP);
               _homeController.setTripStatus(TripStatus.REQUESTED);
             },
-            child: Text(" Request Trip "),
+            child: const Text(" Request Trip "),
           ),
         ],
       ),

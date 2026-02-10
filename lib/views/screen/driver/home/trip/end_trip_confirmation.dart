@@ -10,7 +10,7 @@ class EndTripConfirmation extends StatefulWidget {
 class _EndTripConfirmationState extends State<EndTripConfirmation> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return const SafeArea(
       child: Scaffold(
         body: Column(
           children: [Center(child: Text('End Trip Confirmation Screen'))],

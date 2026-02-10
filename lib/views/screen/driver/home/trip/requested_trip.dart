@@ -10,20 +10,20 @@ class RequestedTrip extends StatefulWidget {
 }
 
 class _RequestedTripState extends State<RequestedTrip> {
-  DriverHomeController _homeController = Get.put(DriverHomeController());
+  final DriverHomeController _homeController = Get.put(DriverHomeController());
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: Column(
           children: [
-            Center(child: Text('Requested Trip Screen')),
+            const Center(child: Text('Requested Trip Screen')),
 
             ElevatedButton(
               onPressed: () {
                 _homeController.setTripStatus(TripStatus.COMPLETED);
               },
-              child: Text("Accept Trip"),
+              child: const Text("Accept Trip"),
             ),
           ],
         ),

@@ -10,7 +10,7 @@ class PaymentOrverView extends StatefulWidget {
 class _PaymentOrverViewState extends State<PaymentOrverView> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return const SafeArea(
       child: Scaffold(
         body: Column(
           children: [Center(child: Text('Payment Over View Screen'))],

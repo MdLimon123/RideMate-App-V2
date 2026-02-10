@@ -12,8 +12,8 @@ import 'helper/route_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Map<String, Map<String, String>> _languages = await di.init();
-  runApp(MyApp(languages: _languages));
+  Map<String, Map<String, String>> languages = await di.init();
+  runApp(MyApp(languages: languages));
 }
 
 class MyApp extends StatelessWidget {

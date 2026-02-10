@@ -20,18 +20,18 @@ Future<Map<String, Map<String, String>>> init() async {
   Get.lazyPut(() => SplashController());
 
   //Retrieving localized data
-  Map<String, Map<String, String>> _languages = Map();
+  Map<String, Map<String, String>> languages = {};
   for (LanguageModel languageModel in AppConstants.languages) {
     String jsonStringValues = await rootBundle.loadString(
       'assets/language/${languageModel.languageCode}.json',
     );
-    Map<String, dynamic> _mappedJson = json.decode(jsonStringValues);
-    Map<String, String> _json = Map();
-    _mappedJson.forEach((key, value) {
-      _json[key] = value.toString();
+    Map<String, dynamic> mappedJson = json.decode(jsonStringValues);
+    Map<String, String> json = {};
+    mappedJson.forEach((key, value) {
+      json[key] = value.toString();
     });
-    _languages['${languageModel.languageCode}_${languageModel.countryCode}'] =
-        _json;
+    languages['${languageModel.languageCode}_${languageModel.countryCode}'] =
+        json;
   }
-  return _languages;
+  return languages;
 }

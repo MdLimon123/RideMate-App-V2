@@ -12,7 +12,7 @@ class MainDriver extends StatefulWidget {
 class _MainDriverState extends State<MainDriver> {
   var selectedIndex = 0;
   var pages = [
-    HomeDriver(),
+    const HomeDriver(),
     const Text("Rides Screen"),
     const Text("Earn Screen"),
     const Text("Profile Screen"),

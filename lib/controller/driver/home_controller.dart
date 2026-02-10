@@ -44,14 +44,14 @@ class DriverHomeController extends GetxController {
         return const RequestedTrip();
       case TripStatus.ACCEPTED:
         //go to accepted screen
-        return AcceptedTrip();
+        return const AcceptedTrip();
       case TripStatus.STARTED:
-        return StartedTrip();
+        return const StartedTrip();
       case TripStatus.ARRIVED:
         // go to waiting for payment screen
         break;
       case TripStatus.COMPLETED:
-        return CustomLoading();
+        return const CustomLoading();
       //go to completed screen
       //
     }

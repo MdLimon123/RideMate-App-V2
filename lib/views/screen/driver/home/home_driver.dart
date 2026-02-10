@@ -25,7 +25,7 @@ class _HomeDriverState extends State<HomeDriver> {
           Get.to(() => const WaitingForPayment());
           break;
         case TripStatus.COMPLETED:
-          Get.to(() => PaymentOrverView());
+          Get.to(() => const PaymentOrverView());
           break;
         default:
           break;

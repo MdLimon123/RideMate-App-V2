@@ -10,7 +10,7 @@ class StartedTrip extends StatefulWidget {
 class _StartedTripState extends State<StartedTrip> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return const SafeArea(
       child: Scaffold(
         body: Column(children: [Center(child: Text('Started Trip Screen'))]),
       ),
