@@ -17,9 +17,9 @@ enum TripStatus { REQUESTED, ACCEPTED, ARRIVED, STARTED, COMPLETED }
 enum ParcelStatus { REQUESTED, ACCEPTED, ARRIVED, STARTED, COMPLETED }
 
 class DriverHomeController extends GetxController {
-  var activeStatus = ActiveStatus.PARCEL.obs;
+  var activeStatus = ActiveStatus.NONE.obs;
   var tripStatus = TripStatus.REQUESTED.obs;
-  var parcelStatus = ParcelStatus.COMPLETED.obs;
+  var parcelStatus = ParcelStatus.ACCEPTED.obs;
 
   var currentLatLng = Rxn<LatLng>();
   GoogleMapController? mapController;

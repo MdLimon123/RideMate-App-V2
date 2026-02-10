@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_auth_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
@@ -14,9 +15,10 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
-
   final newPasswordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+
+  final _driverAuthController = Get.put(DriverAuthController());
 
   final _fromKey = GlobalKey<FormState>();
 
@@ -67,13 +69,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   hintText: "Confirm new password",
                 ),
                 const Spacer(),
-                CustomButton(
-                  onTap: () {
-                    if (_fromKey.currentState!.validate()) {
-                      Get.to(() => const DriverLoginScreen());
-                    }
-                  },
-                  text: "changeNow".tr,
+                Obx(
+                  () => CustomButton(
+                    loading: _driverAuthController.isResetLoading.value,
+                    onTap: () {
+                      if (_fromKey.currentState!.validate()) {
+                        _driverAuthController.resetPassword(
+                          passwordText: newPasswordController.text,
+                        );
+                      }
+                    },
+                    text: "changeNow".tr,
+                  ),
                 ),
               ],
             ),
@@ -82,7 +89,4 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       ),
     );
   }
-
-
-
 }

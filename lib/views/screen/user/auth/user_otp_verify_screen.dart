@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/user_auth_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
@@ -8,13 +9,18 @@ import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 
 class UserOtpVerifyScreen extends StatefulWidget {
-  const UserOtpVerifyScreen({super.key});
+  final String email;
+
+  const UserOtpVerifyScreen({super.key, required this.email});
 
   @override
   State<UserOtpVerifyScreen> createState() => _UserOtpVerifyScreenState();
 }
 
 class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
+  final _userAuthController = Get.put(UserAuthController());
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppbar2(),
@@ -47,7 +53,7 @@ class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
               fillColor: const Color(0xFFE6E6E6),
               onCodeChanged: (String code) {},
               onSubmit: (String verificationCode) {
-                // _driverAuthController.isForgetOtp.value = verificationCode;
+                _userAuthController.isForgetOtp.value = verificationCode;
               },
             ),
             const SizedBox(height: 32),
@@ -72,9 +78,9 @@ class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          // _driverAuthController.resendOtpVerify(
-                          //   email: widget.email,
-                          // );
+                          _userAuthController.resendOtpVerify(
+                            email: widget.email,
+                          );
                         },
                     ),
                   ],
@@ -82,11 +88,14 @@ class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
               ),
             ),
             const Spacer(),
-            CustomButton(
-              onTap: () {
-                Get.to(() => const UserResetPasswordScreen());
-              },
-              text: "verify".tr,
+            Obx(
+              () => CustomButton(
+                loading: _userAuthController.isVerify.value,
+                onTap: () {
+                  _userAuthController.otpForgetVerify(email: widget.email);
+                },
+                text: "verify".tr,
+              ),
             ),
           ],
         ),

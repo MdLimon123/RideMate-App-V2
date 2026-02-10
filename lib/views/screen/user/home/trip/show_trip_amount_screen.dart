@@ -7,14 +7,31 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class ShowTripAmountScreen extends StatefulWidget {
-  const ShowTripAmountScreen({super.key});
+  final double showAmount;
+  final double pickLat;
+  final double pickLng;
+  final double dropLat;
+  final double dropLan;
+
+  final String pickLocation;
+  final String dropLocation;
+
+  const ShowTripAmountScreen({
+    super.key,
+    required this.showAmount,
+    required this.pickLat,
+    required this.pickLng,
+    required this.dropLat,
+    required this.dropLan,
+    required this.pickLocation,
+    required this.dropLocation,
+  });
 
   @override
   State<ShowTripAmountScreen> createState() => _ShowTripAmountScreenState();
 }
 
 class _ShowTripAmountScreenState extends State<ShowTripAmountScreen> {
-
   final pickLocationController = TextEditingController();
   final dropLocationController = TextEditingController();
 
@@ -25,6 +42,8 @@ class _ShowTripAmountScreenState extends State<ShowTripAmountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    pickLocationController.text = widget.pickLocation;
+    dropLocationController.text = widget.dropLocation;
     return Scaffold(
       appBar: const CustomAppbar(title: "Trip Request"),
       body: SafeArea(
@@ -123,18 +142,32 @@ class _ShowTripAmountScreenState extends State<ShowTripAmountScreen> {
                         color: const Color(0xFF345983),
                         borderRadius: BorderRadius.circular(24),
                       ),
-                      child: const Center(
-                        child: Text(
-                          " 30 £",
-                          style: TextStyle(
-                            fontSize: 50,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
+                      child: Column(
+                        children: [
+                          const Center(
+                            child: Text(
+                              "Estimate Amount",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                        ),
+                          Center(
+                            child: Text(
+                              " ${widget.showAmount} £",
+                              style: const TextStyle(
+                                fontSize: 50,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 191),
+                    const SizedBox(height: 100),
                     Row(
                       children: [
                         Expanded(
@@ -184,6 +217,4 @@ class _ShowTripAmountScreenState extends State<ShowTripAmountScreen> {
       ),
     );
   }
-
-
 }

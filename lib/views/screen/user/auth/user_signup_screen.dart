@@ -1,11 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/user_auth_controller.dart';
 import 'package:flutter_extension/helper/route_helper.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
-import 'package:flutter_extension/views/screen/user/auth/user_terms_comdition_screen.dart';
 import 'package:get/get.dart';
 
 class UserSignupScreen extends StatefulWidget {
@@ -16,6 +16,8 @@ class UserSignupScreen extends StatefulWidget {
 }
 
 class _UserSignupScreenState extends State<UserSignupScreen> {
+  final _userAuthController = Get.put(UserAuthController());
+
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -90,11 +92,19 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                 ),
 
                 const Spacer(),
-                CustomButton(
-                  onTap: () {
-                    Get.offAll(() => const UserTermsComditionScreen());
-                  },
-                  text: "signup".tr,
+                Obx(
+                  () => CustomButton(
+                    loading: _userAuthController.isLoading.value,
+                    onTap: () {
+                      if (_fromKey.currentState!.validate()) {
+                        _userAuthController.signup(
+                          email: emailTextController.text.trim(),
+                          password: passwordTextController.text.trim(),
+                        );
+                      }
+                    },
+                    text: "signup".tr,
+                  ),
                 ),
 
                 const SizedBox(height: 20),

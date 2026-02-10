@@ -123,6 +123,7 @@ class _ShowParcelAmountScreenState extends State<ShowParcelAmountScreen> {
                         color: const Color(0xFF345983),
                         borderRadius: BorderRadius.circular(24),
                       ),
+                      
                       child: const Column(
                         children: [
                           Center(
@@ -147,6 +148,7 @@ class _ShowParcelAmountScreenState extends State<ShowParcelAmountScreen> {
                           ),
                         ],
                       ),
+                    
                     ),
                     const SizedBox(height: 191),
                     Row(

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/user/user_setup_profile_controller.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_dropdown.dart';
+import 'package:flutter_extension/views/base/custom_snackbar.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
-import 'package:flutter_extension/views/screen/user/setUpProfile/user_capture_image_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -18,6 +18,40 @@ class _UserPersonalInfoScreenState extends State<UserPersonalInfoScreen> {
   final _userSetupController = Get.put(UserSetupProfileController());
   final nameController = TextEditingController();
   final dateOfBirthController = TextEditingController();
+
+  bool validateProfileSetup() {
+    if (_userSetupController.userProfileImage.value == null) {
+      showCustomSnackBar("Please select profile image");
+      return false;
+    }
+
+    if (_userSetupController.nIdfrontImage.value == null) {
+      showCustomSnackBar("Please upload NID front image");
+      return false;
+    }
+
+    if (_userSetupController.nIdbackImage.value == null) {
+      showCustomSnackBar("Please upload NID back image");
+      return false;
+    }
+
+    if (nameController.text.trim().isEmpty) {
+      showCustomSnackBar("Please enter your name");
+      return false;
+    }
+
+    if (dateOfBirthController.text.trim().isEmpty) {
+      showCustomSnackBar("Please select date of birth");
+      return false;
+    }
+
+    if (_userSetupController.selectedGender.value.isEmpty) {
+      showCustomSnackBar("Please select gender");
+      return false;
+    }
+
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -327,11 +361,23 @@ class _UserPersonalInfoScreenState extends State<UserPersonalInfoScreen> {
             ),
           ),
           const SizedBox(height: 110),
-          CustomButton(
-            onTap: () {
-              Get.offAll(() => const UserCaptureImageScreen());
-            },
-            text: "Save Now",
+          Obx(
+            () => CustomButton(
+              loading: _userSetupController.isLoading.value,
+              onTap: () {
+                if (!validateProfileSetup()) return;
+
+                _userSetupController.setupUserProfile(
+                  avatar: _userSetupController.userProfileImage.value!.path,
+                  nIdFornt: _userSetupController.nIdfrontImage.value!.path,
+                  nIdBack: _userSetupController.nIdbackImage.value!.path,
+                  name: nameController.text.trim(),
+                  dateOfBirth: dateOfBirthController.text.trim(),
+                  gender: _userSetupController.selectedGender.value,
+                );
+              },
+              text: "Save Now",
+            ),
           ),
         ],
       ),

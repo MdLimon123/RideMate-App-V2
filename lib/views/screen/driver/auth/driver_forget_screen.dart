@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_auth_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
@@ -14,8 +15,9 @@ class DriverForgetScreen extends StatefulWidget {
 }
 
 class _DriverForgetScreenState extends State<DriverForgetScreen> {
-  
   final emailTextController = TextEditingController();
+
+  final _driverAuthController = Get.put(DriverAuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +48,20 @@ class _DriverForgetScreenState extends State<DriverForgetScreen> {
 
             const Spacer(),
 
-            CustomButton(onTap: () {
-              Get.to(()=> const DriverOtpVerifyScreen());
-            }, text: "sendOTP".tr),
+            Obx(
+              () => CustomButton(
+                loading: _driverAuthController.isForgetLoading.value,
+                onTap: () {
+                  _driverAuthController.forgetPassword(
+                    email: emailTextController.text,
+                  );
+                },
+                text: "sendOTP".tr,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-
-
 }

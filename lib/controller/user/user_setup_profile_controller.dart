@@ -1,8 +1,11 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/util/image_utils.dart';
 import 'package:flutter_extension/views/base/custom_snackbar.dart';
+import 'package:flutter_extension/views/screen/user/auth/setUpProfile/user_capture_image_screen.dart';
+import 'package:flutter_extension/views/screen/user/auth/setUpProfile/user_verify_screen.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -12,14 +15,14 @@ class UserSetupProfileController extends GetxController {
   Rx<File?> nIdbackImage = Rx<File?>(null);
   var selectedGender = ''.obs;
 
+  var isLoading = false.obs;
+
   Map<String, String> genderMap = {"Male": "Male", "Female": "Female"};
 
-    CameraController? cameraController;
+  CameraController? cameraController;
   RxBool isCameraInitialized = false.obs;
   XFile? capturedImage;
   RxBool isPermissionGranted = false.obs;
-
-
 
   Future<void> pickNIDFrontImage({bool fromCamera = false}) async {
     final pickedFile = await ImageUtils.pickAndCropImage(
@@ -39,7 +42,7 @@ class UserSetupProfileController extends GetxController {
     }
   }
 
-    Future<void> pickUserImage({bool fromCamera = false}) async {
+  Future<void> pickUserImage({bool fromCamera = false}) async {
     final pickedFile = await ImageUtils.pickAndCropImage(
       fromCamera: fromCamera,
     );
@@ -48,8 +51,7 @@ class UserSetupProfileController extends GetxController {
     }
   }
 
-
-    Future<bool> requestCameraPermission() async {
+  Future<bool> requestCameraPermission() async {
     var status = await Permission.camera.status;
 
     if (Platform.isIOS) {
@@ -160,10 +162,78 @@ class UserSetupProfileController extends GetxController {
     }
   }
 
+  Future<void> setupUserProfile({
+    required String avatar,
+    required String nIdFornt,
+    required String nIdBack,
+    required String name,
+    required String dateOfBirth,
+    required String gender,
+  }) async {
+    isLoading(true);
+    List<MultipartBody> multipartBody = [];
+
+    if (avatar.isNotEmpty) {
+      multipartBody.add(MultipartBody('avatar', File(avatar)));
+    }
+
+    if (nIdFornt.isNotEmpty) {
+      multipartBody.add(MultipartBody('nid_photos', File(nIdFornt)));
+    }
+
+    if (nIdBack.isNotEmpty) {
+      multipartBody.add(MultipartBody('nid_photos', File(nIdBack)));
+    }
+
+    Map<String, String> fromData = {
+      "name": name,
+      "date_of_birth": dateOfBirth,
+      "gender": gender,
+    };
+
+    final response = await ApiClient.postMultipartData(
+      "/profile/setup-user-profile",
+      fromData,
+      multipartBody: multipartBody,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      showCustomSnackBar(response.statusText, isError: false);
+      Get.offAll(() => const UserCaptureImageScreen());
+    } else {
+      showCustomSnackBar(response.statusText);
+    }
+
+    isLoading(false);
+  }
+
+  Future<void> uploadCaptureImage({required String imagePath}) async {
+    isLoading(true);
+
+    List<MultipartBody> multipartBody = [];
+
+    if (imagePath.isNotEmpty) {
+      multipartBody.add(MultipartBody('avatar', File(imagePath)));
+    }
+
+    final response = await ApiClient.postMultipartData(
+      "/profile/upload-capture-avatar",
+      {},
+      multipartBody: multipartBody,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      showCustomSnackBar(response.statusText, isError: false);
+      Get.offAll(() => const UserVerifyScreen());
+    } else {
+      showCustomSnackBar(response.statusText, isError: true);
+    }
+    isLoading(false);
+  }
+
   @override
   void onClose() {
     cameraController?.dispose();
     super.onClose();
   }
-
 }

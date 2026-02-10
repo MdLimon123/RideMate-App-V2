@@ -6,7 +6,6 @@ import 'package:flutter_extension/controller/user/user_setup_profile_controller.
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_loading.dart';
-import 'package:flutter_extension/views/screen/user/setUpProfile/user_verify_screen.dart';
 import 'package:get/get.dart';
 
 class UserCaptureImageScreen extends StatefulWidget {
@@ -126,11 +125,16 @@ class _UserCaptureImageScreenState extends State<UserCaptureImageScreen> {
                 ),
                 const SizedBox(height: 240),
 
-                CustomButton(
-                  onTap: () {
-                    Get.offAll(() => const UserVerifyScreen());
-                  },
-                  text: "Confirm & Continue",
+                Obx(
+                  () => CustomButton(
+                    loading: _userSetupController.isLoading.value,
+                    onTap: () {
+                      _userSetupController.uploadCaptureImage(
+                        imagePath: _userSetupController.capturedImage!.path,
+                      );
+                    },
+                    text: "Confirm & Continue",
+                  ),
                 ),
 
                 const SizedBox(height: 16),

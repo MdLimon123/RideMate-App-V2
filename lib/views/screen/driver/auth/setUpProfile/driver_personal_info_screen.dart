@@ -3,7 +3,6 @@ import 'package:flutter_extension/controller/driver/driver_setu_profile_controll
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_dropdown.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
-import 'package:flutter_extension/views/screen/driver/auth/setUpProfile/vehicle_setup_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -521,18 +520,30 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
                     ],
                   ),
                 ),
-
-            
               ],
             ),
           ),
 
           const SizedBox(height: 40),
-          CustomButton(
-            onTap: () {
-              Get.to(() => const VehicleSetupScreen());
-            },
-            text: "Save Now",
+          Obx(
+            () => CustomButton(
+              loading: _driverSetupController.isLoading.value,
+              onTap: () {
+                _driverSetupController.setupUserProfile(
+                  avatar: _driverSetupController.driverProfileImage.value!.path,
+                  drivingLicenseFront:
+                      _driverSetupController.frontImage.value!.path,
+                  drivingLicenseBack:
+                      _driverSetupController.backImage.value!.path,
+                  nIdFornt: _driverSetupController.nIdfrontImage.value!.path,
+                  nIdBack: _driverSetupController.nIdbackImage.value!.path,
+                  name: nameController.text,
+                  dateOfBirth: dateOfBirthController.text,
+                  gender: _driverSetupController.selectedGender.value,
+                );
+              },
+              text: "Save Now",
+            ),
           ),
         ],
       ),

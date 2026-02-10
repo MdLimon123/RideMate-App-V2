@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/helper/prefs_helper.dart';
+import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
+import 'package:flutter_extension/views/screen/Splash/select_role_screen.dart';
 import 'package:flutter_extension/views/screen/driver/profile/about_us_screen.dart';
 import 'package:flutter_extension/views/screen/driver/profile/change_password_screen.dart';
 import 'package:flutter_extension/views/screen/driver/profile/edit_profile_screen.dart';
@@ -227,7 +230,14 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                               children: [
                                 Expanded(
                                   child: InkWell(
-                                    onTap: () {},
+                                    onTap: () async{
+                                           await PrefsHelper.remove(
+                                                AppConstants.bearerTokenKEN,
+                                              );
+                                              await PrefsHelper.remove("id");
+                                              await PrefsHelper.remove("role");
+                                              Get.to(() => const SelectRoleScreen());
+                                    },
                                     child: Container(
                                       width: double.infinity,
                                       height: 52,
@@ -248,7 +258,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 33),
+                                const SizedBox(width: 33),
                                 Expanded(
                                   child: CustomButton(
                                     onTap: () {

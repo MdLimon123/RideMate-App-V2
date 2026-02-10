@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/user/user_home_controller.dart';
+import 'package:flutter_extension/controller/user/user_profile_controller.dart';
+import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_extension/views/base/get_greeting.dart';
 import 'package:flutter_extension/views/screen/user/home/parcel/parcle_input_details.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/book_ride_screen.dart';
@@ -17,14 +20,19 @@ class UserHome extends StatefulWidget {
 
 class _UserHomeState extends State<UserHome> {
   final _userHomeController = Get.put(UserHomeController());
+  final _userProfileController = Get.put(UserProfileController());
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _userProfileController.fetchUserInfo();
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -33,66 +41,58 @@ class _UserHomeState extends State<UserHome> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        getGreeting(),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xFF545454),
+              Obx(
+                () => Row(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          getGreeting(),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xFF545454),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 5),
-                      const Text(
-                        "Walid",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF545454),
+                        const SizedBox(height: 5),
+                        Text(
+                          _userProfileController.userProfileModel.value.name ??
+                              '',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF545454),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  InkWell(
-                    onTap: () {
-                      Get.to(() => const NotificationScreen());
-                    },
-                    child: SvgPicture.asset('assets/icons/notification.svg'),
-                  ),
-                  const SizedBox(width: 12),
-                  InkWell(
-                    onTap: () {
-                      Get.to(() => const UserProfileScreen());
-                    },
-                    child: Container(
-                      height: 32,
-                      width: 32,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.grey, width: 1),
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/demo.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      ],
                     ),
+                    const Spacer(),
+                    InkWell(
+                      onTap: () {
+                        Get.to(() => const NotificationScreen());
+                      },
+                      child: SvgPicture.asset('assets/icons/notification.svg'),
+                    ),
+                    const SizedBox(width: 12),
+                    InkWell(
+                      onTap: () {
+                        Get.to(() => const UserProfileScreen());
+                      },
+                      child: CustomNetworkImage(
+                        imageUrl:
+                            "${ApiConstant.imageBaseUrl}${_userProfileController.userProfileModel.value.avatar}",
+                        boxShape: BoxShape.circle,
+                        border: Border.all(color: Colors.grey, width: 1),
+                        height: 32,
+                        width: 32,
+                      ),
 
-                    // CustomNetworkImage(
-                    //   imageUrl:
-                    //       "${ApiConstant.imageBaseUrl}${_userProfileController.userProfileModel.value.avatar}",
-                    //   boxShape: BoxShape.circle,
-                    //   border: Border.all(color: Colors.grey, width: 1),
-                    //   height: 32,
-                    //   width: 32,
-                    // ),
-                  ),
-                ],
+                   
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 24),
               Expanded(

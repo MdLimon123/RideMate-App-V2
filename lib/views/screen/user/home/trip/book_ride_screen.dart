@@ -3,7 +3,6 @@ import 'package:flutter_extension/controller/user/user_home_controller.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_loading.dart';
-import 'package:flutter_extension/views/screen/user/home/trip/show_trip_amount_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -15,8 +14,6 @@ class BookRideScreen extends StatefulWidget {
 }
 
 class _BookRideScreenState extends State<BookRideScreen> {
-
-
   final _userHomeController = Get.put(UserHomeController());
 
   @override
@@ -28,13 +25,10 @@ class _BookRideScreenState extends State<BookRideScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           child: Column(
             children: [
-              
-              // Main Scrollable Area
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.only(bottom: 20),
                   children: [
-                    // --- Pick-up Field ---
                     Obx(
                       () => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,18 +179,19 @@ class _BookRideScreenState extends State<BookRideScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 157),
-                    CustomButton(
-                      onTap: () {
-                        Get.to(() => const ShowTripAmountScreen());
-                      },
-                      text: "Continue",
+                    const SizedBox(height: 140),
+                    Obx(
+                      () => CustomButton(
+                        loading: _userHomeController.isShowAnountLoading.value,
+                        onTap: () {
+                          _userHomeController.calculateAccount();
+                        },
+                        text: "Continue",
+                      ),
                     ),
                   ],
                 ),
               ),
-           
-           
             ],
           ),
         ),

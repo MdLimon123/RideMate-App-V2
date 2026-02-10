@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/driver/home_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
+import 'package:flutter_extension/views/screen/driver/chat/driver_inbox_screen.dart';
+import 'package:flutter_extension/views/screen/driver/home/parcel/live_parcel.dart';
+import 'package:flutter_extension/views/screen/user/home/parcel/live_parcel_map.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
@@ -22,8 +25,6 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
       body: SafeArea(
         child: Column(
           children: [
-
-
             SizedBox(
               height: 500,
               child: Stack(
@@ -67,8 +68,6 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-
-
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,9 +156,6 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                               ),
                             ],
                           ),
-
-
-
 
                           const SizedBox(height: 20),
                           Container(
@@ -282,7 +278,9 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => const DriverInboxScreen());
+                    },
                     child: Container(
                       height: 40,
                       width: 40,
@@ -299,7 +297,7 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        //Get.to(() => const LiveTrip());
+                        Get.to(() => const LiveParcel());
                       },
                       child: Container(
                         height: 46,
@@ -350,8 +348,6 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                 ],
               ),
             ),
-       
-       
           ],
         ),
       ),

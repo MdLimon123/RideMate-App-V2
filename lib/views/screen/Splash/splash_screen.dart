@@ -10,11 +10,13 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final _splashController = Get.put(SplashController());
+
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
-      Get.find<SplashController>().jumpNextScreen();
+    Future.delayed(const Duration(seconds: 3), () {
+      _splashController.checkLogin();
     });
   }
 

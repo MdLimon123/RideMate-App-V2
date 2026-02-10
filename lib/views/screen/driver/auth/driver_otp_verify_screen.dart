@@ -1,23 +1,25 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_auth_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/screen/driver/auth/reset_password_screen.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-import 'package:get/route_manager.dart';
-import 'package:get/utils.dart';
+import 'package:get/get.dart';
 
 class DriverOtpVerifyScreen extends StatefulWidget {
-  const DriverOtpVerifyScreen({super.key});
+  final String email;
+  const DriverOtpVerifyScreen({super.key, required this.email});
 
   @override
   State<DriverOtpVerifyScreen> createState() => _DriverOtpVerifyScreenState();
 }
 
 class _DriverOtpVerifyScreenState extends State<DriverOtpVerifyScreen> {
-  @override
+  final _driverAuthController = Get.put(DriverAuthController());
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppbar2(),
@@ -50,7 +52,7 @@ class _DriverOtpVerifyScreenState extends State<DriverOtpVerifyScreen> {
               fillColor: const Color(0xFFE6E6E6),
               onCodeChanged: (String code) {},
               onSubmit: (String verificationCode) {
-                // _driverAuthController.isForgetOtp.value = verificationCode;
+                _driverAuthController.isForgetOtp.value = verificationCode;
               },
             ),
             const SizedBox(height: 32),
@@ -75,9 +77,9 @@ class _DriverOtpVerifyScreenState extends State<DriverOtpVerifyScreen> {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          // _driverAuthController.resendOtpVerify(
-                          //   email: widget.email,
-                          // );
+                          _driverAuthController.resendOtpVerify(
+                            email: widget.email,
+                          );
                         },
                     ),
                   ],
@@ -85,17 +87,18 @@ class _DriverOtpVerifyScreenState extends State<DriverOtpVerifyScreen> {
               ),
             ),
             const Spacer(),
-            CustomButton(
-              onTap: () {
-                Get.to(() => const ResetPasswordScreen());
-              },
-              text: "verify".tr,
+            Obx(
+              () => CustomButton(
+                loading: _driverAuthController.isVerify.value,
+                onTap: () {
+                  _driverAuthController.otpForgetVerify(email: widget.email);
+                },
+                text: "verify".tr,
+              ),
             ),
           ],
         ),
       ),
     );
   }
-
-
 }

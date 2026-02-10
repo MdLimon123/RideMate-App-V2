@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/user_auth_controller.dart';
 import 'package:flutter_extension/helper/route_helper.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
@@ -19,8 +20,9 @@ class UserLoginScreen extends StatefulWidget {
 class _UserLoginScreenState extends State<UserLoginScreen> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
-
   final _fromKey = GlobalKey<FormState>();
+
+  final _userAuthController = Get.put(UserAuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -98,11 +100,19 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
 
                 const Spacer(),
 
-                CustomButton(
-                  text: "login".tr,
-                  onTap: () {
-                    Get.offAll(() => const UserHome());
-                  },
+                Obx(
+                  () => CustomButton(
+                    loading: _userAuthController.isLoading.value,
+                    text: "login".tr,
+                    onTap: () {
+                      if (_fromKey.currentState!.validate()) {
+                        _userAuthController.login(
+                          email: emailTextController.text,
+                          password: passwordTextController.text,
+                        );
+                      }
+                    },
+                  ),
                 ),
 
                 const SizedBox(height: 20),

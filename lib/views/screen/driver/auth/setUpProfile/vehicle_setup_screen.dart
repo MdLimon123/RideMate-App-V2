@@ -418,11 +418,25 @@ class _VehicleSetupScreenState extends State<VehicleSetupScreen> {
             ),
 
             const SizedBox(height: 40),
-            CustomButton(
-              onTap: () {
-                Get.to(() => const DriverCaptureImageScreen());
-              },
-              text: "Save Now",
+            Obx(
+              () => CustomButton(
+                loading: _driverSetupController.isLoading.value,
+                onTap: () {
+                  if (_fromKey.currentState!.validate()) {
+                    _driverSetupController.uploadVehicleInfo(
+                      vType: typeController.text,
+                      vBrand: brandController.text,
+                      vModel: modelController.text,
+                      licenseNumber: licenseController.text,
+                      vImage: _driverSetupController.vehicleImage.value!.path,
+                      vFrontImage:
+                          _driverSetupController.vfrontImage.value!.path,
+                      vBackImage: _driverSetupController.vbackImage.value!.path,
+                    );
+                  }
+                },
+                text: "Save Now",
+              ),
             ),
           ],
         ),

@@ -4,7 +4,7 @@ class AppConstants {
   static const String APP_NAME = 'APP Names Here';
   static const double APP_VERSION = 1.0;
 
-  static const String TOKEN = "token";
+  static const String bearerTokenKEN = "bearerTokenKEN";
 
   // share preference Key
   static String THEME = "theme";

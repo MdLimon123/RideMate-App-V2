@@ -6,7 +6,6 @@ import 'package:flutter_extension/controller/driver/driver_setu_profile_controll
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_loading.dart';
-import 'package:flutter_extension/views/screen/driver/auth/setUpProfile/driver_verify_screen.dart';
 import 'package:get/get.dart';
 
 class DriverCaptureImageScreen extends StatefulWidget {
@@ -18,8 +17,6 @@ class DriverCaptureImageScreen extends StatefulWidget {
 }
 
 class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
-
-  
   final _driverSetupController = Get.put(DriverProfileSetupController());
 
   @override
@@ -129,12 +126,16 @@ class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
                 ),
                 const SizedBox(height: 240),
 
-                CustomButton(
-                  loading: _driverSetupController.isLoading.value,
-                  onTap: () {
-                    Get.to(() => const DriverVerifyScreen());
-                  },
-                  text: "Confirm & Continue",
+                Obx(
+                  () => CustomButton(
+                    loading: _driverSetupController.isLoading.value,
+                    onTap: () {
+                      _driverSetupController.uploadCaptureImage(
+                        imagePath: _driverSetupController.capturedImage!.path,
+                      );
+                    },
+                    text: "Confirm & Continue",
+                  ),
                 ),
 
                 const SizedBox(height: 16),

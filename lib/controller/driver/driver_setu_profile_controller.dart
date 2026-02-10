@@ -1,8 +1,13 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/util/image_utils.dart';
 import 'package:flutter_extension/views/base/custom_snackbar.dart';
+import 'package:flutter_extension/views/screen/driver/auth/setUpProfile/driver_capture_image_screen.dart';
+import 'package:flutter_extension/views/screen/driver/auth/setUpProfile/driver_verify_screen.dart';
+import 'package:flutter_extension/views/screen/driver/auth/setUpProfile/vehicle_setup_screen.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -70,7 +75,6 @@ class DriverProfileSetupController extends GetxController {
     }
   }
 
-
   Future<void> pickNIDFrontImage({bool fromCamera = false}) async {
     final pickedFile = await ImageUtils.pickAndCropImage(
       fromCamera: fromCamera,
@@ -109,141 +113,141 @@ class DriverProfileSetupController extends GetxController {
     }
   }
 
-  // Future<void> uploadCaptureImage({required String imagePath}) async {
-  //   isLoading(true);
+  Future<void> uploadCaptureImage({required String imagePath}) async {
+    isLoading(true);
 
-  //   List<MultipartBody> multipartBody = [];
+    List<MultipartBody> multipartBody = [];
 
-  //   if (imagePath.isNotEmpty) {
-  //     multipartBody.add(MultipartBody('avatar', File(imagePath)));
-  //   }
+    if (imagePath.isNotEmpty) {
+      multipartBody.add(MultipartBody('avatar', File(imagePath)));
+    }
 
-  //   final response = await ApiClient.postMultipartData(
-  //     "/profile/upload-capture-avatar",
-  //     {},
-  //     multipartBody: multipartBody,
-  //   );
+    final response = await ApiClient.postMultipartData(
+      "/profile/upload-capture-avatar",
+      {},
+      multipartBody: multipartBody,
+    );
 
-  //   print("status code ====> ${response.statusCode}");
+    print("status code ====> ${response.statusCode}");
 
-  //   if (response.statusCode == 200 || response.statusCode == 201) {
-  //     showCustomSnackBar(response.statusText, isError: false);
-  //     Get.to(() => DriverVerifySuccessScreen());
-  //   } else {
-  //     print("status text ====> ${response.statusText}");
-  //     showCustomSnackBar(response.statusText, isError: true);
-  //   }
-  //   isLoading(false);
-  // }
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      showCustomSnackBar(response.statusText, isError: false);
+      Get.to(() => const DriverVerifyScreen());
+    } else {
+      print("status text ====> ${response.statusText}");
+      showCustomSnackBar(response.statusText, isError: true);
+    }
+    isLoading(false);
+  }
 
-  // Future<void> setupUserProfile({
-  //   required String avatar,
-  //   required String drivingLicenseFront,
-  //   required String drivingLicenseBack,
-  //   required String nIdFornt,
-  //   required String nIdBack,
-  //   required String name,
-  //   required String dateOfBirth,
-  //   required String gender,
-  // }) async {
-  //   isLoading(true);
+  Future<void> setupUserProfile({
+    required String avatar,
+    required String drivingLicenseFront,
+    required String drivingLicenseBack,
+    required String nIdFornt,
+    required String nIdBack,
+    required String name,
+    required String dateOfBirth,
+    required String gender,
+  }) async {
+    isLoading(true);
 
-  //   /// Multipart files
-  //   final List<MultipartBody> multipartBody = [];
+    /// Multipart files
+    final List<MultipartBody> multipartBody = [];
 
-  //   if (avatar.isNotEmpty) {
-  //     multipartBody.add(MultipartBody('avatar', File(avatar)));
-  //   }
+    if (avatar.isNotEmpty) {
+      multipartBody.add(MultipartBody('avatar', File(avatar)));
+    }
 
-  //   if (drivingLicenseFront.isNotEmpty) {
-  //     multipartBody.add(
-  //       MultipartBody('driving_license_photos', File(drivingLicenseFront)),
-  //     );
-  //   }
-  //   if (drivingLicenseBack.isNotEmpty) {
-  //     multipartBody.add(
-  //       MultipartBody('driving_license_photos', File(drivingLicenseBack)),
-  //     );
-  //   }
+    if (drivingLicenseFront.isNotEmpty) {
+      multipartBody.add(
+        MultipartBody('driving_license_photos', File(drivingLicenseFront)),
+      );
+    }
+    if (drivingLicenseBack.isNotEmpty) {
+      multipartBody.add(
+        MultipartBody('driving_license_photos', File(drivingLicenseBack)),
+      );
+    }
 
-  //   if (nIdFornt.isNotEmpty) {
-  //     multipartBody.add(MultipartBody('nid_photos', File(nIdFornt)));
-  //   }
+    if (nIdFornt.isNotEmpty) {
+      multipartBody.add(MultipartBody('nid_photos', File(nIdFornt)));
+    }
 
-  //   if (nIdBack.isNotEmpty) {
-  //     multipartBody.add(MultipartBody('nid_photos', File(nIdBack)));
-  //   }
+    if (nIdBack.isNotEmpty) {
+      multipartBody.add(MultipartBody('nid_photos', File(nIdBack)));
+    }
 
-  //   final Map<String, String> formData = {
-  //     "name": name,
-  //     "date_of_birth": dateOfBirth,
-  //     "gender": gender,
-  //   };
+    final Map<String, String> formData = {
+      "name": name,
+      "date_of_birth": dateOfBirth,
+      "gender": gender,
+    };
 
-  //   final response = await ApiClient.postMultipartData1(
-  //     "/profile/setup-driver-profile",
-  //     formData,
-  //     multipartBody: multipartBody,
-  //   );
+    final response = await ApiClient.postMultipartData(
+      "/profile/setup-driver-profile",
+      formData,
+      multipartBody: multipartBody,
+    );
 
-  //   if (response.statusCode == 200 || response.statusCode == 201) {
-  //     showCustomSnackBar(response.statusText, isError: false);
-  //     Get.to(() => VehicleSetupScreen());
-  //   } else {
-  //     debugPrint("❌ Error Response: ${response.body}");
-  //     showCustomSnackBar(response.statusText ?? "Something went wrong");
-  //   }
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      showCustomSnackBar(response.statusText, isError: false);
+      Get.to(() => const VehicleSetupScreen());
+    } else {
+      debugPrint("❌ Error Response: ${response.body}");
+      showCustomSnackBar(response.statusText ?? "Something went wrong");
+    }
 
-  //   isLoading(false);
-  // }
+    isLoading(false);
+  }
 
-  // Future<void> uploadVehicleInfo({
-  //   required String vType,
-  //   required String vBrand,
-  //   required String vModel,
-  //   required String licenseNumber,
-  //   required String vImage,
-  //   required String vFrontImage,
-  //   required String vBackImage,
-  // }) async {
-  //   isLoading(true);
+  Future<void> uploadVehicleInfo({
+    required String vType,
+    required String vBrand,
+    required String vModel,
+    required String licenseNumber,
+    required String vImage,
+    required String vFrontImage,
+    required String vBackImage,
+  }) async {
+    isLoading(true);
 
-  //   final List<MultipartBody> multipartBody = [];
+    final List<MultipartBody> multipartBody = [];
 
-  //   if (vImage.isNotEmpty) {
-  //     multipartBody.add(
-  //       MultipartBody('vehicle_registration_photos', File(vImage)),
-  //     );
-  //   }
+    if (vImage.isNotEmpty) {
+      multipartBody.add(
+        MultipartBody('vehicle_registration_photos', File(vImage)),
+      );
+    }
 
-  //   if (vFrontImage.isNotEmpty) {
-  //     multipartBody.add(MultipartBody('vehicle_photos', File(vFrontImage)));
-  //   }
-  //   if (vBackImage.isNotEmpty) {
-  //     multipartBody.add(MultipartBody('vehicle_photos', File(vBackImage)));
-  //   }
+    if (vFrontImage.isNotEmpty) {
+      multipartBody.add(MultipartBody('vehicle_photos', File(vFrontImage)));
+    }
+    if (vBackImage.isNotEmpty) {
+      multipartBody.add(MultipartBody('vehicle_photos', File(vBackImage)));
+    }
 
-  //   final Map<String, String> formData = {
-  //     "vehicle_type": vType,
-  //     "vehicle_brand": vBrand,
-  //     "vehicle_model": vModel,
-  //     "vehicle_plate_number": licenseNumber,
-  //   };
+    final Map<String, String> formData = {
+      "vehicle_type": vType,
+      "vehicle_brand": vBrand,
+      "vehicle_model": vModel,
+      "vehicle_plate_number": licenseNumber,
+    };
 
-  //   final response = await ApiClient.postMultipartData1(
-  //     "/profile/setup-vehicle",
-  //     formData,
-  //     multipartBody: multipartBody,
-  //   );
+    final response = await ApiClient.postMultipartData(
+      "/profile/setup-vehicle",
+      formData,
+      multipartBody: multipartBody,
+    );
 
-  //   if (response.statusCode == 200 || response.statusCode == 201) {
-  //     showCustomSnackBar(response.statusText, isError: false);
-  //     Get.to(() => DriverVerifyIdentityScreen());
-  //   } else {
-  //     showCustomSnackBar(response.statusText, isError: true);
-  //   }
-  //   isLoading(false);
-  // }
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      showCustomSnackBar(response.statusText, isError: false);
+      Get.to(() => const DriverCaptureImageScreen());
+    } else {
+      showCustomSnackBar(response.statusText, isError: true);
+    }
+    isLoading(false);
+  }
 
   Future<bool> requestCameraPermission() async {
     var status = await Permission.camera.status;

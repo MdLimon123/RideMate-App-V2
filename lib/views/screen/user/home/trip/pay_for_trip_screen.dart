@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
+import 'package:flutter_extension/views/screen/driver/chat/driver_inbox_screen.dart';
+import 'package:flutter_extension/views/screen/user/chat/user_inbox_screen.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/rating_for_trip_driver.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/route_manager.dart';
@@ -16,7 +18,6 @@ class PayForTripScreen extends StatefulWidget {
 class _PayForTripScreenState extends State<PayForTripScreen> {
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: const CustomAppbar(title: "Driver Assigned"),
       body: SafeArea(
@@ -264,7 +265,9 @@ class _PayForTripScreenState extends State<PayForTripScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         InkWell(
-                          onTap: () async {},
+                          onTap: () {
+                            Get.to(() => const UserInboxScreen());
+                          },
                           child: Container(
                             height: 40,
                             width: 40,
@@ -316,6 +319,5 @@ class _PayForTripScreenState extends State<PayForTripScreen> {
         ),
       ),
     );
- 
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
-import 'package:flutter_extension/views/screen/user/setUpProfile/user_get_start_screen.dart';
+import 'package:flutter_extension/views/screen/user/auth/setUpProfile/user_get_start_screen.dart';
 import 'package:get/get.dart';
 
 class UserTermsComditionScreen extends StatefulWidget {

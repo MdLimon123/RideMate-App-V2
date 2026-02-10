@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
-import 'package:flutter_extension/views/screen/user/setUpProfile/user_personal_info_screen.dart';
+import 'package:flutter_extension/views/screen/user/auth/setUpProfile/user_personal_info_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 

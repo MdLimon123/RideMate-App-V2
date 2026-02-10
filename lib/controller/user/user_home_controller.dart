@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/views/base/custom_snackbar.dart';
+import 'package:flutter_extension/views/screen/user/home/trip/show_trip_amount_screen.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -13,16 +16,18 @@ enum LocationField { pick, drop, none }
 class UserHomeController extends GetxController {
   var selectedIndex = 0.obs;
 
-    RxList<String> parcelType = ["SMALL", "MEDIUM", "LARGE"].obs;
+  RxList<String> parcelType = ["SMALL", "MEDIUM", "LARGE"].obs;
 
-      RxString selectedParcelType = "".obs;
+  var isShowAnountLoading = false.obs;
 
-    var currentLatLng = Rxn<LatLng>();
+  RxString selectedParcelType = "".obs;
+
+  var currentLatLng = Rxn<LatLng>();
   GoogleMapController? mapController;
 
   var activeField = LocationField.none.obs;
 
-    final pickController = TextEditingController();
+  final pickController = TextEditingController();
   final dropController = TextEditingController();
 
   var pickCoordinates = <double>[].obs;
@@ -38,8 +43,7 @@ class UserHomeController extends GetxController {
     selectedIndex.value = index;
   }
 
-
-    Future<void> selectPick(String location) async {
+  Future<void> selectPick(String location) async {
     pickController.text = location;
     pickAddress.value = location;
     suggestions.clear();
@@ -62,53 +66,50 @@ class UserHomeController extends GetxController {
     // );
   }
 
-
   Future<void> getCurrentLocation({bool setToTextField = false}) async {
-  bool serviceEnabled;
-  LocationPermission permission;
+    bool serviceEnabled;
+    LocationPermission permission;
 
-  serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) {
-    Get.snackbar('Error', 'Location services are disabled.');
-    return;
-  }
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      Get.snackbar('Error', 'Location services are disabled.');
+      return;
+    }
 
-  permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) return;
-  }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return;
+    }
 
-  if (permission == LocationPermission.deniedForever) return;
+    if (permission == LocationPermission.deniedForever) return;
 
-  final position = await Geolocator.getCurrentPosition(
-    desiredAccuracy: LocationAccuracy.high,
-  );
-
-  currentLatLng.value = LatLng(position.latitude, position.longitude);
-
-  if (mapController != null) {
-    mapController!.animateCamera(
-      CameraUpdate.newLatLng(currentLatLng.value!),
-    );
-  }
-
-
-  if (setToTextField) {
-    final placemarks = await placemarkFromCoordinates(
-      position.latitude,
-      position.longitude,
+    final position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
     );
 
-    if (placemarks.isNotEmpty) {
-      final place = placemarks.first;
+    currentLatLng.value = LatLng(position.latitude, position.longitude);
 
-      pickController.text =
-          "${place.street}, ${place.locality}, ${place.administrativeArea}";
+    if (mapController != null) {
+      mapController!.animateCamera(
+        CameraUpdate.newLatLng(currentLatLng.value!),
+      );
+    }
+
+    if (setToTextField) {
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        final place = placemarks.first;
+
+        pickController.text =
+            "${place.street}, ${place.locality}, ${place.administrativeArea}";
+      }
     }
   }
-}
-
 
   Future<List<double>> _fetchLatLng(String place) async {
     final response = await http.get(
@@ -155,5 +156,46 @@ class UserHomeController extends GetxController {
     } finally {
       isLoading(false);
     }
+  }
+
+  Future<void> calculateAccount() async {
+    if (pickCoordinates.length < 2 || dropCoordinates.length < 2) {
+      showCustomSnackBar(
+        "Please select pickup and drop location",
+        isError: true,
+      );
+      return;
+    }
+
+    isShowAnountLoading(true);
+
+    final body = {
+      "pickup_lat": pickCoordinates[0],
+      "pickup_lng": pickCoordinates[1],
+      "dropoff_lat": dropCoordinates[0],
+      "dropoff_lng": dropCoordinates[1],
+      "pickup_address": pickAddress.value,
+      "dropoff_address": dropAddress.value,
+    };
+
+    final response = await ApiClient.postData("/trips/estimate-fare", body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      showCustomSnackBar(response.statusText, isError: false);
+      Get.to(
+        () => ShowTripAmountScreen(
+          showAmount: response.body['estimated_fare'].toDouble(),
+          pickLat: pickCoordinates[0],
+          pickLng: pickCoordinates[1],
+          dropLat: dropCoordinates[0],
+          dropLan: dropCoordinates[1],
+          pickLocation: pickAddress.value,
+          dropLocation: dropAddress.value,
+        ),
+      );
+    } else {
+      showCustomSnackBar(response.statusText, isError: true);
+    }
+    isShowAnountLoading(false);
   }
 }
