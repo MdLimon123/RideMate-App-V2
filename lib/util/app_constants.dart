@@ -41,3 +41,24 @@ class AppConstants {
     ),
   ];
 }
+
+enum ActiveStatus { NONE, TRIP, PARCEL }
+enum TripStatus {
+  idle,
+  REQUESTED,
+  ACCEPTED,
+  STARTED,
+  ARRIVED,
+  COMPLETED,
+  CANCELLED,
+}
+
+enum ParcelStatus {
+  idle,
+  REQUESTED,
+  ACCEPTED,
+  STARTED,
+  DELIVERED,
+  COMPLETED,
+  CANCELLED,
+}

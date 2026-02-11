@@ -11,4 +11,15 @@ class ApiConstant {
       "https://maps.googleapis.com/maps/api/place/autocomplete/json";
   static String findPlaceApiUrl =
       "https://maps.googleapis.com/maps/api/place/findplacefromtext/json";
+
+
+    static const requestTripUrl = "/trips/new-trip-request";
+    static const cancelTripUrl = "/trips/cancel-trip";
+    static const payForTrip="/trips/pay-trip";
+
+
+
+
+
 }
+

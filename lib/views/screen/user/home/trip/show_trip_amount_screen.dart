@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 
@@ -34,6 +35,8 @@ class ShowTripAmountScreen extends StatefulWidget {
 class _ShowTripAmountScreenState extends State<ShowTripAmountScreen> {
   final pickLocationController = TextEditingController();
   final dropLocationController = TextEditingController();
+
+  final RideController rideController = Get.put(RideController());
 
   @override
   void initState() {
@@ -197,13 +200,23 @@ class _ShowTripAmountScreenState extends State<ShowTripAmountScreen> {
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: CustomButton(
-                            onTap: () {
-                              // Get.to(() => const FindingTripRequest());
-                              // Get.to(() => const AcceptedTripForDriver());
-                              Get.to(() => const PayForTripScreen());
-                            },
-                            text: "confirm".tr,
+                          child: Obx(()=>
+                               CustomButton(
+                              loading: rideController.isLoading.value,
+                              onTap: () {
+                                var body = {
+                                  "pickup_lat":widget.pickLat,
+                                  "pickup_lng":widget.pickLng,
+                                  "pickup_address":widget.pickLocation,
+                                  "dropoff_type": "Point",
+                                  "dropoff_lat": widget.dropLat,
+                                  "dropoff_lng": widget.dropLan,
+                                  "dropoff_address":widget.dropLocation,
+                                };
+                                rideController.requestTrip(body);
+                              },
+                              text: "confirm".tr,
+                            ),
                           ),
                         ),
                       ],

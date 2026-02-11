@@ -28,7 +28,7 @@ class ApiClient extends GetxService {
     _prefs ??= await SharedPreferences.getInstance();
     token = _prefs?.getString(AppConstants.bearerTokenKEN) ?? "";
     _mainHeaders = {
-      'Content-Type': 'application/json; charset=UTF-8',
+      'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
   }
@@ -51,48 +51,16 @@ class ApiClient extends GetxService {
     }
   }
 
-  // static Future<Response> postData(
-  //   String uri,
-  //   dynamic body, {
-  //   Map<String, String>? headers,
-  // }) async {
-  //   try {
-  //     if (_prefs == null) await loadPrefs();
-  //     debugPrint(
-  //       '====> API Call: $uri\nHeader: ${headers ?? _mainHeaders} \nBody: $body',
-  //     );
-  //     http.Response response = await client
-  //         .post(
-  //           Uri.parse(baseUrl + uri),
-  //           body: body,
-  //           headers: headers ?? _mainHeaders,
-  //         )
-  //         .timeout(Duration(seconds: timeoutInSeconds));
-
-  //     debugPrint('====> API Response: ${response.body}');
-
-  //     return handleResponse(response, uri);
-  //   } catch (e) {
-  //     return Response(statusCode: 1, statusText: noInternetMessage);
-  //   }
-  // }
-
   static Future<Response> postData(
     String uri,
-    Map<String, dynamic> body, {
+    dynamic body, {
     Map<String, String>? headers,
   }) async {
     try {
-      token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
-      var mainHeaders = {
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      };
-      debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
-      debugPrint('====> API Body: $body');
-      debugPrint("Full API URL: ${baseUrl + uri}");
-
+      if (_prefs == null) await loadPrefs();
+      debugPrint(
+        '====> API Call: $uri\nHeader: ${headers ?? _mainHeaders} \nBody: $body',
+      );
       http.Response response = await client
           .post(
             Uri.parse(baseUrl + uri),
@@ -101,15 +69,47 @@ class ApiClient extends GetxService {
           )
           .timeout(Duration(seconds: timeoutInSeconds));
 
-      debugPrint(
-        "==========> Response Post Method :------ : ${response.statusCode}",
-      );
+      debugPrint('====> API Response: ${response.body}');
+
       return handleResponse(response, uri);
     } catch (e) {
-      print(" ==========> Error Post Method :------ : ${e.toString()}");
       return Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
+
+  // static Future<Response> postData(
+  //   String uri,
+  //   Map<String, dynamic> body, {
+  //   Map<String, String>? headers,
+  // }) async {
+  //   try {
+  //     token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
+  //     var mainHeaders = {
+  //       // 'Content-Type': 'application/x-www-form-urlencoded',
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'Bearer $token',
+  //     };
+  //     debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
+  //     debugPrint('====> API Body: $body');
+  //     debugPrint("Full API URL: ${baseUrl + uri}");
+
+  //     http.Response response = await client
+  //         .post(
+  //           Uri.parse(baseUrl + uri),
+  //           body: jsonEncode(body),
+  //           headers: headers ?? _mainHeaders,
+  //         )
+  //         .timeout(Duration(seconds: timeoutInSeconds));
+
+  //     debugPrint(
+  //       "==========> Response Post Method :------ : ${response.statusCode}",
+  //     );
+  //     return handleResponse(response, uri);
+  //   } catch (e) {
+  //     print(" ==========> Error Post Method :------ : ${e.toString()}");
+  //     return Response(statusCode: 1, statusText: noInternetMessage);
+  //   }
+  // }
 
   static Future<Response> postMultipartData(
     String uri,

@@ -4,7 +4,6 @@ import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/helper/prefs_helper.dart';
 import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
-import 'package:flutter_extension/views/base/custom_image.dart';
 import 'package:flutter_extension/views/base/custom_loading.dart';
 import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_extension/views/screen/Splash/select_role_screen.dart';

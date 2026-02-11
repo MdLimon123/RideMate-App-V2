@@ -10,11 +10,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-enum ActiveStatus { NONE, TRIP, PARCEL }
+import '../../util/app_constants.dart';
 
-enum TripStatus { REQUESTED, ACCEPTED, ARRIVED, STARTED, COMPLETED }
-
-enum ParcelStatus { REQUESTED, ACCEPTED, ARRIVED, STARTED, COMPLETED }
 
 class DriverHomeController extends GetxController {
   var activeStatus = ActiveStatus.NONE.obs;
@@ -69,6 +66,12 @@ class DriverHomeController extends GetxController {
         return const PaymentOrverView();
       //go to completed screen
       //
+      case TripStatus.idle:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case TripStatus.CANCELLED:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 
@@ -84,13 +87,19 @@ class DriverHomeController extends GetxController {
       case ParcelStatus.STARTED:
         //go to completed screen
         return const StartedParcel();
-      case ParcelStatus.ARRIVED:
+      case ParcelStatus.DELIVERED:
         //go to started screen
         return const WaitingForPayment();
 
       case ParcelStatus.COMPLETED:
       //go to completed screen
       return const PaymentOrverView();
+      case ParcelStatus.idle:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case ParcelStatus.CANCELLED:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 

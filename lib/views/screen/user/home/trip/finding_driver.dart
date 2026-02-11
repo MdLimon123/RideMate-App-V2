@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class FindingTripRequest extends StatefulWidget {
-  const FindingTripRequest({super.key});
+class FindingDriver extends StatefulWidget {
+  const FindingDriver({super.key});
 
   @override
-  State<FindingTripRequest> createState() => _FindingTripRequestState();
+  State<FindingDriver> createState() => _FindingDriverState();
 }
 
-class _FindingTripRequestState extends State<FindingTripRequest>
+class _FindingDriverState extends State<FindingDriver>
     with TickerProviderStateMixin {
-      
+  final RideController _rideController = Get.put(RideController());
+
   late AnimationController _xController;
   late AnimationController _yController;
   late AnimationController _rotationController;
@@ -206,7 +208,17 @@ class _FindingTripRequestState extends State<FindingTripRequest>
 
               const SizedBox(height: 189),
 
-              CustomButton(onTap: () {}, text: "cancel".tr),
+              Obx(
+                () => CustomButton(
+                  loading: _rideController.isLoading.value,
+                  onTap: () {
+                    _rideController.cancelTrip(
+                      _rideController.tripResponse!.data!.id,
+                    );
+                  },
+                  text: "cancel".tr,
+                ),
+              ),
             ],
           ),
         ),
