@@ -19,7 +19,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.languages});
   final Map<String, Map<String, String>> languages;
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ThemeController>(

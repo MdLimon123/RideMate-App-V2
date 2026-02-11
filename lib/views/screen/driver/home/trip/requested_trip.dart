@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/driver/home_controller.dart';
+import 'package:flutter_extension/util/app_colors.dart';
+import 'package:flutter_extension/views/base/custom_button.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class RequestedTrip extends StatefulWidget {
   const RequestedTrip({super.key});
@@ -10,20 +14,201 @@ class RequestedTrip extends StatefulWidget {
 }
 
 class _RequestedTripState extends State<RequestedTrip> {
-  final DriverHomeController _homeController = Get.put(DriverHomeController());
+  final _homeController = Get.put(DriverHomeController());
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: Column(
           children: [
-            const Center(child: Text('Requested Trip Screen')),
+            SizedBox(
+              height: 500,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Obx(
+                    () => GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target:
+                            _homeController.currentLatLng.value ??
+                            const LatLng(23.8103, 90.4125),
+                        zoom: 15,
+                      ),
+                      myLocationEnabled: true,
+                      myLocationButtonEnabled: true,
+                      onMapCreated: _homeController.setMapController,
+                    ),
+                  ),
 
-            ElevatedButton(
-              onPressed: () {
-                _homeController.setTripStatus(TripStatus.COMPLETED);
-              },
-              child: const Text("Accept Trip"),
+                  Positioned(
+                    bottom: -60,
+                    left: 20,
+                    right: 20,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 30,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF345983),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, -3),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Text(
+                              "newRideRequest".tr,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Center(
+                            child: Text(
+                              "5 min ETA",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFFFFFFFF),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 20),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    SvgPicture.asset('assets/icons/pick.svg'),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        "Pizza Burge Main St, Maintown ",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColors.textColor,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icons/location.svg',
+                                      color: AppColors.textColor,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        "456 Oak Ave, Sometown (7.00 km)",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColors.textColor,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+
+                                Row(
+                                  children: [
+                                    SvgPicture.asset('assets/icons/dollar.svg'),
+                                    const SizedBox(width: 12),
+                                    const Text(
+                                      "100",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFF012F64),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      "(£)",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w200,
+                                        color: AppColors.textColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 120),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {},
+                      child: Container(
+                        width: double.infinity,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE6E6E6),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "decline".tr,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 22),
+                  Expanded(
+                    child: CustomButton(onTap: () {}, text: "accept".tr),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

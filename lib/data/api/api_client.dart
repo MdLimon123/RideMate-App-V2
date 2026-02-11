@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/helper/prefs_helper.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
 import 'package:http/http.dart' as http;
@@ -24,9 +25,9 @@ class ApiClient extends GetxService {
 
   static Future<void> loadPrefs() async {
     _prefs ??= await SharedPreferences.getInstance();
-    token = _prefs?.getString(AppConstants.TOKEN) ?? "";
+    token = _prefs?.getString(AppConstants.bearerTokenKEN) ?? "";
     _mainHeaders = {
-      'Content-Type': 'application/json; charset=UTF-8',
+      'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
   }
@@ -62,16 +63,52 @@ class ApiClient extends GetxService {
       http.Response response = await client
           .post(
             Uri.parse(baseUrl + uri),
-            body: body,
+            body: jsonEncode(body),
             headers: headers ?? _mainHeaders,
           )
           .timeout(Duration(seconds: timeoutInSeconds));
+
+      debugPrint('====> API Response: ${response.body}');
 
       return handleResponse(response, uri);
     } catch (e) {
       return Response(statusCode: 1, statusText: noInternetMessage);
     }
   }
+
+  // static Future<Response> postData(
+  //   String uri,
+  //   Map<String, dynamic> body, {
+  //   Map<String, String>? headers,
+  // }) async {
+  //   try {
+  //     token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
+  //     var mainHeaders = {
+  //       // 'Content-Type': 'application/x-www-form-urlencoded',
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'Bearer $token',
+  //     };
+  //     debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
+  //     debugPrint('====> API Body: $body');
+  //     debugPrint("Full API URL: ${baseUrl + uri}");
+
+  //     http.Response response = await client
+  //         .post(
+  //           Uri.parse(baseUrl + uri),
+  //           body: jsonEncode(body),
+  //           headers: headers ?? _mainHeaders,
+  //         )
+  //         .timeout(Duration(seconds: timeoutInSeconds));
+
+  //     debugPrint(
+  //       "==========> Response Post Method :------ : ${response.statusCode}",
+  //     );
+  //     return handleResponse(response, uri);
+  //   } catch (e) {
+  //     print(" ==========> Error Post Method :------ : ${e.toString()}");
+  //     return Response(statusCode: 1, statusText: noInternetMessage);
+  //   }
+  // }
 
   static Future<Response> postMultipartData(
     String uri,

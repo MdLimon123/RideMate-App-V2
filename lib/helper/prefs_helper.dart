@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter_extension/util/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PrefsHelper {
@@ -23,6 +26,11 @@ class PrefsHelper {
     await preferences.setBool(key, value);
   }
 
+  static Future<String> getToken() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString(AppConstants.bearerTokenKEN) ?? "";
+  }
+
   static Future setInt(String key, int value) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setInt(key, value);
@@ -36,5 +44,51 @@ class PrefsHelper {
   static Future remove(String key) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.remove(key);
+  }
+
+  static Future<void> saveRememberedCredentials({
+    required String email,
+    required String password,
+    required bool isRemember,
+  }) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setBool('isRemember', isRemember);
+
+    if (isRemember) {
+      await preferences.setString('rememberedEmail', email);
+      await preferences.setString('rememberedPassword', password);
+    } else {
+      await preferences.remove('rememberedEmail');
+      await preferences.remove('rememberedPassword');
+    }
+  }
+
+  /// Get Remember Me status
+  static Future<bool> getRememberMeStatus() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getBool('isRemember') ?? false;
+  }
+
+  /// Get remembered email
+  static Future<String> getRememberedEmail() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString('rememberedEmail') ?? '';
+  }
+
+  /// Get remembered password
+  static Future<String> getRememberedPassword() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString('rememberedPassword') ?? '';
+  }
+
+  static Future<void> setUserInfo(Map<String, dynamic> data) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user', jsonEncode(data));
+  }
+
+  static Future<Map<String, dynamic>> getUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final data = prefs.getString('user');
+    return data != null ? jsonDecode(data) : {};
   }
 }
