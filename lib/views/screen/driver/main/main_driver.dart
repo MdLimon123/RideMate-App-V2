@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/data/api/socket_manager.dart';
+import 'package:flutter_extension/helper/prefs_helper.dart';
+import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/views/screen/driver/earn/driver_earn_screen.dart';
 import 'package:flutter_extension/views/screen/driver/home/home_driver.dart';
 import 'package:flutter_extension/views/screen/driver/profile/driver_profile_screen.dart';
@@ -13,6 +16,12 @@ class MainDriver extends StatefulWidget {
 }
 
 class _MainDriverState extends State<MainDriver> {
+  @override
+  void initState() {
+    socketConntect();
+    super.initState();
+  }
+
   var selectedIndex = 0;
   var pages = [
     const HomeDriver(),
@@ -20,6 +29,12 @@ class _MainDriverState extends State<MainDriver> {
     const DriverEarnScreen(),
     const DriverProfileScreen(),
   ];
+
+  socketConntect() async {
+    var token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
+    SocketService().connect(token);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

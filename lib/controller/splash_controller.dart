@@ -1,6 +1,7 @@
 import 'package:flutter_extension/controller/data_controller.dart';
 import 'package:flutter_extension/helper/prefs_helper.dart';
 import 'package:flutter_extension/helper/route_helper.dart';
+import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/views/screen/driver/auth/driver_login_screen.dart';
 import 'package:flutter_extension/views/screen/driver/main/main_driver.dart';
 import 'package:flutter_extension/views/screen/user/auth/user_login_screen.dart';
@@ -31,14 +32,11 @@ class SplashController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
   }
 
-
-    void checkLogin() async {
+  void checkLogin() async {
     await _dataController.getData();
-
-    final token = await PrefsHelper.getToken();
+    final token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
 
     final role = _dataController.role.value;
     final isActive = _dataController.isActive.value;
@@ -50,15 +48,13 @@ class SplashController extends GetxController {
     if (token.isEmpty) {
       Get.offAllNamed(AppRoutes.selectRoleScreen);
       return;
-    } else {
-    
-    }
+    } else {}
 
     if (!isActive) {
       if (role == 'USER') {
         Get.offAll(() => const UserLoginScreen());
       } else if (role == 'DRIVER') {
-        Get.offAll(() =>const  DriverLoginScreen());
+        Get.offAll(() => const DriverLoginScreen());
       } else {
         Get.offAllNamed(AppRoutes.selectRoleScreen);
       }
@@ -73,27 +69,24 @@ class SplashController extends GetxController {
     }
   }
 
-Future<Position?> getCurrentLocation() async {
+  Future<Position?> getCurrentLocation() async {
+    PermissionStatus permission = await Permission.location.status;
 
-  PermissionStatus permission = await Permission.location.status;
+    if (permission.isDenied || permission.isPermanentlyDenied) {
+      permission = await Permission.location.request();
+      if (!permission.isGranted) {
+        return null;
+      }
+    }
 
-  if (permission.isDenied || permission.isPermanentlyDenied) {
-    permission = await Permission.location.request();
-    if (!permission.isGranted) {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
       return null;
     }
+
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
   }
-
-  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) {
-    await Geolocator.openLocationSettings();
-    return null;
-  }
-
-
-  return await Geolocator.getCurrentPosition(
-    desiredAccuracy: LocationAccuracy.high,
-  );
-}
-
 }

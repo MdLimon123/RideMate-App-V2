@@ -14,7 +14,7 @@ class FindingDriver extends StatefulWidget {
 
 class _FindingDriverState extends State<FindingDriver>
     with TickerProviderStateMixin {
-  final RideController _rideController = Get.put(RideController());
+  final RideController _rideController = Get.find<RideController>();
 
   late AnimationController _xController;
   late AnimationController _yController;
@@ -205,16 +205,17 @@ class _FindingDriverState extends State<FindingDriver>
                   ],
                 ),
               ),
-
-              const SizedBox(height: 189),
-
+              Spacer(),
               Obx(
                 () => CustomButton(
                   loading: _rideController.isLoading.value,
                   onTap: () {
-                    _rideController.cancelTrip(
-                      _rideController.tripResponse!.data!.id,
-                    );
+                    final tripData = _rideController.tripResponse.value.data;
+                    if (tripData != null) {
+                      _rideController.cancelTrip(tripData.id);
+                    } else {
+                      print("No trip data available yet.");
+                    }
                   },
                   text: "cancel".tr,
                 ),

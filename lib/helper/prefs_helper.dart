@@ -26,11 +26,6 @@ class PrefsHelper {
     await preferences.setBool(key, value);
   }
 
-  static Future<String> getToken() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.getString(AppConstants.bearerTokenKEN) ?? "";
-  }
-
   static Future setInt(String key, int value) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setInt(key, value);

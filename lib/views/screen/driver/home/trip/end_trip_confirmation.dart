@@ -30,13 +30,13 @@ class _EndTripConfirmationState extends State<EndTripConfirmation> {
                     () => GoogleMap(
                       initialCameraPosition: CameraPosition(
                         target:
-                            _homeController.currentLatLng.value ??
+                            _homeController.currentPosition.value ??
                             const LatLng(23.8103, 90.4125),
                         zoom: 15,
                       ),
                       myLocationEnabled: true,
                       myLocationButtonEnabled: true,
-                      onMapCreated: _homeController.setMapController,
+                      //onMapCreated: _homeController.setMapController,
                     ),
                   ),
 

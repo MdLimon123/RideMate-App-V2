@@ -14,15 +14,14 @@ class StartedTrip extends StatefulWidget {
 }
 
 class _StartedTripState extends State<StartedTrip> {
-
-    final _homeController = Get.put(DriverHomeController());
+  final _homeController = Get.put(DriverHomeController());
   @override
   Widget build(BuildContext context) {
-    return  SafeArea(
+    return SafeArea(
       child: Scaffold(
         body: Column(
           children: [
-                  SizedBox(
+            SizedBox(
               height: 500,
               child: Stack(
                 clipBehavior: Clip.none,
@@ -31,13 +30,13 @@ class _StartedTripState extends State<StartedTrip> {
                     () => GoogleMap(
                       initialCameraPosition: CameraPosition(
                         target:
-                            _homeController.currentLatLng.value ??
+                            _homeController.currentPosition.value ??
                             const LatLng(23.8103, 90.4125),
                         zoom: 15,
                       ),
                       myLocationEnabled: true,
                       myLocationButtonEnabled: true,
-                      onMapCreated: _homeController.setMapController,
+                      // onMapCreated: _homeController.setMapController,
                     ),
                   ),
 
@@ -294,10 +293,7 @@ class _StartedTripState extends State<StartedTrip> {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-
-                       // Get.to(() => const EndTripConfirmation());
-
-
+                        // Get.to(() => const EndTripConfirmation());
                       },
                       child: Container(
                         height: 46,
@@ -323,8 +319,6 @@ class _StartedTripState extends State<StartedTrip> {
                 ],
               ),
             ),
-         
-         
           ],
         ),
       ),

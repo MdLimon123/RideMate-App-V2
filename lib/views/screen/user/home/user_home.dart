@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/controller/user/user_home_controller.dart';
 import 'package:flutter_extension/controller/user/user_profile_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
@@ -21,6 +22,7 @@ class UserHome extends StatefulWidget {
 class _UserHomeState extends State<UserHome> {
   final _userHomeController = Get.put(UserHomeController());
   final _userProfileController = Get.put(UserProfileController());
+  final _rideController = Get.put(RideController(), permanent: true);
 
   @override
   void initState() {
@@ -32,7 +34,6 @@ class _UserHomeState extends State<UserHome> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -88,8 +89,6 @@ class _UserHomeState extends State<UserHome> {
                         height: 32,
                         width: 32,
                       ),
-
-                   
                     ),
                   ],
                 ),

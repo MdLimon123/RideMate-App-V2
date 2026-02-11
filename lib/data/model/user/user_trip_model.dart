@@ -4,24 +4,17 @@ class TripResponseModel {
   final ActiveStatus? kind;
   final TripModel? data;
 
-  TripResponseModel({
-     this.kind,
-     this.data,
-  });
+  TripResponseModel({this.kind, this.data});
 
   factory TripResponseModel.fromJson(Map<String, dynamic> json) {
     return TripResponseModel(
-      kind: ActiveStatus.values.firstWhere((e) => e.name == json['status']),
+      kind: ActiveStatus.values.firstWhere((e) => e.name == json['kind']),
       data: TripModel.fromJson(json['data']),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'kind': kind,
-      'data': data
-          ?.toJson(),
-    };
+    return {'kind': kind, 'data': data?.toJson()};
   }
 }
 

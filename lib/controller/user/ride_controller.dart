@@ -14,15 +14,16 @@ class RideController extends GetxController {
   var activeStatus = ActiveStatus.NONE.obs;
   var tripStatus = TripStatus.idle.obs;
   var parcelStatus = ParcelStatus.idle.obs;
-  TripResponseModel? tripResponse;
+  Rx<TripResponseModel> tripResponse = TripResponseModel().obs;
 
   var isLoading = false.obs;
 
   void setTripStatus(TripResponseModel tripResponseModel) {
     activeStatus.value = tripResponseModel.kind!;
     tripStatus.value = tripResponseModel.data!.status;
-    tripResponse = tripResponseModel;
+    tripResponse.value = tripResponseModel;
     tripFlow(tripStatus.value);
+    update();
   }
 
   // ========== CLEAR TRIP =================
@@ -84,6 +85,7 @@ class RideController extends GetxController {
       isLoading(false);
       ApiChecker.checkApi(response);
     }
+    isLoading(false);
   }
 
   /// ================= CANCEL TRIP =================

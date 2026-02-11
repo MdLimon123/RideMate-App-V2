@@ -36,7 +36,7 @@ class _ShowTripAmountScreenState extends State<ShowTripAmountScreen> {
   final pickLocationController = TextEditingController();
   final dropLocationController = TextEditingController();
 
-  final RideController rideController = Get.put(RideController());
+  final RideController rideController = Get.find<RideController>();
 
   @override
   void initState() {
@@ -200,18 +200,18 @@ class _ShowTripAmountScreenState extends State<ShowTripAmountScreen> {
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: Obx(()=>
-                               CustomButton(
+                          child: Obx(
+                            () => CustomButton(
                               loading: rideController.isLoading.value,
                               onTap: () {
                                 var body = {
-                                  "pickup_lat":widget.pickLat,
-                                  "pickup_lng":widget.pickLng,
-                                  "pickup_address":widget.pickLocation,
+                                  "pickup_lat": widget.pickLat,
+                                  "pickup_lng": widget.pickLng,
+                                  "pickup_address": widget.pickLocation,
                                   "dropoff_type": "Point",
                                   "dropoff_lat": widget.dropLat,
                                   "dropoff_lng": widget.dropLan,
-                                  "dropoff_address":widget.dropLocation,
+                                  "dropoff_address": widget.dropLocation,
                                 };
                                 rideController.requestTrip(body);
                               },
