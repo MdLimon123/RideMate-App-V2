@@ -81,11 +81,11 @@ class RideController extends GetxController {
     var response = await ApiClient.postData(ApiConstant.requestTripUrl, body);
     if (response.statusCode == 200 || response.statusCode == 201) {
       setTripStatus(TripResponseModel.fromJson(response.body));
+      isLoading(false);
     } else {
       isLoading(false);
       ApiChecker.checkApi(response);
     }
-    isLoading(false);
   }
 
   /// ================= CANCEL TRIP =================
@@ -100,6 +100,7 @@ class RideController extends GetxController {
       isLoading(false);
       ApiChecker.checkApi(response);
     }
+    isLoading(false);
   }
 
   payForTrip() async {
@@ -111,5 +112,6 @@ class RideController extends GetxController {
       isLoading(false);
       ApiChecker.checkApi(response);
     }
+    isLoading(false);
   }
 }

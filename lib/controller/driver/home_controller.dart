@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/views/screen/driver/home/parcel/accepted_parcel.dart';
 import 'package:flutter_extension/views/screen/driver/home/parcel/requested_parcel.dart';
 import 'package:flutter_extension/views/screen/driver/home/parcel/started_parcel.dart';
@@ -116,14 +117,24 @@ class DriverHomeController extends GetxController {
       if (status == LocationPermission.denied) {
         await _requestLocationPermission();
       } else {
+        updateActiveStatus(value);
         _startLocationUpdates();
       }
     } else {
+      updateActiveStatus(value);
       _stopLocationUpdates();
     }
   }
 
-  updateActiveSatus() {}
+  updateActiveStatus(bool value) {
+    SocketService().socket?.emitWithAck(
+      "driver:toggle_online",
+      {"online": value},
+      ack: (response) {
+        debugPrint('Driver online status updated: $response');
+      },
+    );
+  }
 
   // Start location stream (global tracking)
   void _startLocationUpdates() {
@@ -181,13 +192,13 @@ class DriverHomeController extends GetxController {
   }
 
   updateDriverLocation(Map<String, dynamic> body) async {
-    var response = await ApiClient.postData(
-      ApiConstant.updateDriverLocation,
+    SocketService().socket?.emitWithAck(
+      "driver:update_location",
       body,
+      ack: (response) {
+        debugPrint('Driver location updated: $response');
+      },
     );
-    if (response.statusCode == 200) {
-      print("Update location in driver");
-    }
   }
 
   // Stop location stream

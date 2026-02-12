@@ -20,9 +20,9 @@ class SocketService {
       return;
     }
 
-    debugPrint('🟡 Trying to connect socket...');
+    debugPrint('🟡 Trying to connect socket... , \n token :${token} ');
     socket = IO.io(
-      'http://10.10.12.126:3008',
+      'https://v2.radeefz.com',
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()
