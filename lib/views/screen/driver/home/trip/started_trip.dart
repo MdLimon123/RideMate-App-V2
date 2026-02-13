@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/controller/driver/home_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
+import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/screen/driver/home/trip/live_trip.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -15,6 +18,7 @@ class StartedTrip extends StatefulWidget {
 
 class _StartedTripState extends State<StartedTrip> {
   final _homeController = Get.put(DriverHomeController());
+  final _driverRideController = Get.put(DriverRideController());
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -291,30 +295,37 @@ class _StartedTripState extends State<StartedTrip> {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        // Get.to(() => const EndTripConfirmation());
-                      },
-                      child: Container(
-                        height: 46,
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          color: const Color(0xFF345983),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "End Trip",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    child: Obx(() {
+                      return CustomButton(
+                        radius: 50.r,
+                        onTap: () => _showEndTripDialog(context),
+                        text: "End Trip",
+                        loading: _driverRideController.isLoading.value,
+                      );
+                    }),
+
+                    // child:  InkWell(
+                    //   onTap: () => _showEndTripDialog(context),
+                    //   child: Container(
+                    //     height: 46,
+                    //     width: double.infinity,
+                    //     padding: const EdgeInsets.symmetric(horizontal: 10),
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(24),
+                    //       color: const Color(0xFF345983),
+                    //     ),
+                    //     child:  Center(
+                    //       child: Text(
+                    //         "End Trip",
+                    //         style: TextStyle(
+                    //           fontSize: 12,
+                    //           fontWeight: FontWeight.w500,
+                    //           color: Colors.white,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ),
                 ],
               ),
@@ -322,6 +333,67 @@ class _StartedTripState extends State<StartedTrip> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showEndTripDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // user must tap a button
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          title: const Text(
+            "End Trip",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: const Text(
+            "Are you sure you want to end this trip?",
+            style: TextStyle(fontSize: 16),
+          ),
+          actionsPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey[700],
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
+              ),
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop(); // close dialog
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                "End Trip",
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Get.find<DriverRideController>().endTrip();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

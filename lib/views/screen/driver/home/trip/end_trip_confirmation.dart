@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/controller/driver/home_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
@@ -194,7 +195,15 @@ class _EndTripConfirmationState extends State<EndTripConfirmation> {
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: CustomButton(onTap: () {}, text: "Confirm"),
+              child: Obx(
+                () => CustomButton(
+                  loading: Get.find<DriverRideController>().isLoading.value,
+                  onTap: () {
+                    Get.find<DriverRideController>().endTrip();
+                  },
+                  text: "Confirm",
+                ),
+              ),
             ),
           ],
         ),

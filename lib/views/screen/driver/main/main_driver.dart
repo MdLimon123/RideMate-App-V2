@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/helper/prefs_helper.dart';
 import 'package:flutter_extension/util/app_constants.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_extension/views/screen/driver/home/home_driver.dart';
 import 'package:flutter_extension/views/screen/driver/profile/driver_profile_screen.dart';
 import 'package:flutter_extension/views/screen/driver/rides/driver_ride_history_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 class MainDriver extends StatefulWidget {
   const MainDriver({super.key});
@@ -16,9 +18,15 @@ class MainDriver extends StatefulWidget {
 }
 
 class _MainDriverState extends State<MainDriver> {
+  final DriverRideController _driverRideController = Get.put(
+    DriverRideController(),
+    permanent: true,
+  );
+
   @override
   void initState() {
     socketConntect();
+
     super.initState();
   }
 
@@ -33,6 +41,7 @@ class _MainDriverState extends State<MainDriver> {
   socketConntect() async {
     var token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
     SocketService().connect(token);
+    // _driverRideController.listenDriverRide();
   }
 
   @override

@@ -1,12 +1,18 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_checker.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/data/model/user/user_trip_model.dart';
 import 'package:flutter_extension/helper/route_helper.dart';
+import 'package:flutter_extension/theme/dark_theme.dart';
 import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/accepted_trip_for_driver.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/finding_driver.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/pay_for_trip_screen.dart';
+import 'package:flutter_extension/views/screen/user/home/trip/rating_for_trip_driver.dart';
 import 'package:flutter_extension/views/screen/user/home/user_home.dart';
 import 'package:get/get.dart';
 
@@ -39,17 +45,19 @@ class RideController extends GetxController {
   tripFlow(TripStatus tripStatus) {
     switch (tripStatus) {
       case TripStatus.REQUESTED:
-        Get.offAll(() => const FindingDriver());
+        Get.off(() => const FindingDriver());
         break;
       case TripStatus.ACCEPTED:
-        Get.offAll(() => const AcceptedTripForDriver());
+        Get.off(() => const AcceptedTripForDriver());
         break;
       case TripStatus.STARTED:
-        Get.offAll(() => const AcceptedTripForDriver());
+        Get.off(() => const AcceptedTripForDriver());
         break;
       case TripStatus.ARRIVED:
-        Get.offAll(() => const PayForTripScreen());
+        Get.off(() => const PayForTripScreen());
         break;
+      case TripStatus.COMPLETED:
+        Get.off(() => const RatingForTripDriver());
       default:
         Get.offAll(() => const UserHome());
     }
@@ -74,12 +82,24 @@ class RideController extends GetxController {
     }
   }
 
+  /// ============= listen trip/parcel ==================
+  listenTripAndParcel() {
+    SocketService().on("user-trip", (data) {
+      debugPrint("test Data : $data");
+      final response = data is String ? jsonDecode(data) : data;
+      if (response["kind"] == "TRIP") {
+        setTripStatus(TripResponseModel.fromJson(data));
+      } else {}
+    });
+  }
+
   /// ================= REQUEST TRIP =================
 
   requestTrip(Map<String, dynamic> body) async {
     isLoading(true);
     var response = await ApiClient.postData(ApiConstant.requestTripUrl, body);
     if (response.statusCode == 200 || response.statusCode == 201) {
+      debugPrint("test Response : $body");
       setTripStatus(TripResponseModel.fromJson(response.body));
       isLoading(false);
     } else {
@@ -105,7 +125,8 @@ class RideController extends GetxController {
 
   payForTrip() async {
     isLoading(true);
-    var response = await ApiClient.postData(ApiConstant.payForTrip, {});
+    var body = {"trip_id": tripResponse.value.data!.id};
+    var response = await ApiClient.postData(ApiConstant.payForTrip, body);
     if (response.statusCode == 200 || response.statusCode == 201) {
       setTripStatus(TripResponseModel.fromJson(response.body));
     } else {

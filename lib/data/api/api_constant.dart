@@ -14,4 +14,8 @@ class ApiConstant {
   static const cancelTripUrl = "/trips/cancel-trip";
   static const payForTrip = "/trips/pay-trip";
   static const updateDriverLocation = "/drivers/update-location";
+  static const acceptTripRequestForDriver = "/trips/accept-trip-request";
+  static const cancelTripRequestForDriver = "/trips/cancel-trip-request";
+  static const startedTripForDriver = "/trips/start-trip";
+  static const endTripForDriver = "/trips/end-trip";
 }

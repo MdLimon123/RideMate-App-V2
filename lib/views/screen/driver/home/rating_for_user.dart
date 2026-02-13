@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/screen/driver/main/main_driver.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/state_manager.dart';
 
@@ -14,6 +16,8 @@ class RatingForUser extends StatefulWidget {
 }
 
 class _RatingForUserState extends State<RatingForUser> {
+  final _rideController = Get.find<DriverRideController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -171,7 +175,8 @@ class _RatingForUserState extends State<RatingForUser> {
             const SizedBox(height: 221),
             CustomButton(
               onTap: () {
-                Get.to(() => const MainDriver());
+                _rideController.clear();
+                Get.offAll(() => const MainDriver());
               },
               text: "Rate Now",
             ),

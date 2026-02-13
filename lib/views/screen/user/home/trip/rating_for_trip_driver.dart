@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
@@ -15,10 +16,10 @@ class RatingForTripDriver extends StatefulWidget {
 }
 
 class _RatingForTripDriverState extends State<RatingForTripDriver> {
+  final _rideController = Get.find<RideController>();
+
   @override
   Widget build(BuildContext context) {
-
-    
     return Scaffold(
       appBar: const CustomAppbar(title: "Rate Driver"),
       body: SafeArea(
@@ -181,7 +182,13 @@ class _RatingForTripDriverState extends State<RatingForTripDriver> {
                   ),
                   const SizedBox(width: 22),
                   Expanded(
-                    child: CustomButton(onTap: () {}, text: "Rate Now"),
+                    child: CustomButton(
+                      onTap: () {
+                        _rideController.clearStates();
+                        Get.offAll(() => const UserHome());
+                      },
+                      text: "Rate Now",
+                    ),
                   ),
                 ],
               ),
@@ -190,7 +197,5 @@ class _RatingForTripDriverState extends State<RatingForTripDriver> {
         ),
       ),
     );
- 
- 
   }
 }

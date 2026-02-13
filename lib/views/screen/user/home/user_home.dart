@@ -3,6 +3,8 @@ import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/controller/user/user_home_controller.dart';
 import 'package:flutter_extension/controller/user/user_profile_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/data/api/socket_manager.dart';
+import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_extension/views/base/get_greeting.dart';
 import 'package:flutter_extension/views/screen/user/home/parcel/parcle_input_details.dart';
@@ -11,6 +13,8 @@ import 'package:flutter_extension/views/screen/user/notification/notification_sc
 import 'package:flutter_extension/views/screen/user/profile/user_profile_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
+import '../../../../helper/prefs_helper.dart';
 
 class UserHome extends StatefulWidget {
   const UserHome({super.key});
@@ -29,7 +33,15 @@ class _UserHomeState extends State<UserHome> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _userProfileController.fetchUserInfo();
     });
+    socketConntect();
+
     super.initState();
+  }
+
+  socketConntect() async {
+    var token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
+    SocketService().connect(token);
+    _rideController.listenTripAndParcel();
   }
 
   @override

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
+import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/screen/driver/chat/driver_inbox_screen.dart';
 import 'package:flutter_extension/views/screen/user/chat/user_inbox_screen.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/rating_for_trip_driver.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/utils.dart';
 
@@ -16,6 +20,8 @@ class PayForTripScreen extends StatefulWidget {
 }
 
 class _PayForTripScreenState extends State<PayForTripScreen> {
+  final RideController rideController = Get.put(RideController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -281,32 +287,18 @@ class _PayForTripScreenState extends State<PayForTripScreen> {
                         ),
                         const SizedBox(width: 22),
                         Expanded(
-                          child: InkWell(
+                          child: CustomButton(
+                            loading: rideController.isLoading.value,
                             onTap: () {
-                              Get.to(() => const RatingForTripDriver());
+                              rideController.payForTrip();
                             },
-
-                            child: Container(
-                              height: 46,
-
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(24),
-                                color: const Color(0xFFE6EAF0),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Pay Now",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.textColor,
-                                  ),
-                                ),
-                              ),
+                            text: "Pay Now",
+                            textStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
                             ),
+                            color: const Color(0xFFE6EAF0),
                           ),
                         ),
                       ],

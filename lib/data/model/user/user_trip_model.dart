@@ -118,7 +118,7 @@ class TripModel {
       cancelledAt: json['cancelled_at'] != null
           ? DateTime.parse(json['cancelled_at'])
           : null,
-      time: json['time'],
+      time: json['time'].toString(),
       date: json['date'] ?? '',
       userId: json['user_id'] ?? '',
       driverId: json['driver_id'],

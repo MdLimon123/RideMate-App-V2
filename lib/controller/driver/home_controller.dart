@@ -20,56 +20,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../util/app_constants.dart';
 
 class DriverHomeController extends GetxController {
-  // var currentLatLng = Rxn<LatLng>();
-  // GoogleMapController? mapController;
-
-  // @override
-  // void onInit() {
-  //   getCurrentLocation();
-  //   super.onInit();
-  // }
-
-  // Future<void> getCurrentLocation() async {
-  //   bool serviceEnabled;
-  //   LocationPermission permission;
-
-  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  //   if (!serviceEnabled) {
-  //     Get.snackbar('Error', 'Location services are disabled.');
-  //     return;
-  //   }
-
-  //   permission = await Geolocator.checkPermission();
-  //   if (permission == LocationPermission.denied) {
-  //     permission = await Geolocator.requestPermission();
-  //     if (permission == LocationPermission.denied) return;
-  //   }
-
-  //   if (permission == LocationPermission.deniedForever) return;
-
-  //   final position = await Geolocator.getCurrentPosition(
-  //     desiredAccuracy: LocationAccuracy.high,
-  //   );
-
-  //   currentLatLng.value = LatLng(position.latitude, position.longitude);
-
-  //   if (mapController != null) {
-  //     mapController!.animateCamera(
-  //       CameraUpdate.newLatLng(currentLatLng.value!),
-  //     );
-  //   }
-  // }
-
-  // void setMapController(GoogleMapController controller) {
-  //   mapController = controller;
-
-  //   if (currentLatLng.value != null) {
-  //     mapController!.animateCamera(
-  //       CameraUpdate.newLatLng(currentLatLng.value!),
-  //     );
-  //   }
-  // }
-  // Public reactive variables (any screen can listen)
   final RxBool isLocationEnabled = false.obs;
   final Rx<LatLng?> currentPosition = Rx<LatLng?>(null);
   final RxString statusMessage = 'Location disabled'.obs;
@@ -127,13 +77,15 @@ class DriverHomeController extends GetxController {
   }
 
   updateActiveStatus(bool value) {
-    SocketService().socket?.emitWithAck(
+    print("======> action : toggle : $value");
+    SocketService().emit(
       "driver:toggle_online",
-      {"online": value},
+      data: {"online": value},
       ack: (response) {
-        debugPrint('Driver online status updated: $response');
+        print("====>res: $response");
       },
     );
+    // SocketService().socket?.emit("driver:toggle_online", {"online": value});
   }
 
   // Start location stream (global tracking)

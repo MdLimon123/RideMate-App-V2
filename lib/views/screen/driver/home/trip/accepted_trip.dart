@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/controller/driver/home_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
+import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/screen/driver/home/trip/live_trip.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -15,6 +17,7 @@ class AcceptedTrip extends StatefulWidget {
 
 class _AcceptedTripState extends State<AcceptedTrip> {
   final _homeController = Get.put(DriverHomeController());
+  final _driverRideController = Get.find<DriverRideController>();
 
   @override
   Widget build(BuildContext context) {
@@ -292,28 +295,41 @@ class _AcceptedTripState extends State<AcceptedTrip> {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: InkWell(
-                      onTap: () {},
-                      child: Container(
-                        height: 46,
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          color: const Color(0xFF345983),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Start Trip",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                    child: Obx(
+                      () => CustomButton(
+                        loading: _driverRideController.isLoading.value,
+                        onTap: () {
+                          _driverRideController.startTrip();
+                        },
+                        text: "Start Trip",
                       ),
                     ),
+
+                    //  InkWell(
+                    //   onTap: () {
+                    //     // _driverRideController.startTrip();
+                    //   },
+                    //   child: Container(
+                    //     height: 46,
+                    //     width: double.infinity,
+                    //     padding: const EdgeInsets.symmetric(horizontal: 10),
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(24),
+                    //       color: const Color(0xFF345983),
+                    //     ),
+                    //     child: const Center(
+                    //       child: Text(
+                    //         "Start Trip",
+                    //         style: TextStyle(
+                    //           fontSize: 12,
+                    //           fontWeight: FontWeight.w500,
+                    //           color: Colors.white,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+
+                    // ),
                   ),
                 ],
               ),

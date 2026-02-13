@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter_extension/data/api/api_checker.dart';
+import 'package:flutter_extension/data/api/api_client.dart';
+import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/data/model/user/user_trip_model.dart';
 import 'package:flutter_extension/util/app_constants.dart';
@@ -19,8 +22,13 @@ class DriverRideController extends GetxController {
   var tripStatus = TripStatus.REQUESTED.obs;
   var parcelStatus = ParcelStatus.ACCEPTED.obs;
   Rx<TripResponseModel> tripResponse = TripResponseModel().obs;
+  var isLoading = false.obs;
 
   void setTripStatus(TripResponseModel tripResponseModel) {
+    if (tripResponseModel.data!.status == TripStatus.CANCELLED) {
+      clear();
+      return;
+    }
     activeStatus.value = tripResponseModel.kind!;
     tripStatus.value = tripResponseModel.data!.status;
     tripResponse.value = tripResponseModel;
@@ -35,6 +43,7 @@ class DriverRideController extends GetxController {
   }
 
   tripFlow() {
+    print("trip flow : ${tripStatus.value}");
     switch (tripStatus.value) {
       case TripStatus.REQUESTED:
         return const RequestedTrip();
@@ -81,17 +90,75 @@ class DriverRideController extends GetxController {
   }
 
   listenDriverRide() {
-    SocketService().on("driver:trip", (data) {
-      var response = jsonDecode(data);
-      print("========> response listen driver: $data");
-      if (data['kind'] == ActiveStatus.TRIP) {
+    SocketService().on("driver-trip", (data) {
+      final response = data is String ? jsonDecode(data) : data;
+      if (response['kind'] == "TRIP") {
+        print("========> check response:$response");
         TripResponseModel responseModel = TripResponseModel.fromJson(response);
-        activeStatus.value = responseModel.kind!;
-        tripStatus.value = responseModel.data!.status;
-        tripFlow();
+        print("========> check model:${responseModel.kind}");
+        setTripStatus(responseModel);
       } else {
-        parcelFlow();
+        print("========> cancel");
       }
     });
+  }
+
+  var acceptedLoading = false.obs;
+  acceptTripRequest() async {
+    acceptedLoading(true);
+    var response = await ApiClient.postData(
+      ApiConstant.acceptTripRequestForDriver,
+      {"trip_id": tripResponse.value.data!.id},
+    );
+    if (response.statusCode == 200) {
+      var responseModel = TripResponseModel.fromJson(response.body);
+      setTripStatus(responseModel);
+    } else {
+      ApiChecker.checkApi(response);
+    }
+    acceptedLoading(false);
+  }
+
+  var cancelLoading = false.obs;
+  cancelTripRequest() async {
+    cancelLoading(true);
+    var response = await ApiClient.postData(
+      ApiConstant.cancelTripRequestForDriver,
+      {"trip_id": tripResponse.value.data!.id},
+    );
+    if (response.statusCode == 200) {
+      clear();
+    } else {
+      ApiChecker.checkApi(response);
+    }
+    cancelLoading(false);
+  }
+
+  startTrip() async {
+    isLoading(true);
+    var response = await ApiClient.postData(ApiConstant.startedTripForDriver, {
+      "trip_id": tripResponse.value.data!.id,
+    });
+    if (response.statusCode == 200) {
+      var responseModel = TripResponseModel.fromJson(response.body);
+      setTripStatus(responseModel);
+    } else {
+      ApiChecker.checkApi(response);
+    }
+    isLoading(false);
+  }
+
+  endTrip() async {
+    isLoading(true);
+    var response = await ApiClient.postData(ApiConstant.endTripForDriver, {
+      "trip_id": tripResponse.value.data!.id,
+    });
+    if (response.statusCode == 200) {
+      var responseModel = TripResponseModel.fromJson(response.body);
+      setTripStatus(responseModel);
+    } else {
+      ApiChecker.checkApi(response);
+    }
+    isLoading(false);
   }
 }

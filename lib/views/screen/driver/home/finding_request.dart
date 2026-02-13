@@ -5,7 +5,6 @@ import 'package:flutter_extension/views/base/custom_switch.dart';
 import 'package:flutter_extension/views/screen/driver/home/custom_map_view.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FindingRequest extends StatefulWidget {
   const FindingRequest({super.key});
@@ -18,142 +17,88 @@ class _FindingRequestState extends State<FindingRequest>
     with TickerProviderStateMixin {
   final _homeController = Get.put(DriverHomeController());
 
-  late AnimationController _xController;
-  late AnimationController _yController;
-  late AnimationController _rotationController;
-
-  late Animation<double> _xScale;
-  late Animation<double> _yScale;
-  late Animation<double> _rotation;
-
-  @override
-  void initState() {
-    setupAnimation();
-    super.initState();
-  }
-
-  void setupAnimation() {
-    _xController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat(reverse: true);
-
-    _yController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..repeat(reverse: true);
-
-    _rotationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 5),
-    )..repeat();
-
-    _xScale = Tween<double>(
-      begin: 0.9,
-      end: 1.15,
-    ).animate(CurvedAnimation(parent: _xController, curve: Curves.easeInOut));
-
-    _yScale = Tween<double>(
-      begin: 0.9,
-      end: 1.15,
-    ).animate(CurvedAnimation(parent: _yController, curve: Curves.easeInOut));
-
-    _rotation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _rotationController, curve: Curves.linear),
-    );
-  }
-
-  @override
-  void dispose() {
-    _xController.dispose();
-    _yController.dispose();
-    _rotationController.dispose();
-
-    //SocketService().socket?.disconnect();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Obx(
-            () => Column(
-              children: [
-                Obx(
-                  () => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        Text(
-                          _homeController.isLocationEnabled.value
-                              ? "Online"
-                              : "Offline",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.textColor,
-                          ),
+          child: Column(
+            children: [
+              // Top bar
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Obx(
+                  () => Row(
+                    children: [
+                      Text(
+                        _homeController.isLocationEnabled.value
+                            ? "Online"
+                            : "Offline",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textColor,
                         ),
-                        const SizedBox(width: 4),
-                        CustomSwitch(
-                          value: _homeController.isLocationEnabled.value,
-                          onChanged: _homeController.toggleLocation,
+                      ),
+                      const SizedBox(width: 4),
+                      CustomSwitch(
+                        value: _homeController.isLocationEnabled.value,
+                        onChanged: _homeController.toggleLocation,
+                      ),
+                      const Spacer(),
+                      InkWell(
+                        onTap: () {},
+                        child: SvgPicture.asset(
+                          'assets/icons/notification.svg',
                         ),
-                        const Spacer(),
-                        InkWell(
-                          onTap: () {
-                            // Get.to(() => NotificationScreen());
-                          },
-                          child: SvgPicture.asset(
-                            'assets/icons/notification.svg',
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 24),
+              ),
+              const SizedBox(height: 24),
+              // Map + Bottom Panel
+              SizedBox(
+                height: 300,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    // MAP (static, never rebuild)
+                    const CustomMapView(
+                      height: 300,
+                      zoom: 15,
+                      gesturesEnabled: false,
+                      showMyLocation: true,
+                      showMyLocationButton: false,
+                    ),
 
-                SizedBox(
-                  height: 300,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      const CustomMapView(
-                        height: 300,
-                        zoom: 15,
-                        gesturesEnabled: false,
-                        showMyLocation: true,
-                        showMyLocationButton: false,
-                      ),
-
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        top: 280,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 30,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF345983),
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
-                                blurRadius: 10,
-                                offset: const Offset(0, -3),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Center(
-                                child: Text(
+                    // Bottom Panel
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: 280,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 30,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF345983),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, -3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Obx(
+                                () => Text(
                                   _homeController.isLocationEnabled.value
                                       ? "We're searching a request for you!"
                                       : 'You are Now Offline',
@@ -165,170 +110,146 @@ class _FindingRequestState extends State<FindingRequest>
                                   textAlign: TextAlign.center,
                                 ),
                               ),
-                              const SizedBox(height: 30),
-                              _homeController.isLocationEnabled.value
-                                  ? Center(
-                                      child: AnimatedBuilder(
-                                        animation: Listenable.merge([
-                                          _xController,
-                                          _yController,
-                                          _rotationController,
-                                        ]),
-                                        builder: (context, child) {
-                                          return Transform.scale(
-                                            scaleX: _xScale.value,
-                                            scaleY: _yScale.value,
-                                            child: Transform.rotate(
-                                              angle: _rotation.value * 6.28319,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.white
-                                                          .withValues(
-                                                            alpha: 0.4,
-                                                          ),
-                                                      blurRadius: 30,
-                                                      spreadRadius: 4,
-                                                    ),
-                                                  ],
-                                                ),
-                                                child: child,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        child: SvgPicture.asset(
-                                          'assets/icons/search_fill.svg',
-                                          color: Colors.white,
-                                          width: 72,
-                                          height: 72,
-                                        ),
-                                      ),
-                                    )
-                                  : Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icons/happy.svg',
-                                      ),
-                                    ),
-                              const SizedBox(height: 20),
+                            ),
+                            const SizedBox(height: 30),
 
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: const Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            "Tips",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: Color(0xFF333333),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            "Online",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: Color(0xFF333333),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            "Earnings",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: Color(0xFF333333),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                            // Animated Icon (self-contained, isolated)
+                            Obx(() {
+                              if (_homeController.isLocationEnabled.value) {
+                                return Center(
+                                  // child: AnimatedBuilder(
+                                  //   animation: Listenable.merge([
+                                  //     _xController,
+                                  //     _yController,
+                                  //     _rotationController,
+                                  //   ]),
+                                  //   builder: (context, child) {
+                                  //     return Transform.scale(
+                                  //       scaleX: _xScale.value,
+                                  //       scaleY: _yScale.value,
+                                  //       child: Transform.rotate(
+                                  //         angle: _rotation.value * 6.28319,
+                                  //         child: child,
+                                  //       ),
+                                  //     );
+                                  //   },
+                                  child: SvgPicture.asset(
+                                    'assets/icons/search_fill.svg',
+                                    color: Colors.white,
+                                    width: 72,
+                                    height: 72,
+                                  ),
+                                );
+                              } else {
+                                return Center(
+                                  child: SvgPicture.asset(
+                                    'assets/icons/happy.svg',
+                                  ),
+                                );
+                              }
+                            }),
+                            const SizedBox(height: 20),
 
-                                    SizedBox(height: 8),
-
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            "10",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xFF333333),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            "10h 30m",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xFF333333),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            "£ 1000",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xFF333333),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                            // Tips / Earnings Row
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 12,
                               ),
-                            ],
-                          ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: const Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          "Tips",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Color(0xFF333333),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          "Online",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Color(0xFF333333),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          "Earnings",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Color(0xFF333333),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          "10",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFF333333),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          "10h 30m",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFF333333),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          "£ 1000",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFF333333),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-
-                const SizedBox(height: 24),
-                // ElevatedButton(
-                //   onPressed: () {
-                //     _homeController.setActiveStatus(ActiveStatus.TRIP);
-                //     _homeController.setTripStatus(TripStatus.REQUESTED);
-                //   },
-                //   child: const Text(" Request Trip "),
-                // ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
         ),
       ),

@@ -17,16 +17,20 @@ class HomeDriver extends StatefulWidget {
 
 class _HomeDriverState extends State<HomeDriver> {
   final DriverHomeController _homeController = Get.put(DriverHomeController());
-  final DriverRideController _driverRideController = Get.put(
-    DriverRideController(),
-    permanent: true,
-  );
+  final DriverRideController _driverRideController =
+      Get.find<DriverRideController>();
+
+  @override
+  void initState() {
+    _driverRideController.listenDriverRide();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     ever(_driverRideController.tripStatus, (TripStatus status) {
       switch (status) {
-        case TripStatus.REQUESTED:
+        case TripStatus.ARRIVED:
           Get.to(() => const WaitingForPayment());
           break;
         case TripStatus.COMPLETED:
