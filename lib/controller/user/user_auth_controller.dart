@@ -53,11 +53,8 @@ class UserAuthController extends GetxController {
   /// Login
   Future<void> login({required String email, required String password}) async {
     isLoading(true);
-
     final body = {"email": email, "password": password};
-
     var headers = {'Content-Type': 'application/json'};
-
     final response = await ApiClient.postData(
       "/auth/login",
       body,
@@ -68,6 +65,7 @@ class UserAuthController extends GetxController {
       final userInfo = UserInfoModel.fromJson(response.body);
 
       final token = response.body['access_token'];
+      print("token : $token");
 
       await PrefsHelper.setString(AppConstants.bearerTokenKEN, token);
       await PrefsHelper.setUserInfo(response.body);
@@ -188,7 +186,4 @@ class UserAuthController extends GetxController {
     }
     isResetLoading(false);
   }
-
-
-
 }

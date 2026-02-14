@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
-import 'package:flutter_extension/views/screen/driver/home/rating_for_user.dart';
+import 'package:flutter_extension/views/screen/user/home/parcel/rating_for_parcel_driver.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class PaymentOrverView extends StatefulWidget {
-  const PaymentOrverView({super.key});
+class ParcelPaymentOverview extends StatefulWidget {
+  const ParcelPaymentOverview({super.key});
 
   @override
-  State<PaymentOrverView> createState() => _PaymentOrverViewState();
+  State<ParcelPaymentOverview> createState() => _ParcelPaymentOverviewState();
 }
 
-class _PaymentOrverViewState extends State<PaymentOrverView> {
+class _ParcelPaymentOverviewState extends State<ParcelPaymentOverview> {
   final _driverRideController = Get.find<DriverRideController>();
 
   @override
@@ -74,7 +74,7 @@ class _PaymentOrverViewState extends State<PaymentOrverView> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "${_driverRideController.tripResponse.value.data!.totalCost}(£)",
+                                    "${_driverRideController.parcelResponse.value.data!.totalCost}(£)",
                                     style: TextStyle(
                                       fontSize: 20,
                                       color: AppColors.textColor,
@@ -108,7 +108,7 @@ class _PaymentOrverViewState extends State<PaymentOrverView> {
                               const SizedBox(width: 4),
                               Text(
                                 _driverRideController
-                                    .tripResponse
+                                    .parcelResponse
                                     .value
                                     .data!
                                     .adminEarning
@@ -142,7 +142,7 @@ class _PaymentOrverViewState extends State<PaymentOrverView> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: CustomButton(
                 onTap: () {
-                  Get.to(() => const RatingForUser());
+                  Get.to(() => const RatingForParcelDriver());
                 },
                 text: "Close",
               ),

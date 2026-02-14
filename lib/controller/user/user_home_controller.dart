@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/views/base/custom_snackbar.dart';
+import 'package:flutter_extension/views/screen/user/home/parcel/show_parcel_amount_screen.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/show_trip_amount_screen.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -29,6 +30,8 @@ class UserHomeController extends GetxController {
 
   final pickController = TextEditingController();
   final dropController = TextEditingController();
+  final parcelWeightController = TextEditingController();
+  final parcelAmount = TextEditingController();
 
   var pickCoordinates = <double>[].obs;
   var dropCoordinates = <double>[].obs;
@@ -156,6 +159,54 @@ class UserHomeController extends GetxController {
     } finally {
       isLoading(false);
     }
+  }
+
+  Future<void> calculateParcelAmount() async {
+    if (pickCoordinates.length < 2 || dropCoordinates.length < 2) {
+      showCustomSnackBar(
+        "Please select pickup and drop location",
+        isError: true,
+      );
+      return;
+    }
+
+    isShowAnountLoading(true);
+
+    final body = {
+      "pickup_lat": pickCoordinates[0],
+      "pickup_lng": pickCoordinates[1],
+      "dropoff_lat": dropCoordinates[0],
+      "dropoff_lng": dropCoordinates[1],
+      "pickup_address": pickAddress.value,
+      "dropoff_address": dropAddress.value,
+      "parcel_type": selectedParcelType.value,
+      "weight": parcelWeightController.text,
+      "amount": parcelAmount.text,
+    };
+
+    final response = await ApiClient.postData("/parcels/estimate-fare", body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      showCustomSnackBar(response.statusText, isError: false);
+      Get.to(
+        () => ShowParcelAmountScreen(
+          showAmount: response.body['estimated_fare'].toDouble(),
+          weight: response.body['query']['weight'],
+          amount: response.body['query']['amount'].runtimeType == int
+              ? response.body['query']['amount'].toDouble()
+              : response.body['query']['amount'],
+          pickLat: pickCoordinates[0],
+          pickLng: pickCoordinates[1],
+          dropLat: dropCoordinates[0],
+          dropLan: dropCoordinates[1],
+          pickLocation: pickAddress.value,
+          dropLocation: dropAddress.value,
+        ),
+      );
+    } else {
+      showCustomSnackBar(response.statusText, isError: true);
+    }
+
+    isShowAnountLoading(false);
   }
 
   Future<void> calculateAccount() async {

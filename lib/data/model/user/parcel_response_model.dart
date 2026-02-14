@@ -1,33 +1,41 @@
 import 'package:flutter_extension/util/app_constants.dart';
 
-class TripResponseModel {
+class ParcelResponseModel {
   final ActiveStatus? kind;
-  final TripModel? data;
+  final ParcelModel? data;
 
-  TripResponseModel({this.kind, this.data});
+  ParcelResponseModel({this.kind, this.data});
 
-  factory TripResponseModel.fromJson(Map<String, dynamic> json) {
-    return TripResponseModel(
-      kind: ActiveStatus.values.firstWhere((e) => e.name == json['kind']),
-      data: TripModel.fromJson(json['data']),
+  factory ParcelResponseModel.fromJson(Map<String, dynamic> json) {
+    return ParcelResponseModel(
+      kind: ActiveStatus.values.firstWhere(
+        (e) => e.name == json['kind'],
+      ),
+      data: json['data'] != null
+          ? ParcelModel.fromJson(json['data'])
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'kind': kind, 'data': data?.toJson()};
+    return {
+      'kind': kind,
+      'data': data?.toJson(),
+    };
   }
 }
 
-class TripModel {
+class ParcelModel {
   final String id;
   final String slug;
   final DateTime? requestedAt;
   final DateTime? acceptedAt;
   final DateTime? startedAt;
-  final DateTime? arrivedAt;
-  final DateTime? paymentAt;
+  final DateTime? deliveredAt;
   final DateTime? completedAt;
   final DateTime? cancelledAt;
+  final DateTime? paymentAt;
+
   final String? time;
   final String date;
   final String userId;
@@ -48,7 +56,12 @@ class TripModel {
   final double? locationLng;
   final String? locationAddress;
 
-  final TripStatus status;
+  final ParcelStatus status;
+
+  final String parcelType;
+  final double weight;
+  final int amount;
+
   final double totalCost;
   final double driverEarning;
   final double adminEarning;
@@ -57,19 +70,23 @@ class TripModel {
   final DateTime? processingAt;
   final bool isProcessing;
 
+  final List<dynamic>? deliveryProofFiles;
+  final double? deliveryLat;
+  final double? deliveryLng;
+
   final UserModel user;
   final DriverModel? driver;
 
-  TripModel({
+  ParcelModel({
     required this.id,
     required this.slug,
     this.requestedAt,
     this.acceptedAt,
     this.startedAt,
-    this.arrivedAt,
-    this.paymentAt,
+    this.deliveredAt,
     this.completedAt,
     this.cancelledAt,
+    this.paymentAt,
     this.time,
     required this.date,
     required this.userId,
@@ -87,18 +104,24 @@ class TripModel {
     this.locationLng,
     this.locationAddress,
     required this.status,
+    required this.parcelType,
+    required this.weight,
+    required this.amount,
     required this.totalCost,
     required this.driverEarning,
     required this.adminEarning,
     this.processingDriverId,
     this.processingAt,
     required this.isProcessing,
+    this.deliveryProofFiles,
+    this.deliveryLat,
+    this.deliveryLng,
     required this.user,
     this.driver,
   });
 
-  factory TripModel.fromJson(Map<String, dynamic> json) {
-    return TripModel(
+  factory ParcelModel.fromJson(Map<String, dynamic> json) {
+    return ParcelModel(
       id: json['id'] ?? '',
       slug: json['slug'] ?? '',
       requestedAt: json['requested_at'] != null
@@ -110,11 +133,8 @@ class TripModel {
       startedAt: json['started_at'] != null
           ? DateTime.parse(json['started_at'])
           : null,
-      arrivedAt: json['arrived_at'] != null
-          ? DateTime.parse(json['arrived_at'])
-          : null,
-      paymentAt: json['payment_at'] != null
-          ? DateTime.parse(json['payment_at'])
+      deliveredAt: json['delivered_at'] != null
+          ? DateTime.parse(json['delivered_at'])
           : null,
       completedAt: json['completed_at'] != null
           ? DateTime.parse(json['completed_at'])
@@ -122,7 +142,10 @@ class TripModel {
       cancelledAt: json['cancelled_at'] != null
           ? DateTime.parse(json['cancelled_at'])
           : null,
-      time: json['time'].toString(),
+      paymentAt: json['payment_at'] != null
+          ? DateTime.parse(json['payment_at'])
+          : null,
+      time: json['time']?.toString(),
       date: json['date'] ?? '',
       userId: json['user_id'] ?? '',
       driverId: json['driver_id'],
@@ -138,15 +161,23 @@ class TripModel {
       locationLat: json['location_lat']?.toDouble(),
       locationLng: json['location_lng']?.toDouble(),
       locationAddress: json['location_address'],
-      status: TripStatus.values.firstWhere((e) => e.name == json['status']),
+      status: ParcelStatus.values.firstWhere(
+        (e) => e.name == json['status'],
+      ),
+      parcelType: json['parcel_type'] ?? '',
+      weight: (json['weight'] ?? 0).toDouble(),
+      amount: json['amount'] ?? 0,
       totalCost: (json['total_cost'] ?? 0).toDouble(),
-      processingDriverId: json['processing_driver_id'],
       driverEarning: (json['driver_earning'] ?? 0).toDouble(),
       adminEarning: (json['admin_earning'] ?? 0).toDouble(),
+      processingDriverId: json['processing_driver_id'],
       processingAt: json['processing_at'] != null
           ? DateTime.parse(json['processing_at'])
           : null,
       isProcessing: json['is_processing'] ?? false,
+      deliveryProofFiles: json['delivery_proof_files'],
+      deliveryLat: json['delivery_lat']?.toDouble(),
+      deliveryLng: json['delivery_lng']?.toDouble(),
       user: UserModel.fromJson(json['user']),
       driver: json['driver'] != null
           ? DriverModel.fromJson(json['driver'])
@@ -161,10 +192,10 @@ class TripModel {
       'requested_at': requestedAt?.toIso8601String(),
       'accepted_at': acceptedAt?.toIso8601String(),
       'started_at': startedAt?.toIso8601String(),
-      'arrived_at': arrivedAt?.toIso8601String(),
-      'payment_at': paymentAt?.toIso8601String(),
+      'delivered_at': deliveredAt?.toIso8601String(),
       'completed_at': completedAt?.toIso8601String(),
       'cancelled_at': cancelledAt?.toIso8601String(),
+      'payment_at': paymentAt?.toIso8601String(),
       'time': time,
       'date': date,
       'user_id': userId,
@@ -182,10 +213,18 @@ class TripModel {
       'location_lng': locationLng,
       'location_address': locationAddress,
       'status': status,
+      'parcel_type': parcelType,
+      'weight': weight,
+      'amount': amount,
       'total_cost': totalCost,
+      'driver_earning': driverEarning,
+      'admin_earning': adminEarning,
       'processing_driver_id': processingDriverId,
       'processing_at': processingAt?.toIso8601String(),
       'is_processing': isProcessing,
+      'delivery_proof_files': deliveryProofFiles,
+      'delivery_lat': deliveryLat,
+      'delivery_lng': deliveryLng,
       'user': user.toJson(),
       'driver': driver?.toJson(),
     };
@@ -255,7 +294,6 @@ class UserModel {
     };
   }
 }
-
 class DriverModel {
   final String id;
   final String role;
@@ -349,3 +387,4 @@ class DriverModel {
     };
   }
 }
+

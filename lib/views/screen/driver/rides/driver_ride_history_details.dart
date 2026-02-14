@@ -4,7 +4,9 @@ import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_svg/svg.dart';
 
 class DriverRideHistoryDetails extends StatefulWidget {
-  const DriverRideHistoryDetails({super.key});
+    final bool isParcel;
+
+  const DriverRideHistoryDetails({super.key, required this.isParcel});
 
   @override
   State<DriverRideHistoryDetails> createState() =>

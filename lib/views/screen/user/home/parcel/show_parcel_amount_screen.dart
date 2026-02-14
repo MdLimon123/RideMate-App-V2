@@ -1,14 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
-import 'package:flutter_extension/views/screen/user/home/parcel/accepted_parcel_for_driver.dart';
-import 'package:flutter_extension/views/screen/user/home/parcel/finding_for_parcel_request.dart';
+
 import 'package:flutter_extension/views/screen/user/home/parcel/pay_for_parcel_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class ShowParcelAmountScreen extends StatefulWidget {
-  const ShowParcelAmountScreen({super.key});
+  final double showAmount;
+  final double pickLat;
+  final double pickLng;
+  final double dropLat;
+  final double dropLan;
+
+  final String pickLocation;
+  final String dropLocation;
+
+  final int? weight;
+  final double? amount;
+
+  const ShowParcelAmountScreen({
+    super.key,
+    required this.showAmount,
+    required this.pickLat,
+    required this.pickLng,
+    required this.dropLat,
+    required this.dropLan,
+    required this.pickLocation,
+    required this.dropLocation,
+    required this.amount,
+    required this.weight,
+  });
 
   @override
   State<ShowParcelAmountScreen> createState() => _ShowParcelAmountScreenState();
@@ -18,6 +41,8 @@ class _ShowParcelAmountScreenState extends State<ShowParcelAmountScreen> {
   final pickLocationController = TextEditingController();
   final dropLocationController = TextEditingController();
 
+  final RideController rideController = Get.find<RideController>();
+
   @override
   void initState() {
     super.initState();
@@ -25,6 +50,8 @@ class _ShowParcelAmountScreenState extends State<ShowParcelAmountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    pickLocationController.text = widget.pickLocation;
+    dropLocationController.text = widget.dropLocation;
     return Scaffold(
       appBar: const CustomAppbar(title: "Parcels  Request"),
       body: SafeArea(
@@ -38,7 +65,6 @@ class _ShowParcelAmountScreenState extends State<ShowParcelAmountScreen> {
                     TextFormField(
                       readOnly: true,
                       controller: pickLocationController,
-
                       decoration: InputDecoration(
                         prefixIcon: Padding(
                           padding: const EdgeInsets.all(12.0),
@@ -77,7 +103,6 @@ class _ShowParcelAmountScreenState extends State<ShowParcelAmountScreen> {
                     TextFormField(
                       readOnly: true,
                       controller: dropLocationController,
-
                       decoration: InputDecoration(
                         prefixIcon: Padding(
                           padding: const EdgeInsets.all(12.0),
@@ -123,10 +148,10 @@ class _ShowParcelAmountScreenState extends State<ShowParcelAmountScreen> {
                         color: const Color(0xFF345983),
                         borderRadius: BorderRadius.circular(24),
                       ),
-                      
-                      child: const Column(
+
+                      child: Column(
                         children: [
-                          Center(
+                          const Center(
                             child: Text(
                               "Estimate Amount",
                               style: TextStyle(
@@ -138,8 +163,8 @@ class _ShowParcelAmountScreenState extends State<ShowParcelAmountScreen> {
                           ),
                           Center(
                             child: Text(
-                              " 30 £",
-                              style: TextStyle(
+                              " ${widget.showAmount} £",
+                              style: const TextStyle(
                                 fontSize: 50,
                                 fontWeight: FontWeight.w500,
                                 color: Colors.white,
@@ -148,9 +173,8 @@ class _ShowParcelAmountScreenState extends State<ShowParcelAmountScreen> {
                           ),
                         ],
                       ),
-                    
                     ),
-                    const SizedBox(height: 191),
+                    const SizedBox(height: 80),
                     Row(
                       children: [
                         Expanded(
@@ -180,13 +204,24 @@ class _ShowParcelAmountScreenState extends State<ShowParcelAmountScreen> {
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: CustomButton(
-                            onTap: () {
-                              //Get.to(() => const FindingForParcelRewuest());
-                              // Get.to(() => const AcceptedParcelForDriver());
-                              Get.to(() => const PayForParcelScreen());
-                            },
-                            text: "confirm".tr,
+                          child: Obx(
+                            () => CustomButton(
+                              loading: rideController.isLoading.value,
+                              onTap: () {
+                                var body = {
+                                  "weight": widget.weight,
+                                  "amount": widget.showAmount,
+                                  "pickup_lat": widget.pickLat,
+                                  "pickup_lng": widget.pickLng,
+                                  "pickup_address": widget.pickLocation,
+                                  "dropoff_lat": widget.dropLat,
+                                  "dropoff_lng": widget.dropLan,
+                                  "dropoff_address": widget.dropLocation,
+                                };
+                                rideController.requestParcel(body);
+                              },
+                              text: "confirm".tr,
+                            ),
                           ),
                         ),
                       ],

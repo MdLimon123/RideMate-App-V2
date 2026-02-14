@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_extension/controller/driver/home_controller.dart';
+import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
+import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/util/app_colors.dart';
+import 'package:flutter_extension/views/base/custom_button.dart';
+import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_extension/views/screen/driver/chat/driver_inbox_screen.dart';
+import 'package:flutter_extension/views/screen/driver/home/custom_map_view.dart';
 import 'package:flutter_extension/views/screen/driver/home/parcel/live_parcel.dart';
-import 'package:flutter_extension/views/screen/user/home/parcel/live_parcel_map.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/instance_manager.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AcceptedParcel extends StatefulWidget {
   const AcceptedParcel({super.key});
@@ -17,7 +18,7 @@ class AcceptedParcel extends StatefulWidget {
 }
 
 class _AcceptedParcelState extends State<AcceptedParcel> {
-  final _homeController = Get.put(DriverHomeController());
+  final _driverRideController = Get.find<DriverRideController>();
 
   @override
   Widget build(BuildContext context) {
@@ -30,19 +31,7 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Obx(
-                    () => GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target:
-                            _homeController.currentLatLng.value ??
-                            const LatLng(23.8103, 90.4125),
-                        zoom: 15,
-                      ),
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: true,
-                      onMapCreated: _homeController.setMapController,
-                    ),
-                  ),
+                  const CustomMapView(),
 
                   Positioned(
                     bottom: -60,
@@ -72,16 +61,12 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
+                              CustomNetworkImage(
+                                imageUrl:
+                                    "${ApiConstant.imageBaseUrl}${_driverRideController.parcelResponse.value.data!.user.avatar}",
                                 height: 48,
+                                boxShape: BoxShape.circle,
                                 width: 48,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    image: AssetImage("assets/images/demo.png"),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
                               ),
 
                               const SizedBox(width: 12),
@@ -91,7 +76,12 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                                 children: [
                                   Center(
                                     child: Text(
-                                      "Sergio Romasis",
+                                      _driverRideController
+                                          .parcelResponse
+                                          .value
+                                          .data!
+                                          .user
+                                          .name,
                                       style: TextStyle(
                                         color: AppColors.textColor,
                                         fontSize: 24,
@@ -126,9 +116,15 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                                             ),
                                           ),
                                           const SizedBox(width: 4),
-                                          const Text(
-                                            "5",
-                                            style: TextStyle(
+                                          Text(
+                                            _driverRideController
+                                                .parcelResponse
+                                                .value
+                                                .data!
+                                                .user
+                                                .tripReceivedCount
+                                                .toString(),
+                                            style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w400,
                                               color: Color(0xFF333333),
@@ -140,9 +136,15 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                                             color: Color(0xFF012F64),
                                           ),
                                           const SizedBox(width: 4),
-                                          const Text(
-                                            "4.5",
-                                            style: TextStyle(
+                                          Text(
+                                            _driverRideController
+                                                .parcelResponse
+                                                .value
+                                                .data!
+                                                .user
+                                                .rating
+                                                .toString(),
+                                            style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w400,
                                               color: Color(0xFF333333),
@@ -176,7 +178,11 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Text(
-                                        "Pizza Burge Main St, Maintown",
+                                        _driverRideController
+                                            .parcelResponse
+                                            .value
+                                            .data!
+                                            .pickupAddress,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
@@ -197,7 +203,11 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Text(
-                                        "Pizza Burge Main St, Maintown ",
+                                        _driverRideController
+                                            .parcelResponse
+                                            .value
+                                            .data!
+                                            .dropoffAddress,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
@@ -214,9 +224,14 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                                   children: [
                                     SvgPicture.asset('assets/icons/kg.svg'),
                                     const SizedBox(width: 12),
-                                    const Text(
-                                      "10",
-                                      style: TextStyle(
+                                    Text(
+                                      _driverRideController
+                                          .parcelResponse
+                                          .value
+                                          .data!
+                                          .weight
+                                          .toString(),
+                                      style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w500,
                                         color: Color(0xFF012F64),
@@ -242,9 +257,14 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                                       color: AppColors.textColor,
                                     ),
                                     const SizedBox(width: 12),
-                                    const Text(
-                                      "100",
-                                      style: TextStyle(
+                                    Text(
+                                      _driverRideController
+                                          .parcelResponse
+                                          .value
+                                          .data!
+                                          .totalCost
+                                          .toString(),
+                                      style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w500,
                                         color: Color(0xFF012F64),
@@ -292,7 +312,7 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                       child: SvgPicture.asset('assets/icons/message.svg'),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 6),
 
                   Expanded(
                     child: InkWell(
@@ -320,27 +340,19 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 6),
                   Expanded(
-                    child: InkWell(
-                      onTap: () {},
-                      child: Container(
-                        height: 46,
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          color: const Color(0xFF345983),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Picked Parcel",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
+                    child: Obx(
+                      () => CustomButton(
+                        loading: _driverRideController.isLoading.value,
+                        onTap: () {
+                          _driverRideController.startParcel();
+                        },
+                        text: "Pickup Parcel",
+                        textStyle: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
                         ),
                       ),
                     ),

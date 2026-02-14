@@ -9,14 +9,14 @@ import 'package:flutter_extension/views/screen/driver/main/main_driver.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 
-class RatingForUser extends StatefulWidget {
-  const RatingForUser({super.key});
+class RatingForUserInParcel extends StatefulWidget {
+  const RatingForUserInParcel({super.key});
 
   @override
-  State<RatingForUser> createState() => _RatingForUserState();
+  State<RatingForUserInParcel> createState() => _RatingForUserInParcelState();
 }
 
-class _RatingForUserState extends State<RatingForUser> {
+class _RatingForUserInParcelState extends State<RatingForUserInParcel> {
   final _rideController = Get.find<DriverRideController>();
   final _driverProfileController = Get.put(DriverProfileController());
 
@@ -77,7 +77,7 @@ class _RatingForUserState extends State<RatingForUser> {
                     Center(
                       child: CustomNetworkImage(
                         imageUrl:
-                            "${ApiConstant.imageBaseUrl}${_rideController.tripResponse.value.data!.user.avatar}",
+                            "${ApiConstant.imageBaseUrl}${_rideController.parcelResponse.value.data!.user.avatar}",
                         boxShape: BoxShape.circle,
                         height: 96,
                         width: 96,
@@ -87,7 +87,7 @@ class _RatingForUserState extends State<RatingForUser> {
                     const SizedBox(height: 12),
                     Center(
                       child: Text(
-                        _rideController.tripResponse.value.data!.user.name,
+                        _rideController.parcelResponse.value.data!.user.name,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
@@ -113,7 +113,7 @@ class _RatingForUserState extends State<RatingForUser> {
                   const SizedBox(width: 8),
                   Text(
                     _rideController
-                        .tripResponse
+                        .parcelResponse
                         .value
                         .data!
                         .user
@@ -144,7 +144,7 @@ class _RatingForUserState extends State<RatingForUser> {
                   Icon(Icons.star, color: AppColors.textColor, size: 16),
                   const SizedBox(width: 4),
                   Text(
-                    _rideController.tripResponse.value.data!.user.rating
+                    _rideController.parcelResponse.value.data!.user.rating
                         .toString(),
                     style: TextStyle(
                       fontSize: 16,
@@ -157,7 +157,7 @@ class _RatingForUserState extends State<RatingForUser> {
               const SizedBox(height: 30),
               Center(
                 child: Text(
-                  "How was your trip with ${_rideController.tripResponse.value.data!.user.name}",
+                  "How was your trip with ${_rideController.parcelResponse.value.data!.user.name}",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
@@ -189,9 +189,10 @@ class _RatingForUserState extends State<RatingForUser> {
                 () => CustomButton(
                   loading: _driverProfileController.isLaoding.value,
                   onTap: () {
-                    _driverProfileController.driverSubmitTripRating(
-                      userId: _rideController.tripResponse.value.data!.user.id,
-                      tripId: _rideController.tripResponse.value.data!.id,
+                    _driverProfileController.driverSubmitParcelRating(
+                      userId:
+                          _rideController.parcelResponse.value.data!.user.id,
+                      tripId: _rideController.parcelResponse.value.data!.id,
                     );
                   },
                   text: "Rate Now",

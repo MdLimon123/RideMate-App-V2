@@ -1,5 +1,7 @@
 import 'package:flutter_extension/controller/data_controller.dart';
 import 'package:flutter_extension/helper/prefs_helper.dart';
+import 'package:flutter_extension/controller/data_controller.dart';
+import 'package:flutter_extension/helper/prefs_helper.dart';
 import 'package:flutter_extension/helper/route_helper.dart';
 import 'package:flutter_extension/views/screen/driver/auth/driver_login_screen.dart';
 import 'package:flutter_extension/views/screen/driver/main/main_driver.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_extension/views/screen/user/auth/user_login_screen.dart'
 import 'package:flutter_extension/views/screen/user/home/user_home.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SplashController extends GetxController {

@@ -6,7 +6,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class FindingDriver extends StatefulWidget {
-  const FindingDriver({super.key});
+  final String pickLocation;
+  final String dropLocation;
+
+  const FindingDriver({
+    super.key,
+    required this.pickLocation,
+    required this.dropLocation,
+  });
 
   @override
   State<FindingDriver> createState() => _FindingDriverState();
@@ -14,7 +21,10 @@ class FindingDriver extends StatefulWidget {
 
 class _FindingDriverState extends State<FindingDriver>
     with TickerProviderStateMixin {
-  final RideController _rideController = Get.put(RideController());
+  final RideController _rideController = Get.find<RideController>();
+
+  final pickupLocationController = TextEditingController();
+  final dropLocationController = TextEditingController();
 
   late AnimationController _xController;
   late AnimationController _yController;
@@ -26,53 +36,55 @@ class _FindingDriverState extends State<FindingDriver>
 
   @override
   void initState() {
-    setupAnimation();
+    // setupAnimation();
     super.initState();
   }
 
-  void setupAnimation() {
-    _xController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat(reverse: true);
+  // void setupAnimation() {
+  //   _xController = AnimationController(
+  //     vsync: this,
+  //     duration: const Duration(seconds: 2),
+  //   )..repeat(reverse: true);
 
-    _yController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..repeat(reverse: true);
+  //   _yController = AnimationController(
+  //     vsync: this,
+  //     duration: const Duration(seconds: 1),
+  //   )..repeat(reverse: true);
 
-    _rotationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 5),
-    )..repeat();
+  //   _rotationController = AnimationController(
+  //     vsync: this,
+  //     duration: const Duration(seconds: 5),
+  //   )..repeat();
 
-    _xScale = Tween<double>(
-      begin: 0.9,
-      end: 1.15,
-    ).animate(CurvedAnimation(parent: _xController, curve: Curves.easeInOut));
+  //   _xScale = Tween<double>(
+  //     begin: 0.9,
+  //     end: 1.15,
+  //   ).animate(CurvedAnimation(parent: _xController, curve: Curves.easeInOut));
 
-    _yScale = Tween<double>(
-      begin: 0.9,
-      end: 1.15,
-    ).animate(CurvedAnimation(parent: _yController, curve: Curves.easeInOut));
+  //   _yScale = Tween<double>(
+  //     begin: 0.9,
+  //     end: 1.15,
+  //   ).animate(CurvedAnimation(parent: _yController, curve: Curves.easeInOut));
 
-    _rotation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _rotationController, curve: Curves.linear),
-    );
-  }
+  //   _rotation = Tween<double>(begin: 0.0, end: 1.0).animate(
+  //     CurvedAnimation(parent: _rotationController, curve: Curves.linear),
+  //   );
+  // }
 
-  @override
-  void dispose() {
-    _xController.dispose();
-    _yController.dispose();
-    _rotationController.dispose();
+  // @override
+  // void dispose() {
+  //   _xController.dispose();
+  //   _yController.dispose();
+  //   _rotationController.dispose();
 
-    //SocketService().socket?.disconnect();
-    super.dispose();
-  }
+  //   //SocketService().socket?.disconnect();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
+    pickupLocationController.text = widget.pickLocation;
+    dropLocationController.text = widget.dropLocation;
     return Scaffold(
       appBar: const CustomAppbar(title: "Searching"),
       body: SafeArea(
@@ -84,6 +96,7 @@ class _FindingDriverState extends State<FindingDriver>
             children: [
               TextFormField(
                 readOnly: true,
+                controller: pickupLocationController,
                 decoration: InputDecoration(
                   prefixIcon: Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -113,7 +126,7 @@ class _FindingDriverState extends State<FindingDriver>
 
               TextFormField(
                 readOnly: true,
-
+                controller: dropLocationController,
                 decoration: InputDecoration(
                   prefixIcon: Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -156,41 +169,40 @@ class _FindingDriverState extends State<FindingDriver>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    AnimatedBuilder(
-                      animation: Listenable.merge([
-                        _xController,
-                        _yController,
-                        _rotationController,
-                      ]),
-                      builder: (context, child) {
-                        return Transform.scale(
-                          scaleX: _xScale.value,
-                          scaleY: _yScale.value,
-                          child: Transform.rotate(
-                            angle: _rotation.value * 6.28319,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.white.withValues(alpha: 0.4),
-                                    blurRadius: 30,
-                                    spreadRadius: 4,
-                                  ),
-                                ],
-                              ),
-                              child: child,
-                            ),
-                          ),
-                        );
-                      },
-                      child: SvgPicture.asset(
-                        'assets/icons/search_fill.svg',
-                        color: Colors.white,
-                        width: 72,
-                        height: 72,
-                      ),
-                    ),
-
+                    // AnimatedBuilder(
+                    //   animation: Listenable.merge([
+                    //     _xController,
+                    //     _yController,
+                    //     _rotationController,
+                    //   ]),
+                    //   builder: (context, child) {
+                    //     return Transform.scale(
+                    //       scaleX: _xScale.value,
+                    //       scaleY: _yScale.value,
+                    //       child: Transform.rotate(
+                    //         angle: _rotation.value * 6.28319,
+                    //         child: Container(
+                    //           decoration: BoxDecoration(
+                    //             boxShadow: [
+                    //               BoxShadow(
+                    //                 color: Colors.white.withValues(alpha: 0.4),
+                    //                 blurRadius: 30,
+                    //                 spreadRadius: 4,
+                    //               ),
+                    //             ],
+                    //           ),
+                    //           child: child,
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    //   child: SvgPicture.asset(
+                    //     'assets/icons/search_fill.svg',
+                    //     color: Colors.white,
+                    //     width: 72,
+                    //     height: 72,
+                    //   ),
+                    // ),
                     const SizedBox(height: 15),
 
                     Text(
@@ -205,16 +217,17 @@ class _FindingDriverState extends State<FindingDriver>
                   ],
                 ),
               ),
-
-              const SizedBox(height: 189),
-
+              Spacer(),
               Obx(
                 () => CustomButton(
                   loading: _rideController.isLoading.value,
                   onTap: () {
-                    _rideController.cancelTrip(
-                      _rideController.tripResponse!.data!.id,
-                    );
+                    final tripData = _rideController.tripResponse.value.data;
+                    if (tripData != null) {
+                      _rideController.cancelTrip(tripData.id);
+                    } else {
+                      print("No trip data available yet.");
+                    }
                   },
                   text: "cancel".tr,
                 ),

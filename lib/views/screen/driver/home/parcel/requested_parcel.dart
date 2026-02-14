@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/controller/driver/home_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
+import 'package:flutter_extension/views/screen/driver/home/custom_map_view.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class RequestedParcel extends StatefulWidget {
@@ -16,8 +17,11 @@ class RequestedParcel extends StatefulWidget {
 
 class _RequestedParcelState extends State<RequestedParcel> {
   final _homeController = Get.put(DriverHomeController());
+
+  final _driverRideController = Get.find<DriverRideController>();
   @override
   Widget build(BuildContext context) {
+    var parcel = _driverRideController.parcelResponse.value.data;
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -27,20 +31,7 @@ class _RequestedParcelState extends State<RequestedParcel> {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Obx(
-                    () => GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target:
-                            _homeController.currentLatLng.value ??
-                            const LatLng(23.8103, 90.4125),
-                        zoom: 15,
-                      ),
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: true,
-                      onMapCreated: _homeController.setMapController,
-                    ),
-                  ),
-
+                  const CustomMapView(),
                   Positioned(
                     bottom: -60,
                     left: 20,
@@ -78,7 +69,7 @@ class _RequestedParcelState extends State<RequestedParcel> {
                           const SizedBox(height: 8),
                           const Center(
                             child: Text(
-                              "5 min ETA",
+                              "Static 5 min ETA",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -106,7 +97,7 @@ class _RequestedParcelState extends State<RequestedParcel> {
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Text(
-                                        "Pizza Burge Main St, Maintown ",
+                                        parcel!.pickupAddress,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
@@ -127,7 +118,7 @@ class _RequestedParcelState extends State<RequestedParcel> {
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Text(
-                                        "456 Oak Ave, Sometown (7.00 km)",
+                                        parcel.dropoffAddress,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
@@ -144,9 +135,9 @@ class _RequestedParcelState extends State<RequestedParcel> {
                                   children: [
                                     SvgPicture.asset('assets/icons/kg.svg'),
                                     const SizedBox(width: 12),
-                                    const Text(
-                                      "10",
-                                      style: TextStyle(
+                                    Text(
+                                      parcel.weight.toString(),
+                                      style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w500,
                                         color: Color(0xFF012F64),
@@ -164,16 +155,15 @@ class _RequestedParcelState extends State<RequestedParcel> {
                                   ],
                                 ),
 
-                                
                                 const SizedBox(height: 12),
 
                                 Row(
                                   children: [
                                     SvgPicture.asset('assets/icons/dollar.svg'),
                                     const SizedBox(width: 12),
-                                    const Text(
-                                      "100",
-                                      style: TextStyle(
+                                    Text(
+                                      parcel.totalCost.toString(),
+                                      style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w500,
                                         color: Color(0xFF012F64),
@@ -208,31 +198,30 @@ class _RequestedParcelState extends State<RequestedParcel> {
               child: Row(
                 children: [
                   Expanded(
-                    child: InkWell(
-                      onTap: () {},
-                      child: Container(
-                        width: double.infinity,
-                        height: 52,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE6E6E6),
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "decline".tr,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textColor,
-                            ),
-                          ),
-                        ),
+                    child: Obx(
+                      () => CustomButton(
+                        loading: _driverRideController.cancelLoading.value,
+                        onTap: () {
+                          _driverRideController.cancelParcelRequest();
+                        },
+                        text: "Decline",
+                        color: const Color(0xFFE6E6E6),
+                        textStyle: const TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
+
                   const SizedBox(width: 22),
                   Expanded(
-                    child: CustomButton(onTap: () {}, text: "accept".tr),
+                    child: Obx(
+                      () => CustomButton(
+                        loading: _driverRideController.acceptedLoading.value,
+                        onTap: () {
+                          _driverRideController.acceptParcelRequest();
+                        },
+                        text: "accept".tr,
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart' as Foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/helper/prefs_helper.dart';
@@ -25,8 +24,7 @@ class ApiClient extends GetxService {
   static Map<String, String>? _mainHeaders;
 
   static Future<void> loadPrefs() async {
-    _prefs ??= await SharedPreferences.getInstance();
-    token = _prefs?.getString(AppConstants.bearerTokenKEN) ?? "";
+    token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
     _mainHeaders = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',

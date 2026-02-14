@@ -5,7 +5,6 @@ import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_dropdown.dart';
 import 'package:flutter_extension/views/base/custom_loading.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
-import 'package:flutter_extension/views/screen/user/home/parcel/show_parcel_amount_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -18,6 +17,7 @@ class ParcleInputDetails extends StatefulWidget {
 
 class _ParcleInputDetailsState extends State<ParcleInputDetails> {
   final _userHomeController = Get.put(UserHomeController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -169,12 +169,14 @@ class _ParcleInputDetailsState extends State<ParcleInputDetails> {
                     ),
 
                     const SizedBox(height: 12),
-                    const CustomTextField(
+                    CustomTextField(
+                      controller: _userHomeController.parcelWeightController,
                       hintText: "Parcels Weight",
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 12),
-                    const CustomTextField(
+                    CustomTextField(
+                      controller: _userHomeController.parcelAmount,
                       hintText: "Parcels Amount",
                       keyboardType: TextInputType.number,
                     ),
@@ -216,11 +218,14 @@ class _ParcleInputDetailsState extends State<ParcleInputDetails> {
                     //   },
                     // ),
                     const SizedBox(height: 157),
-                    CustomButton(
-                      onTap: () {
-                        Get.to(() => const ShowParcelAmountScreen());
-                      },
-                      text: "Continue",
+                    Obx(
+                      () => CustomButton(
+                        loading: _userHomeController.isShowAnountLoading.value,
+                        onTap: () {
+                          _userHomeController.calculateParcelAmount();
+                        },
+                        text: "Continue",
+                      ),
                     ),
                   ],
                 ),

@@ -43,6 +43,7 @@ class AppConstants {
 }
 
 enum ActiveStatus { NONE, TRIP, PARCEL }
+
 enum TripStatus {
   idle,
   REQUESTED,
