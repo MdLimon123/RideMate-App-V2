@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_chat_controller.dart';
 import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
-import 'package:flutter_extension/views/screen/driver/chat/driver_inbox_screen.dart';
 import 'package:flutter_extension/views/screen/driver/home/custom_map_view.dart';
 import 'package:flutter_extension/views/screen/driver/home/parcel/live_parcel.dart';
 import 'package:flutter_svg/svg.dart';
@@ -19,6 +19,7 @@ class AcceptedParcel extends StatefulWidget {
 
 class _AcceptedParcelState extends State<AcceptedParcel> {
   final _driverRideController = Get.find<DriverRideController>();
+  final _driverChatController = Get.put(DriverChatController());
 
   @override
   Widget build(BuildContext context) {
@@ -298,8 +299,15 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: () {
-                      Get.to(() => const DriverInboxScreen());
+                    onTap: () async {
+                      await _driverChatController.createChatRoom(
+                        userId: _driverRideController
+                            .parcelResponse
+                            .value
+                            .data!
+                            .userId
+                            .toString(),
+                      );
                     },
                     child: Container(
                       height: 40,

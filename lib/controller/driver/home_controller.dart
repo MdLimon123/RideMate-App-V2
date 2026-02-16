@@ -1,16 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/data/api/api_client.dart';
 
 import 'package:flutter_extension/data/api/socket_manager.dart';
+import 'package:flutter_extension/data/model/driver/home_model.dart';
 
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-
 class DriverHomeController extends GetxController {
+  var isLoading = false.obs;
+  var homeModel = HomeModel().obs;
+
   final RxBool isLocationEnabled = false.obs;
   final Rx<LatLng?> currentPosition = Rx<LatLng?>(null);
   final RxString statusMessage = 'Location disabled'.obs;
@@ -21,14 +25,25 @@ class DriverHomeController extends GetxController {
     super.onInit();
     debugPrint('📍 LocationController INITIALIZED (Permanent Service)');
     _requestLocationPermission();
+    fetchHomeData();
   }
 
   @override
   void onClose() {
-    // ⚠️ Get.offAll() করলেও এটা কল হবে না কারণ permanent: true
-    // তাই manual cleanup দরকার নেই (service চালু রাখতে চাইলে)
     debugPrint('📍 LocationController CLOSED');
     super.onClose();
+  }
+
+  Future<void> fetchHomeData() async {
+    isLoading(true);
+    final response = await ApiClient.getData("/drivers");
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      homeModel.value = HomeModel.fromJson(response.body);
+    } else {
+      debugPrint("soemthing we want wrong ======> ${response.statusText}");
+    }
+    isLoading(false);
   }
 
   // Permission request

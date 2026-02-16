@@ -163,6 +163,7 @@ class _RatingForUserInParcelState extends State<RatingForUserInParcel> {
                     fontWeight: FontWeight.w500,
                     color: AppColors.textColor,
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ),
               const SizedBox(height: 16),
@@ -184,7 +185,7 @@ class _RatingForUserInParcelState extends State<RatingForUserInParcel> {
                   ),
                 ),
               ),
-              const SizedBox(height: 200),
+              const SizedBox(height: 150),
               Obx(
                 () => CustomButton(
                   loading: _driverProfileController.isLaoding.value,

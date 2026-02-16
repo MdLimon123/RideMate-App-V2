@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/chat_controller.dart';
 import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/controller/user/user_home_controller.dart';
 import 'package:flutter_extension/controller/user/user_profile_controller.dart';
@@ -7,9 +8,9 @@ import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_extension/views/base/get_greeting.dart';
+import 'package:flutter_extension/views/screen/notification/notification_screen.dart';
 import 'package:flutter_extension/views/screen/user/home/parcel/parcle_input_details.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/book_ride_screen.dart';
-import 'package:flutter_extension/views/screen/user/notification/notification_screen.dart';
 import 'package:flutter_extension/views/screen/user/profile/user_profile_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -27,6 +28,7 @@ class _UserHomeState extends State<UserHome> {
   final _userHomeController = Get.put(UserHomeController());
   final _userProfileController = Get.put(UserProfileController());
   final _rideController = Get.put(RideController(), permanent: true);
+  final _chatController = Get.put(ChatController());
 
   @override
   void initState() {
@@ -302,7 +304,7 @@ class _UserHomeState extends State<UserHome> {
                       const SizedBox(height: 129),
                       InkWell(
                         onTap: () {
-                          // _chatController.createAdminChatRoom();
+                          _chatController.createAdminChatRoom();
                         },
                         child: Container(
                           width: double.infinity,

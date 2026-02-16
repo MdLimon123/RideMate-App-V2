@@ -112,6 +112,7 @@ class _DriverRideHistoryScreenState extends State<DriverRideHistoryScreen> {
                           Get.to(
                             () => DriverRideHistoryDetails(
                               isParcel: item.isParcel,
+                              riderHistoryItem: item,
                             ),
                           );
                         },

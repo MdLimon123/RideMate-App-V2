@@ -210,4 +210,11 @@ class RideController extends GetxController {
     }
     isLoading(false);
   }
+
+
+
+
+
+
+
 }

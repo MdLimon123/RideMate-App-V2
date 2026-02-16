@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/user_profile_controller.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
@@ -16,6 +17,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final oldPasswordController = TextEditingController();
   final newPasswordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+
+  final _userProfileController = Get.put(UserProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +68,26 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               },
             ),
             const SizedBox(height: 84),
-            CustomButton(onTap: () {}, text: "changeNow".tr),
+            Obx(
+              () => CustomButton(
+                loading: _userProfileController.changePasswordLoading.value,
+                onTap: () {
+                  if (_fromKey.currentState!.validate()) {
+                    _userProfileController.changePassword(
+                      oldPassword: oldPasswordController.text,
+                      newPassword: newPasswordController.text,
+                    );
+                  }
+                },
+                text: "changeNow".tr,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
+
+
+
 }

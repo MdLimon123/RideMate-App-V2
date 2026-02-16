@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/driver/home_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_switch.dart';
+import 'package:flutter_extension/views/base/formate_min_to_hours.dart';
+import 'package:flutter_extension/views/base/home_state_shimmer.dart';
 import 'package:flutter_extension/views/screen/driver/home/custom_map_view.dart';
+import 'package:flutter_extension/views/screen/notification/notification_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FindingRequest extends StatefulWidget {
   const FindingRequest({super.key});
@@ -17,6 +19,61 @@ class FindingRequest extends StatefulWidget {
 class _FindingRequestState extends State<FindingRequest>
     with TickerProviderStateMixin {
   final _homeController = Get.put(DriverHomeController());
+
+  late AnimationController _xController;
+  late AnimationController _yController;
+  late AnimationController _rotationController;
+
+  late Animation<double> _xScale;
+  late Animation<double> _yScale;
+  late Animation<double> _rotation;
+
+  @override
+  void initState() {
+    setupAnimation();
+    super.initState();
+  }
+
+  void setupAnimation() {
+    _xController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
+
+    _yController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat(reverse: true);
+
+    _rotationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..repeat();
+
+    _xScale = Tween<double>(
+      begin: 0.9,
+      end: 1.15,
+    ).animate(CurvedAnimation(parent: _xController, curve: Curves.easeInOut));
+
+    _yScale = Tween<double>(
+      begin: 0.9,
+      end: 1.15,
+    ).animate(CurvedAnimation(parent: _yController, curve: Curves.easeInOut));
+
+    _rotation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _rotationController, curve: Curves.linear),
+    );
+  }
+
+  @override
+  void dispose() {
+    _xController.dispose();
+    _yController.dispose();
+    _rotationController.dispose();
+
+    //SocketService().socket?.disconnect();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +105,9 @@ class _FindingRequestState extends State<FindingRequest>
                       ),
                       const Spacer(),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Get.to(() => const NotificationScreen());
+                        },
                         child: SvgPicture.asset(
                           'assets/icons/notification.svg',
                         ),
@@ -120,27 +179,28 @@ class _FindingRequestState extends State<FindingRequest>
                               Obx(() {
                                 if (_homeController.isLocationEnabled.value) {
                                   return Center(
-                                    // child: AnimatedBuilder(
-                                    //   animation: Listenable.merge([
-                                    //     _xController,
-                                    //     _yController,
-                                    //     _rotationController,
-                                    //   ]),
-                                    //   builder: (context, child) {
-                                    //     return Transform.scale(
-                                    //       scaleX: _xScale.value,
-                                    //       scaleY: _yScale.value,
-                                    //       child: Transform.rotate(
-                                    //         angle: _rotation.value * 6.28319,
-                                    //         child: child,
-                                    //       ),
-                                    //     );
-                                    //   },
-                                    child: SvgPicture.asset(
-                                      'assets/icons/search_fill.svg',
-                                      color: Colors.white,
-                                      width: 72,
-                                      height: 72,
+                                    child: AnimatedBuilder(
+                                      animation: Listenable.merge([
+                                        _xController,
+                                        _yController,
+                                        _rotationController,
+                                      ]),
+                                      builder: (context, child) {
+                                        return Transform.scale(
+                                          scaleX: _xScale.value,
+                                          scaleY: _yScale.value,
+                                          child: Transform.rotate(
+                                            angle: _rotation.value * 6.28319,
+                                            child: child,
+                                          ),
+                                        );
+                                      },
+                                      child: SvgPicture.asset(
+                                        'assets/icons/search_fill.svg',
+                                        color: Colors.white,
+                                        width: 72,
+                                        height: 72,
+                                      ),
                                     ),
                                   );
                                 } else {
@@ -164,9 +224,9 @@ class _FindingRequestState extends State<FindingRequest>
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(16),
                                 ),
-                                child: const Column(
+                                child: Column(
                                   children: [
-                                    Row(
+                                    const Row(
                                       children: [
                                         Expanded(
                                           child: Text(
@@ -203,44 +263,93 @@ class _FindingRequestState extends State<FindingRequest>
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 8),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            "10",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xFF333333),
+                                    const SizedBox(height: 8),
+
+                                    // Row(
+                                    //   children: [
+                                    //     Expanded(
+                                    //       child: Text(
+                                    //         "10",
+                                    //         textAlign: TextAlign.center,
+                                    //         style: TextStyle(
+                                    //           fontSize: 20,
+                                    //           fontWeight: FontWeight.w500,
+                                    //           color: Color(0xFF333333),
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //     Expanded(
+                                    //       child: Text(
+                                    //         "10h 30m",
+                                    //         textAlign: TextAlign.center,
+                                    //         style: TextStyle(
+                                    //           fontSize: 20,
+                                    //           fontWeight: FontWeight.w500,
+                                    //           color: Color(0xFF333333),
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //     Expanded(
+                                    //       child: Text(
+                                    //         "£ 1000",
+                                    //         textAlign: TextAlign.center,
+                                    //         style: TextStyle(
+                                    //           fontSize: 20,
+                                    //           fontWeight: FontWeight.w500,
+                                    //           color: Color(0xFF333333),
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ],
+                                    // ),
+                                    Obx(() {
+                                      if (_homeController.isLoading.value) {
+                                        return const HomeStatsShimmer();
+                                      }
+
+                                      final home =
+                                          _homeController.homeModel.value;
+
+                                      return Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              home.totalCount.toString(),
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w500,
+                                                color: Color(0xFF333333),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            "10h 30m",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xFF333333),
+                                          Expanded(
+                                            child: Text(
+                                              formatMinutesToHour(
+                                                home.totalTime,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w500,
+                                                color: Color(0xFF333333),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            "£ 1000",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xFF333333),
+                                          Expanded(
+                                            child: Text(
+                                              "£ ${home.totalEarnings}",
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w500,
+                                                color: Color(0xFF333333),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
+                                        ],
+                                      );
+                                    }),
                                   ],
                                 ),
                               ),

@@ -6,9 +6,7 @@ import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
 import 'package:flutter_extension/views/screen/user/auth/user_forget_screen.dart';
-import 'package:flutter_extension/views/screen/user/home/user_home.dart';
 import 'package:get/get.dart';
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
 class UserLoginScreen extends StatefulWidget {
   const UserLoginScreen({super.key});
@@ -37,7 +35,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 50),
-
+      
                 Text(
                   "login".tr,
                   style: const TextStyle(
@@ -46,9 +44,9 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     color: Color(0xFF333333),
                   ),
                 ),
-
+      
                 const SizedBox(height: 24),
-
+      
                 CustomTextField(
                   controller: emailTextController,
                   keyboardType: TextInputType.emailAddress,
@@ -61,13 +59,13 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                   isEmail: true,
                   hintText: "Enter your email",
                 ),
-
+      
                 const SizedBox(height: 12),
-
+      
                 CustomTextField(
                   controller: passwordTextController,
                   isPassword: true,
-                  keyboardType: TextInputType.number,
+            
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Please enter your password";
@@ -78,9 +76,9 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                   },
                   hintText: "Enter Password",
                 ),
-
+      
                 const SizedBox(height: 12),
-
+      
                 Align(
                   alignment: Alignment.centerRight,
                   child: InkWell(
@@ -97,9 +95,9 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     ),
                   ),
                 ),
-
+      
                 const Spacer(),
-
+      
                 Obx(
                   () => CustomButton(
                     loading: _userAuthController.isLoading.value,
@@ -114,9 +112,9 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     },
                   ),
                 ),
-
-                const SizedBox(height: 20),
-
+      
+                const SizedBox(height: 10),
+      
                 Center(
                   child: RichText(
                     text: TextSpan(
@@ -143,7 +141,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     ),
                   ),
                 ),
-
+      
                 const SizedBox(height: 20),
               ],
             ),

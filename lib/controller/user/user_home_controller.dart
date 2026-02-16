@@ -249,4 +249,38 @@ class UserHomeController extends GetxController {
     }
     isShowAnountLoading(false);
   }
+
+  RxString driverEta = "Calculating...".obs;
+
+  Future<void> calculateDriverETA({
+    required double driverLat,
+    required double driverLng,
+    required double userLat,
+    required double userLng,
+  }) async {
+    try {
+      final url =
+          "https://maps.googleapis.com/maps/api/distancematrix/json"
+          "?origins=$driverLat,$driverLng"
+          "&destinations=$userLat,$userLng"
+          "&mode=driving"
+          "&departure_time=now"
+          "&key=${ApiConstant.googleApiKey}";
+
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        final duration =
+            data['rows'][0]['elements'][0]['duration_in_traffic']['text'];
+
+        driverEta.value = duration;
+      } else {
+        driverEta.value = "Unknown";
+      }
+    } catch (e) {
+      driverEta.value = "Unknown";
+    }
+  }
 }

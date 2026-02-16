@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_extension/data/api/api_checker.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
@@ -18,12 +19,15 @@ import 'package:flutter_extension/views/screen/driver/home/trip/started_trip.dar
 import 'package:flutter_extension/views/screen/driver/home/trip/waiting_for_payment.dart';
 import 'package:flutter_extension/views/screen/driver/main/main_driver.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DriverRideController extends GetxController {
   var activeStatus = ActiveStatus.NONE.obs;
   var tripStatus = TripStatus.REQUESTED.obs;
   var parcelStatus = ParcelStatus.ACCEPTED.obs;
   Rx<TripResponseModel> tripResponse = TripResponseModel().obs;
+
+  var isTripStarted = false.obs;
 
   Rx<ParcelResponseModel> parcelResponse = ParcelResponseModel().obs;
   var isLoading = false.obs;
@@ -78,7 +82,7 @@ class DriverRideController extends GetxController {
       //go to completed screen
       //
       default:
-        Get.offAll(MainDriver());
+        Get.offAll(const MainDriver());
     }
   }
 
@@ -104,6 +108,27 @@ class DriverRideController extends GetxController {
       default:
         Get.offAll(const MainDriver());
     }
+  }
+
+  void updateDriverLocation(double lat, double lng, String? address) {
+    SocketService().emit(
+      'driver:update_location',
+      data: {
+        "location_lat": lat,
+        "location_lng": lng,
+        "location_address": address,
+      },
+    );
+  }
+
+  void listenDriverLocation({
+    required void Function(LatLng newLatLng) onLocationUpdate,
+    required String id,
+  }) {
+    SocketService().on('location:$id', (data) async {
+      final newLatLng = LatLng(data['location_lat'], data['location_lng']);
+      onLocationUpdate(newLatLng);
+    });
   }
 
   listenDriverRide() {
@@ -167,6 +192,7 @@ class DriverRideController extends GetxController {
     if (response.statusCode == 200) {
       var responseModel = TripResponseModel.fromJson(response.body);
       setTripStatus(responseModel);
+      isTripStarted.value = true;
     } else {
       ApiChecker.checkApi(response);
     }
@@ -222,32 +248,45 @@ class DriverRideController extends GetxController {
 
   startParcel() async {
     isLoading(true);
-    var response = await ApiClient.postData(ApiConstant.startedParcelForDriver, {
-      "parcel_id": parcelResponse.value.data!.id,
-    });
+    var response = await ApiClient.postData(
+      ApiConstant.startedParcelForDriver,
+      {"parcel_id": parcelResponse.value.data!.id},
+    );
     if (response.statusCode == 200) {
       var responseModel = ParcelResponseModel.fromJson(response.body);
       setParcelStatus(responseModel);
+        isTripStarted.value = true;
     } else {
       ApiChecker.checkApi(response);
     }
     isLoading(false);
   }
 
+  Future<bool> endParcel({required String imagePath}) async {
+    try {
+      isLoading(true);
 
+      final multipartBody = [MultipartBody('files', File(imagePath))];
 
-/// ekhne parcel er image upload korar kaj ta hobe alada kono api thakbe na image uplaod korar por get back korte hobe
-  endParcel() async {
-    isLoading(true);
-    var response = await ApiClient.postData(ApiConstant.endParcelForDriver, {
-      "parcel_id": parcelResponse.value.data!.id,
-    });
-    if (response.statusCode == 200) {
-      var responseModel = ParcelResponseModel.fromJson(response.body);
-      setParcelStatus(responseModel);
-    } else {
-      ApiChecker.checkApi(response);
+      final response = await ApiClient.postMultipartData(
+        ApiConstant.endParcelForDriver,
+        {"parcel_id": parcelResponse.value.data!.id},
+        multipartBody: multipartBody,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var responseModel = ParcelResponseModel.fromJson(response.body);
+        setParcelStatus(responseModel);
+        return true;
+      } else {
+        ApiChecker.checkApi(response);
+        return false;
+      }
+    } catch (e) {
+      print("End Parcel Error: $e");
+      return false;
+    } finally {
+      isLoading(false);
     }
-    isLoading(false);
   }
 }

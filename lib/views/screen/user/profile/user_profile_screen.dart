@@ -13,6 +13,8 @@ import 'package:flutter_extension/views/screen/driver/profile/edit_profile_scree
 import 'package:flutter_extension/views/screen/driver/profile/support_screen.dart';
 import 'package:flutter_extension/views/screen/driver/profile/wallet_screen.dart';
 import 'package:flutter_extension/views/screen/user/profile/trip_history_screen.dart';
+import 'package:flutter_extension/views/screen/user/profile/user_edit_profile_screen.dart';
+import 'package:flutter_extension/views/screen/user/profile/user_wallet_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -68,7 +70,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             const Spacer(),
                             InkWell(
                               onTap: () {
-                                Get.to(() => const EditProfileScreen());
+                                Get.to(() => const UserEditProfileScreen());
                               },
                               child: SvgPicture.asset("assets/icons/edit.svg"),
                             ),
@@ -187,7 +189,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         const SizedBox(height: 20),
                         _customTile(
                           onTap: () {
-                            Get.to(() => const WalletScreen());
+                            Get.to(() => const UserWalletScreen());
                           },
                           image: 'assets/icons/wallet_icon.svg',
                           title: 'RADEEF Wallet',

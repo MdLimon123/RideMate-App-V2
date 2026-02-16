@@ -29,7 +29,7 @@ class _EndParcelConfirmationScreenState
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
-          const SizedBox(height: 162),
+          const SizedBox(height: 40),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
             decoration: BoxDecoration(
@@ -332,25 +332,20 @@ class _EndParcelConfirmationScreenState
           ),
           const SizedBox(height: 50),
 
-          CustomButton(
-            onTap: () {
-              // final parcelImage = _parcelEndController.parcelImage.value;
+          Obx(
+            () => CustomButton(
+              loading: _driverRideController.isLoading.value,
+              onTap: () async {
+                bool success = await _driverRideController.endParcel(
+                  imagePath: _parcelEndController.parcelImage.value!.path,
+                );
 
-              // if (parcelImage == null) {
-              //   Get.snackbar("Error", "Please select a parcel image first");
-              //   return;
-              // }
-
-              // _parcelEndController
-              //     .uplaodParcelImage(
-              //       imagePath: parcelImage.path,
-              //       parcelId:
-              //           _driverRideController.parcelResponse.value.data!.id,
-              //     )
-              //     .then((_) {});
-              Get.back();
-            },
-            text: "Confirm",
+                if (success) {
+                  Get.back();
+                }
+              },
+              text: "Confirm",
+            ),
           ),
         ],
       ),

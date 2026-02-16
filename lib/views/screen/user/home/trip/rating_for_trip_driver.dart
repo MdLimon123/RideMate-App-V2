@@ -176,7 +176,7 @@ class _RatingForTripDriverState extends State<RatingForTripDriver> {
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          Get.to(() => const UserHome());
+                          Get.offAll(() => const UserHome());
                         },
                         child: Container(
                           height: 52,

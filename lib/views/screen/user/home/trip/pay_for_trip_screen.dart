@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_extension/controller/user/chat_controller.dart';
 import 'package:flutter_extension/controller/user/ride_controller.dart';
+import 'package:flutter_extension/controller/user/user_home_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
-import 'package:flutter_extension/views/screen/user/chat/user_inbox_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -20,6 +21,28 @@ class PayForTripScreen extends StatefulWidget {
 class _PayForTripScreenState extends State<PayForTripScreen> {
   final RideController rideController = Get.put(RideController());
   final codeController = TextEditingController(text: "");
+  final _chatController = Get.put(ChatController());
+
+  final _homeController = Get.put(UserHomeController());
+
+  @override
+  void initState() {
+    final driverLat =
+        rideController.tripResponse.value.data!.driver!.locationLat;
+    final driverLng =
+        rideController.tripResponse.value.data!.driver!.locationLng;
+
+    final userLat = rideController.tripResponse.value.data!.user.locationLat;
+    final userLng = rideController.tripResponse.value.data!.user.locationLng;
+
+    _homeController.calculateDriverETA(
+      driverLat: driverLat!,
+      driverLng: driverLng!,
+      userLat: userLat!,
+      userLng: userLng!,
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,9 +114,9 @@ class _PayForTripScreenState extends State<PayForTripScreen> {
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                const Text(
-                                  " 10 min away",
-                                  style: TextStyle(
+                                Text(
+                                  " ${_homeController.driverEta.value} away",
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
                                     color: Color(0xFFFFFFFF),
@@ -304,8 +327,16 @@ class _PayForTripScreenState extends State<PayForTripScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           InkWell(
-                            onTap: () {
-                              Get.to(() => const UserInboxScreen());
+                            onTap: () async {
+                              await _chatController.createChatRoom(
+                                userId: rideController
+                                    .tripResponse
+                                    .value
+                                    .data!
+                                    .driver!
+                                    .id
+                                    .toString(),
+                              );
                             },
                             child: Container(
                               height: 40,
@@ -322,8 +353,8 @@ class _PayForTripScreenState extends State<PayForTripScreen> {
                           ),
                           const SizedBox(width: 22),
                           Expanded(
-                            child: Obx(()=>
-                               CustomButton(
+                            child: Obx(
+                              () => CustomButton(
                                 loading: rideController.isLoading.value,
                                 onTap: () {
                                   rideController.payForTrip();
