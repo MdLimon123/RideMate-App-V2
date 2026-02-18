@@ -4,6 +4,7 @@ import 'package:flutter_extension/controller/user/chat_controller.dart';
 import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/controller/user/user_home_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
@@ -27,26 +28,27 @@ class _PayForTripScreenState extends State<PayForTripScreen> {
 
   @override
   void initState() {
-    final driverLat =
-        rideController.tripResponse.value.data!.driver!.locationLat;
-    final driverLng =
-        rideController.tripResponse.value.data!.driver!.locationLng;
+    // final driverLat =
+    //     rideController.tripResponse.value.data!.driver!.locationLat;
+    // final driverLng =
+    //     rideController.tripResponse.value.data!.driver!.locationLng;
 
-    final userLat = rideController.tripResponse.value.data!.user.locationLat;
-    final userLng = rideController.tripResponse.value.data!.user.locationLng;
+    // final userLat = rideController.tripResponse.value.data!.user.locationLat;
+    // final userLng = rideController.tripResponse.value.data!.user.locationLng;
 
-    _homeController.calculateDriverETA(
-      driverLat: driverLat!,
-      driverLng: driverLng!,
-      userLat: userLat!,
-      userLng: userLng!,
-    );
+    // _homeController.calculateDriverETA(
+    //   driverLat: driverLat!,
+    //   driverLng: driverLng!,
+    //   userLat: userLat!,
+    //   userLng: userLng!,
+    // );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    codeController.text = rideController.tripResponse.value.data!.slug;
+    print( "Slug ====> ${rideController.tripResponse.value}");
+   // codeController.text = rideController.tripResponse.value.data!.slug;
     return Scaffold(
       appBar: const CustomAppbar(title: "Driver Assigned"),
       body: SafeArea(
@@ -366,6 +368,7 @@ class _PayForTripScreenState extends State<PayForTripScreen> {
                                   fontWeight: FontWeight.w500,
                                 ),
                                 color: const Color(0xFFE6EAF0),
+                                circleColor: AppColors.primaryColor,
                               ),
                             ),
                           ),

@@ -66,7 +66,7 @@ class _DriverLoginScreenState extends State<DriverLoginScreen> {
                 CustomTextField(
                   controller: passwordTextController,
                   isPassword: true,
-                  keyboardType: TextInputType.number,
+                
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Please enter your password";

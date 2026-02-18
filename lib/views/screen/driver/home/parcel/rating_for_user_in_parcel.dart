@@ -18,8 +18,8 @@ class RatingForUserInParcel extends StatefulWidget {
 
 class _RatingForUserInParcelState extends State<RatingForUserInParcel> {
   final _rideController = Get.find<DriverRideController>();
-  final _driverProfileController = Get.put(DriverProfileController());
 
+  var rating = 0.0.obs;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -171,7 +171,7 @@ class _RatingForUserInParcelState extends State<RatingForUserInParcel> {
               Obx(
                 () => Center(
                   child: RatingBar.builder(
-                    initialRating: _driverProfileController.rating.value,
+                    initialRating: rating.value,
                     minRating: 1,
                     allowHalfRating: true,
                     itemCount: 5,
@@ -180,7 +180,7 @@ class _RatingForUserInParcelState extends State<RatingForUserInParcel> {
                     itemBuilder: (context, _) =>
                         const Icon(Icons.star, color: Color(0xFF012F64)),
                     onRatingUpdate: (value) {
-                      _driverProfileController.updateRating(value);
+                      rating.value = value;
                     },
                   ),
                 ),
@@ -188,12 +188,14 @@ class _RatingForUserInParcelState extends State<RatingForUserInParcel> {
               const SizedBox(height: 150),
               Obx(
                 () => CustomButton(
-                  loading: _driverProfileController.isLaoding.value,
+                  loading: _rideController.isLoading.value,
                   onTap: () {
-                    _driverProfileController.driverSubmitParcelRating(
+                    _rideController.driverSubmitRating(
                       userId:
                           _rideController.parcelResponse.value.data!.user.id,
                       tripId: _rideController.parcelResponse.value.data!.id,
+                      rating: rating.value,
+                      isTrip: false,
                     );
                   },
                   text: "Rate Now",

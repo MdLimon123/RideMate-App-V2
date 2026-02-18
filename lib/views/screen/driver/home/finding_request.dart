@@ -30,7 +30,7 @@ class _FindingRequestState extends State<FindingRequest>
 
   @override
   void initState() {
-    setupAnimation();
+    //setupAnimation();
     super.initState();
   }
 
@@ -176,41 +176,41 @@ class _FindingRequestState extends State<FindingRequest>
                               const SizedBox(height: 30),
 
                               // Animated Icon (self-contained, isolated)
-                              Obx(() {
-                                if (_homeController.isLocationEnabled.value) {
-                                  return Center(
-                                    child: AnimatedBuilder(
-                                      animation: Listenable.merge([
-                                        _xController,
-                                        _yController,
-                                        _rotationController,
-                                      ]),
-                                      builder: (context, child) {
-                                        return Transform.scale(
-                                          scaleX: _xScale.value,
-                                          scaleY: _yScale.value,
-                                          child: Transform.rotate(
-                                            angle: _rotation.value * 6.28319,
-                                            child: child,
-                                          ),
-                                        );
-                                      },
-                                      child: SvgPicture.asset(
-                                        'assets/icons/search_fill.svg',
-                                        color: Colors.white,
-                                        width: 72,
-                                        height: 72,
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  return Center(
-                                    child: SvgPicture.asset(
-                                      'assets/icons/happy.svg',
-                                    ),
-                                  );
-                                }
-                              }),
+                              // Obx(() {
+                              //   if (_homeController.isLocationEnabled.value) {
+                              //     return Center(
+                              //       child: AnimatedBuilder(
+                              //         animation: Listenable.merge([
+                              //           _xController,
+                              //           _yController,
+                              //           _rotationController,
+                              //         ]),
+                              //         builder: (context, child) {
+                              //           return Transform.scale(
+                              //             scaleX: _xScale.value,
+                              //             scaleY: _yScale.value,
+                              //             child: Transform.rotate(
+                              //               angle: _rotation.value * 6.28319,
+                              //               child: child,
+                              //             ),
+                              //           );
+                              //         },
+                              //         child: SvgPicture.asset(
+                              //           'assets/icons/search_fill.svg',
+                              //           color: Colors.white,
+                              //           width: 72,
+                              //           height: 72,
+                              //         ),
+                              //       ),
+                              //     );
+                              //   } else {
+                              //     return Center(
+                              //       child: SvgPicture.asset(
+                              //         'assets/icons/happy.svg',
+                              //       ),
+                              //     );
+                              //   }
+                              // }),
                               const SizedBox(height: 20),
 
                               // Tips / Earnings Row

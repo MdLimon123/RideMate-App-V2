@@ -18,7 +18,7 @@ Future<Map<String, Map<String, String>>> init() async {
   Get.lazyPut(() => ThemeController(sharedPreferences: Get.find()));
   Get.lazyPut(() => LocalizationController(sharedPreferences: Get.find()));
   Get.lazyPut(() => SplashController());
-  Get.lazyPut(() => RideController());
+
 
   //Retrieving localized data
   Map<String, Map<String, String>> languages = {};

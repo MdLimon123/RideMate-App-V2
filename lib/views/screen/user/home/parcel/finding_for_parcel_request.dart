@@ -6,10 +6,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class FindingForParcelRewuest extends StatefulWidget {
-
-    final String pickLocation;
+  final String pickLocation;
   final String dropLocation;
-  const FindingForParcelRewuest({super.key, required this.pickLocation, required this.dropLocation});
+  const FindingForParcelRewuest({
+    super.key,
+    required this.pickLocation,
+    required this.dropLocation,
+  });
 
   @override
   State<FindingForParcelRewuest> createState() =>
@@ -18,10 +21,9 @@ class FindingForParcelRewuest extends StatefulWidget {
 
 class _FindingForParcelRewuestState extends State<FindingForParcelRewuest>
     with TickerProviderStateMixin {
+  final RideController _rideController = Get.find<RideController>();
 
-       final RideController _rideController = Get.find<RideController>();
-
-         final pickupLocationController = TextEditingController();
+  final pickupLocationController = TextEditingController();
   final dropLocationController = TextEditingController();
   late AnimationController _xController;
   late AnimationController _yController;
@@ -33,58 +35,53 @@ class _FindingForParcelRewuestState extends State<FindingForParcelRewuest>
 
   @override
   void initState() {
-  //  setupAnimation();
+    setupAnimation();
     super.initState();
   }
 
-  // void setupAnimation() {
-  //   _xController = AnimationController(
-  //     vsync: this,
-  //     duration: const Duration(seconds: 2),
-  //   )..repeat(reverse: true);
+  void setupAnimation() {
+    _xController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
 
-  //   _yController = AnimationController(
-  //     vsync: this,
-  //     duration: const Duration(seconds: 1),
-  //   )..repeat(reverse: true);
+    _yController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat(reverse: true);
 
-  //   _rotationController = AnimationController(
-  //     vsync: this,
-  //     duration: const Duration(seconds: 5),
-  //   )..repeat();
+    _rotationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..repeat();
 
-  //   _xScale = Tween<double>(
-  //     begin: 0.9,
-  //     end: 1.15,
-  //   ).animate(CurvedAnimation(parent: _xController, curve: Curves.easeInOut));
+    _xScale = Tween<double>(
+      begin: 0.9,
+      end: 1.15,
+    ).animate(CurvedAnimation(parent: _xController, curve: Curves.easeInOut));
 
-  //   _yScale = Tween<double>(
-  //     begin: 0.9,
-  //     end: 1.15,
-  //   ).animate(CurvedAnimation(parent: _yController, curve: Curves.easeInOut));
+    _yScale = Tween<double>(
+      begin: 0.9,
+      end: 1.15,
+    ).animate(CurvedAnimation(parent: _yController, curve: Curves.easeInOut));
 
-  //   _rotation = Tween<double>(begin: 0.0, end: 1.0).animate(
-  //     CurvedAnimation(parent: _rotationController, curve: Curves.linear),
-  //   );
-  // }
+    _rotation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _rotationController, curve: Curves.linear),
+    );
+  }
 
+  @override
+  void dispose() {
+    _xController.dispose();
+    _yController.dispose();
+    _rotationController.dispose();
 
-
-  // @override
-  // void dispose() {
-  //   _xController.dispose();
-  //   _yController.dispose();
-  //   _rotationController.dispose();
-
-  //   //SocketService().socket?.disconnect();
-  //   super.dispose();
-  // }
-
-
+    //SocketService().socket?.disconnect();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-
     pickupLocationController.text = widget.pickLocation;
     dropLocationController.text = widget.dropLocation;
     return Scaffold(
@@ -171,44 +168,40 @@ class _FindingForParcelRewuestState extends State<FindingForParcelRewuest>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-
-
-                    // AnimatedBuilder(
-                    //   animation: Listenable.merge([
-                    //     _xController,
-                    //     _yController,
-                    //     _rotationController,
-                    //   ]),
-                    //   builder: (context, child) {
-                    //     return Transform.scale(
-                    //       scaleX: _xScale.value,
-                    //       scaleY: _yScale.value,
-                    //       child: Transform.rotate(
-                    //         angle: _rotation.value * 6.28319,
-                    //         child: Container(
-                    //           decoration: BoxDecoration(
-                    //             boxShadow: [
-                    //               BoxShadow(
-                    //                 color: Colors.white.withValues(alpha: 0.4),
-                    //                 blurRadius: 30,
-                    //                 spreadRadius: 4,
-                    //               ),
-                    //             ],
-                    //           ),
-                    //           child: child,
-                    //         ),
-                    //       ),
-                    //     );
-                    //   },
-                    //   child: SvgPicture.asset(
-                    //     'assets/icons/search_fill.svg',
-                    //     color: Colors.white,
-                    //     width: 72,
-                    //     height: 72,
-                    //   ),
-                    // ),
-
-
+                    AnimatedBuilder(
+                      animation: Listenable.merge([
+                        _xController,
+                        _yController,
+                        _rotationController,
+                      ]),
+                      builder: (context, child) {
+                        return Transform.scale(
+                          scaleX: _xScale.value,
+                          scaleY: _yScale.value,
+                          child: Transform.rotate(
+                            angle: _rotation.value * 6.28319,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.white.withValues(alpha: 0.4),
+                                    blurRadius: 30,
+                                    spreadRadius: 4,
+                                  ),
+                                ],
+                              ),
+                              child: child,
+                            ),
+                          ),
+                        );
+                      },
+                      child: SvgPicture.asset(
+                        'assets/icons/search_fill.svg',
+                        color: Colors.white,
+                        width: 72,
+                        height: 72,
+                      ),
+                    ),
 
                     const SizedBox(height: 15),
 
@@ -227,16 +220,17 @@ class _FindingForParcelRewuestState extends State<FindingForParcelRewuest>
 
               const SizedBox(height: 100),
 
-              Obx(()=>
-                 CustomButton(
-                loading: _rideController.isLoading.value,
+              Obx(
+                () => CustomButton(
+                  loading: _rideController.isLoading.value,
                   onTap: () {
-                       final parcelData = _rideController.parcelResponse.value.data;
-                      if (parcelData != null) {
-                        _rideController.cancelParcel(parcelData.id);
-                      } else {
-                        print("No trip data available yet.");
-                      }
+                    final parcelData =
+                        _rideController.parcelResponse.value.data;
+                    if (parcelData != null) {
+                      _rideController.cancelParcel(parcelData.id);
+                    } else {
+                      print("No trip data available yet.");
+                    }
                   },
                   text: "cancel".tr,
                 ),

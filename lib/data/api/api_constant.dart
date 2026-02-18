@@ -27,4 +27,6 @@ class ApiConstant {
   static const cancelParcelRequestForDriver = "/parcels/cancel-parcel-request";
   static const startedParcelForDriver = "/parcels/start-parcel";
   static const endParcelForDriver = "/parcels/deliver-parcel-v2";
+
+  static const recoverTripUrl = "/trips/recover-trip-v2";
 }

@@ -65,7 +65,6 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                 CustomTextField(
                   controller: passwordTextController,
                   isPassword: true,
-            
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Please enter your password";

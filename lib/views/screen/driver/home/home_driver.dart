@@ -22,7 +22,7 @@ class _HomeDriverState extends State<HomeDriver> {
 
   @override
   void initState() {
-    _driverRideController.listenDriverRide();
+  
     super.initState();
   }
 

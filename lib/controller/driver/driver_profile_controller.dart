@@ -48,62 +48,7 @@ class DriverProfileController extends GetxController {
     }
   }
 
-  Future<void> driverSubmitTripRating({
-    required String userId,
-
-    required String tripId,
-  }) async {
-    isLaoding(true);
-
-    final Map<String, dynamic> body = {
-      "user_id": userId,
-      "rating": rating.value.toInt(),
-      "comment": "Good",
-      "ref_trip_id": tripId,
-    };
-
-    final response = await ApiClient.postData("/reviews/give-review", body);
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      showCustomSnackBar("Review Submitted", isError: false);
-
-      _rideController.clear();
-      Get.offAll(() => const MainDriver());
-    } else {
-      debugPrint(response.body);
-      showCustomSnackBar(response.statusText, isError: true);
-    }
-    isLaoding(false);
-  }
-
-  Future<void> driverSubmitParcelRating({
-    required String userId,
-
-    required String tripId,
-  }) async {
-    isLaoding(true);
-
-    final Map<String, dynamic> body = {
-      "user_id": userId,
-      "rating": rating.value.toInt(),
-      "comment": "Good",
-      "ref_parcel_id": tripId,
-    };
-
-    final response = await ApiClient.postData("/reviews/give-review", body);
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      showCustomSnackBar("Review Submitted", isError: false);
-
-      _rideController.clear();
-      Get.offAll(() => const MainDriver());
-    } else {
-      debugPrint(response.body);
-      showCustomSnackBar(response.statusText, isError: true);
-    }
-    isLaoding(false);
-  }
-
+ 
   Future<void> fetchDriverProfile() async {
     isLoading(true);
 

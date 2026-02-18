@@ -1,13 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_extension/data/api/api_checker.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/data/model/user/parcel_response_model.dart';
 import 'package:flutter_extension/data/model/user/user_trip_model.dart';
+import 'package:flutter_extension/helper/prefs_helper.dart';
 import 'package:flutter_extension/util/app_constants.dart';
+import 'package:flutter_extension/views/base/custom_snackbar.dart';
 import 'package:flutter_extension/views/screen/driver/home/parcel/accepted_parcel.dart';
 import 'package:flutter_extension/views/screen/driver/home/parcel/parcel_payment_overview.dart';
 import 'package:flutter_extension/views/screen/driver/home/parcel/requested_parcel.dart';
@@ -26,6 +29,12 @@ class DriverRideController extends GetxController {
   var tripStatus = TripStatus.REQUESTED.obs;
   var parcelStatus = ParcelStatus.ACCEPTED.obs;
   Rx<TripResponseModel> tripResponse = TripResponseModel().obs;
+
+  @override
+  void onInit() {
+    listenDriverRide();
+    super.onInit();
+  }
 
   var isTripStarted = false.obs;
 
@@ -60,6 +69,7 @@ class DriverRideController extends GetxController {
     activeStatus.value = ActiveStatus.NONE;
     tripStatus.value = TripStatus.idle;
     parcelStatus.value = ParcelStatus.idle;
+    isLoading.value = false;
     update();
   }
 
@@ -121,6 +131,11 @@ class DriverRideController extends GetxController {
     );
   }
 
+  socketConntect() async {
+    var token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
+    await SocketService().connect(token);
+  }
+
   void listenDriverLocation({
     required void Function(LatLng newLatLng) onLocationUpdate,
     required String id,
@@ -131,23 +146,25 @@ class DriverRideController extends GetxController {
     });
   }
 
-  listenDriverRide() {
+  Future<void> listenDriverRide() async {
+    print("listenDriverRide");
+
+    // Ensure socket connected first
+    await socketConntect();
+
+    // Attach listener safely
     SocketService().on("driver-trip", (data) {
+      print("driver-trip received: $data");
       final response = data is String ? jsonDecode(data) : data;
 
       if (response['kind'] == "TRIP") {
-        print("========> check response:$response");
         TripResponseModel responseModel = TripResponseModel.fromJson(response);
-        print("========> check model:${responseModel.kind}");
         setTripStatus(responseModel);
       } else if (response['kind'] == "PARCEL") {
         ParcelResponseModel parcelResponseModel = ParcelResponseModel.fromJson(
           response,
         );
         setParcelStatus(parcelResponseModel);
-        print("========> check model:${response['kind']}");
-
-        print("========> cancel");
       }
     });
   }
@@ -207,6 +224,7 @@ class DriverRideController extends GetxController {
     if (response.statusCode == 200) {
       var responseModel = TripResponseModel.fromJson(response.body);
       setTripStatus(responseModel);
+      isLoading(false);
     } else {
       ApiChecker.checkApi(response);
     }
@@ -255,7 +273,7 @@ class DriverRideController extends GetxController {
     if (response.statusCode == 200) {
       var responseModel = ParcelResponseModel.fromJson(response.body);
       setParcelStatus(responseModel);
-        isTripStarted.value = true;
+      isTripStarted.value = true;
     } else {
       ApiChecker.checkApi(response);
     }
@@ -285,6 +303,72 @@ class DriverRideController extends GetxController {
     } catch (e) {
       print("End Parcel Error: $e");
       return false;
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  recoverTrip() async {
+    isLoading(true);
+    final response = await ApiClient.getData(ApiConstant.recoverTripUrl);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.body["kind"] == "TRIP") {
+        setTripStatus(TripResponseModel.fromJson(response.body));
+      } else if (response.body["kind"] == "PARCEL") {
+        setParcelStatus(ParcelResponseModel.fromJson(response.body));
+      } else {
+        clear();
+      }
+      Get.off(() => const MainDriver());
+      isLoading(false);
+    } else {
+      isLoading(false);
+      //   ApiChecker.checkApi(response);
+    }
+    isLoading(false);
+  }
+
+  Future<void> driverSubmitRating({
+    required String userId,
+    required String tripId,
+    required dynamic rating,
+    required bool isTrip,
+  }) async {
+    try {
+      isLoading(true);
+
+      if (rating.value <= 0) {
+        showCustomSnackBar("Please give a rating first", isError: true);
+        return;
+      }
+
+      final Map<String, dynamic> body = isTrip
+          ? {
+              "user_id": userId,
+              "rating": rating.value.toInt(),
+              "comment": "Good",
+              "ref_trip_id": tripId,
+            }
+          : {
+              "user_id": userId,
+              "rating": rating.value.toInt(),
+              "comment": "Good",
+              "ref_parcel_id": tripId,
+            };
+
+      final response = await ApiClient.postData("/reviews/give-review", body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        clear();
+        Get.back();
+        Get.back();
+        Get.back();
+        
+      } else {
+        debugPrint(response.body.toString());
+      }
+    } catch (e) {
+      debugPrint("Review Error: $e");
     } finally {
       isLoading(false);
     }

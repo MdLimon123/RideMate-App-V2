@@ -35,16 +35,12 @@ class _UserHomeState extends State<UserHome> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _userProfileController.fetchUserInfo();
     });
-    socketConntect();
+  
 
     super.initState();
   }
 
-  socketConntect() async {
-    var token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
-    SocketService().connect(token);
-    _rideController.listenTripAndParcel();
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -262,44 +258,62 @@ class _UserHomeState extends State<UserHome> {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: 5,
-                        separatorBuilder: (_, _) => const SizedBox(height: 6),
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {},
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: const Color(
-                                  0xFFE6E6E6,
-                                ).withValues(alpha: 0.24),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset('assets/icons/location.svg'),
-                                  const SizedBox(width: 12),
-                                  const Expanded(
-                                    child: Text(
-                                      "2972 Westheimer Rd. Santa ",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: Color(0xFF8A8A8A),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
+
+                      Obx(
+                        () => ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _userHomeController.recentDestinations.length,
+                          separatorBuilder: (_, _) => const SizedBox(height: 6),
+                          itemBuilder: (context, index) {
+                            final dest =
+                                _userHomeController.recentDestinations[index];
+
+                            return InkWell(
+                              onTap: () {
+                                _userHomeController.dropController.text =
+                                    dest.address;
+                                _userHomeController.dropAddress.value =
+                                    dest.address;
+                                _userHomeController.dropCoordinates.value = [
+                                  dest.lat,
+                                  dest.lng,
+                                ];
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: const Color(
+                                    0xFFE6E6E6,
+                                  ).withValues(alpha: 0.24),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icons/location.svg',
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        dest.address,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color(0xFF8A8A8A),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
+
 
                       const SizedBox(height: 129),
                       InkWell(

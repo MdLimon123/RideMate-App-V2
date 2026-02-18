@@ -7,6 +7,7 @@ import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/data/model/user/parcel_response_model.dart';
 import 'package:flutter_extension/data/model/user/user_trip_model.dart';
+import 'package:flutter_extension/helper/prefs_helper.dart';
 
 import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/views/screen/user/home/parcel/accepted_parcel_for_driver.dart';
@@ -107,8 +108,13 @@ class RideController extends GetxController {
         break;
       default:
         Get.offAll(() => const UserHome());
-        
     }
+  }
+
+   socketConntect() async {
+    var token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
+  await  SocketService().connect(token);
+    listenTripAndParcel();
   }
 
   /// ============= listen trip/parcel ==================
@@ -211,10 +217,23 @@ class RideController extends GetxController {
     isLoading(false);
   }
 
+  recoverTrip() async {
+    isLoading(true);
 
+    final response = await ApiClient.getData(ApiConstant.recoverTripUrl);
 
-
-
-
-
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.body["kind"] == "TRIP") {
+        setTripStatus(TripResponseModel.fromJson(response.body));
+      } else if (response.body["kind"] == "PARCEL") {
+        setParcelStatus(ParcelResponseModel.fromJson(response.body));
+      } else {
+        clearStates();
+      }
+    } else {
+      isLoading(false);
+      ApiChecker.checkApi(response);
+    }
+    isLoading(false);
+  }
 }

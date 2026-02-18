@@ -5,6 +5,7 @@ import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/util/message.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'controller/localization_controller.dart';
 import 'controller/theme_controller.dart';
 import 'helper/get_di.dart' as di;
@@ -12,6 +13,9 @@ import 'helper/route_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await GetStorage.init();
+
   Map<String, Map<String, String>> languages = await di.init();
   runApp(MyApp(languages: languages));
 }

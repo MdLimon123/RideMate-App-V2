@@ -25,8 +25,7 @@ class _MainDriverState extends State<MainDriver> {
 
   @override
   void initState() {
-    socketConntect();
-
+    _driverRideController.recoverTrip();
     super.initState();
   }
 
@@ -38,16 +37,12 @@ class _MainDriverState extends State<MainDriver> {
     const DriverProfileScreen(),
   ];
 
-  socketConntect() async {
-    var token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
-    SocketService().connect(token);
-    // _driverRideController.listenDriverRide();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: selectedIndex, children: pages),
+      body:IndexedStack(index: selectedIndex, children: pages),
+      
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,

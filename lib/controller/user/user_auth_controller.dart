@@ -1,4 +1,5 @@
 import 'package:flutter_extension/controller/data_controller.dart';
+import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/model/user/user_info_model.dart';
 import 'package:flutter_extension/helper/prefs_helper.dart';
@@ -20,6 +21,7 @@ class UserAuthController extends GetxController {
 
   var isResetLoading = false.obs;
   final _dataController = Get.put(DataController());
+  final _rideController = Get.put(RideController(), permanent: true );
 
   /// Signup
 
@@ -93,6 +95,7 @@ class UserAuthController extends GetxController {
       Future.delayed(const Duration(milliseconds: 300), () {
         if (userInfo.user.isActive) {
           Get.offAll(() => const UserHome());
+          _rideController.socketConntect();
         } else {
           Get.offAll(() => const UserVerifyScreen());
         }

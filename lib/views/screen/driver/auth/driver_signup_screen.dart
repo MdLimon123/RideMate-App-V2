@@ -63,7 +63,7 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                 const SizedBox(height: 12),
                 CustomTextField(
                   controller: passwordTextController,
-                  keyboardType: TextInputType.number,
+               
                   isPassword: true,
                   validator: (value) {
                     if (value!.isEmpty) {

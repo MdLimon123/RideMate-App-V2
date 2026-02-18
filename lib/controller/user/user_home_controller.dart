@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/data/model/user/recent_destinations.dart';
 import 'package:flutter_extension/views/base/custom_snackbar.dart';
 import 'package:flutter_extension/views/screen/user/home/parcel/show_parcel_amount_screen.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/show_trip_amount_screen.dart';
@@ -8,6 +9,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -23,6 +25,8 @@ class UserHomeController extends GetxController {
 
   RxString selectedParcelType = "".obs;
 
+  var recentDestinations = <RecentDestination>[].obs;
+
   var currentLatLng = Rxn<LatLng>();
   GoogleMapController? mapController;
 
@@ -35,6 +39,8 @@ class UserHomeController extends GetxController {
 
   var pickCoordinates = <double>[].obs;
   var dropCoordinates = <double>[].obs;
+    final box = GetStorage();
+
 
   var pickAddress = ''.obs;
   var dropAddress = ''.obs;
@@ -64,9 +70,33 @@ class UserHomeController extends GetxController {
 
     dropCoordinates.value = coords;
 
-    // saveRecentDestination(
-    //   RecentDestination(address: location, lat: coords[0], lng: coords[1]),
-    // );
+    saveRecentDestination(
+      RecentDestination(address: location, lat: coords[0], lng: coords[1]),
+    );
+  }
+
+    void loadRecentDestinations() {
+    final data = box.read<List>('recent_destinations') ?? [];
+
+    recentDestinations.value = data
+        .map((e) => RecentDestination.fromJson(e))
+        .toList();
+  }
+
+  void saveRecentDestination(RecentDestination dest) {
+
+    recentDestinations.removeWhere((e) => e.address == dest.address);
+
+    recentDestinations.insert(0, dest);
+
+    if (recentDestinations.length > 5) {
+      recentDestinations.removeLast();
+    }
+
+    box.write(
+      'recent_destinations',
+      recentDestinations.map((e) => e.toJson()).toList(),
+    );
   }
 
   Future<void> getCurrentLocation({bool setToTextField = false}) async {

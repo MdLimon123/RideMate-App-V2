@@ -19,6 +19,19 @@ class _ParcleInputDetailsState extends State<ParcleInputDetails> {
   final _userHomeController = Get.put(UserHomeController());
 
   @override
+  void dispose() {
+    _userHomeController.pickController.clear();
+    _userHomeController.dropController.clear();
+    _userHomeController.suggestions.clear();
+    _userHomeController.pickAddress.value = '';
+    _userHomeController.dropAddress.value = '';
+    _userHomeController.dropCoordinates.clear();
+    _userHomeController.parcelWeightController.clear();
+    _userHomeController.parcelAmount.clear();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppbar(title: "Send Parcel"),

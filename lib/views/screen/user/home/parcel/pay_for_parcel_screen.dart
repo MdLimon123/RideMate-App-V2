@@ -4,6 +4,7 @@ import 'package:flutter_extension/controller/user/chat_controller.dart';
 import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/controller/user/user_home_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
@@ -366,6 +367,7 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
                                 fontWeight: FontWeight.w500,
                               ),
                               color: const Color(0xFFE6EAF0),
+                              circleColor: AppColors.primaryColor,
                             ),
                           ),
                         ),

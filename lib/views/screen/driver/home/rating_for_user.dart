@@ -18,8 +18,8 @@ class RatingForUser extends StatefulWidget {
 
 class _RatingForUserState extends State<RatingForUser> {
   final _rideController = Get.find<DriverRideController>();
-  final _driverProfileController = Get.put(DriverProfileController());
 
+  var rating = 0.0.obs;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,7 +170,7 @@ class _RatingForUserState extends State<RatingForUser> {
               Obx(
                 () => Center(
                   child: RatingBar.builder(
-                    initialRating: _driverProfileController.rating.value,
+                    initialRating: rating.value,
                     minRating: 1,
                     allowHalfRating: true,
                     itemCount: 5,
@@ -179,7 +179,7 @@ class _RatingForUserState extends State<RatingForUser> {
                     itemBuilder: (context, _) =>
                         const Icon(Icons.star, color: Color(0xFF012F64)),
                     onRatingUpdate: (value) {
-                      _driverProfileController.updateRating(value);
+                      rating.value = value;
                     },
                   ),
                 ),
@@ -187,11 +187,13 @@ class _RatingForUserState extends State<RatingForUser> {
               const SizedBox(height: 200),
               Obx(
                 () => CustomButton(
-                  loading: _driverProfileController.isLaoding.value,
+                  loading: _rideController.isLoading.value,
                   onTap: () {
-                    _driverProfileController.driverSubmitTripRating(
+                    _rideController.driverSubmitRating(
                       userId: _rideController.tripResponse.value.data!.user.id,
                       tripId: _rideController.tripResponse.value.data!.id,
+                      rating: rating,
+                      isTrip: true,
                     );
                   },
                   text: "Rate Now",
