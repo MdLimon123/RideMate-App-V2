@@ -1,13 +1,7 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_extension/controller/data_controller.dart';
 import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/controller/user/ride_controller.dart';
-import 'package:flutter_extension/data/api/api_client.dart';
-import 'package:flutter_extension/data/api/api_constant.dart';
-import 'package:flutter_extension/data/model/user/parcel_response_model.dart';
-import 'package:flutter_extension/data/model/user/user_trip_model.dart';
 import 'package:flutter_extension/helper/prefs_helper.dart';
-
 import 'package:flutter_extension/helper/route_helper.dart';
 import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/views/screen/driver/auth/driver_login_screen.dart';
@@ -46,7 +40,6 @@ class SplashController extends GetxController {
     await _dataController.getData();
 
     final token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
-    ();
 
     final role = _dataController.role.value;
     final isActive = _dataController.isActive.value;
@@ -69,7 +62,18 @@ class SplashController extends GetxController {
 
     if (role == 'USER') {
       await _rideController.recoverTrip();
-      _rideController.socketConntect();
+      await _rideController.socketConntect();
+
+      /// add new condition
+
+      final isIdle =
+          _rideController.tripStatus.value == TripStatus.idle &&
+          _rideController.parcelStatus.value == ParcelStatus.idle;
+
+      if (isIdle) {
+        Get.offAll(() => const UserHome());
+        return;
+      }
     } else if (role == 'DRIVER') {
       await _driverRideController.socketConntect();
       Get.offAll(() => const MainDriver());

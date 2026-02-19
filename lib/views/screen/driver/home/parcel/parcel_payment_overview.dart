@@ -3,7 +3,6 @@ import 'package:flutter_extension/controller/driver/driver_ride_controller.dart'
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/screen/driver/home/parcel/rating_for_user_in_parcel.dart';
-import 'package:flutter_extension/views/screen/user/home/parcel/rating_for_parcel_driver.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 

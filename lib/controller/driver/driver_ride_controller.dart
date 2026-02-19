@@ -311,6 +311,7 @@ class DriverRideController extends GetxController {
   recoverTrip() async {
     isLoading(true);
     final response = await ApiClient.getData(ApiConstant.recoverTripUrl);
+    debugPrint("test Response==========> : ${response.body}");
     if (response.statusCode == 200 || response.statusCode == 201) {
       if (response.body["kind"] == "TRIP") {
         setTripStatus(TripResponseModel.fromJson(response.body));
@@ -363,7 +364,6 @@ class DriverRideController extends GetxController {
         Get.back();
         Get.back();
         Get.back();
-        
       } else {
         debugPrint(response.body.toString());
       }

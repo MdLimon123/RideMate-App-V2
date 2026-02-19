@@ -8,7 +8,6 @@ import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_extension/views/screen/user/home/user_home.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class RatingForParcelDriver extends StatefulWidget {
@@ -44,13 +43,15 @@ class _RatingForParcelDriverState extends State<RatingForParcelDriver> {
                     vertical: 30,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF345983),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: const Color(0xFFE6E6E6)),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, -3),
+                        color: Colors.black.withValues(alpha: 0.08),
+
+                        blurRadius: 4,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
@@ -72,8 +73,8 @@ class _RatingForParcelDriverState extends State<RatingForParcelDriver> {
                           return CustomNetworkImage(
                             imageUrl:
                                 "${ApiConstant.imageBaseUrl}${driver.avatar}",
-                            height: 48,
-                            width: 48,
+                            height: 96,
+                            width: 96,
                             boxShape: BoxShape.circle,
                           );
                         }),
@@ -87,8 +88,8 @@ class _RatingForParcelDriverState extends State<RatingForParcelDriver> {
 
                           return Text(
                             driver?.name ?? "Driver not assigned",
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: AppColors.textColor,
                               fontSize: 24,
                               fontWeight: FontWeight.w500,
                             ),
@@ -96,104 +97,103 @@ class _RatingForParcelDriverState extends State<RatingForParcelDriver> {
                           );
                         }),
                       ),
-
-                      const SizedBox(height: 8),
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset("assets/icons/cycle.svg"),
-                              const SizedBox(width: 4),
-                              const Text(
-                                "Trip",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF333333),
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                _rideController
-                                        .parcelResponse
-                                        .value
-                                        .data
-                                        ?.driver
-                                        ?.tripGivenCount
-                                        .toString() ??
-                                    "0",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF333333),
-                                ),
-                              ),
-
-                              const SizedBox(width: 16),
-                              const Icon(Icons.star, color: Color(0xFF012F64)),
-                              const SizedBox(width: 4),
-                              Text(
-                                _rideController
-                                        .parcelResponse
-                                        .value
-                                        .data
-                                        ?.driver
-                                        ?.rating
-                                        .toString() ??
-                                    "0",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF333333),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 34),
-                      const Center(
-                        child: Text(
-                          "Rate the Driver",
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFFFFFFFF),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Obx(
-                        () => Center(
-                          child: RatingBar.builder(
-                            initialRating: _userProfileController.rating.value,
-                            minRating: 1,
-                            direction: Axis.horizontal,
-                            allowHalfRating: true,
-                            itemCount: 5,
-                            itemSize: 30,
-                            itemPadding: const EdgeInsets.symmetric(
-                              horizontal: 4.0,
-                            ),
-                            itemBuilder: (context, _) =>
-                                const Icon(Icons.star, color: Colors.white),
-                            onRatingUpdate: (rating) {
-                              _userProfileController.updateRating(rating);
-                            },
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
-                const Spacer(),
+
+                const SizedBox(height: 32),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Total Trips",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textColor,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      _rideController
+                              .parcelResponse
+                              .value
+                              .data
+                              ?.driver
+                              ?.tripGivenCount
+                              .toString() ??
+                          "0",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF333333),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Current Ratings",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textColor,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Icon(Icons.star, color: Color(0xFF012F64)),
+                    const SizedBox(width: 4),
+                    Text(
+                      _rideController.parcelResponse.value.data?.driver?.rating
+                              .toString() ??
+                          "0",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textColor,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 34),
+                Center(
+                  child: Text(
+                    "How was your trip with ${_rideController.parcelResponse.value.data!.driver!.name}",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                Obx(
+                  () => Center(
+                    child: RatingBar.builder(
+                      initialRating: _userProfileController.rating.value,
+                      minRating: 1,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemCount: 5,
+                      itemSize: 30,
+                      itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      itemBuilder: (context, _) =>
+                          Icon(Icons.star, color: AppColors.primaryColor),
+                      onRatingUpdate: (rating) {
+                        _userProfileController.updateRating(rating);
+                      },
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 150),
 
                 Row(
                   children: [

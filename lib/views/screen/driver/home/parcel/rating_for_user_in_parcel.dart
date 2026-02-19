@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_extension/controller/driver/driver_profile_controller.dart';
 import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/util/app_colors.dart';
@@ -190,11 +189,13 @@ class _RatingForUserInParcelState extends State<RatingForUserInParcel> {
                 () => CustomButton(
                   loading: _rideController.isLoading.value,
                   onTap: () {
+                    print("rating ====> ${rating.value}");
+
                     _rideController.driverSubmitRating(
                       userId:
                           _rideController.parcelResponse.value.data!.user.id,
                       tripId: _rideController.parcelResponse.value.data!.id,
-                      rating: rating.value,
+                      rating: rating,
                       isTrip: false,
                     );
                   },

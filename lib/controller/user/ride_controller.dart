@@ -111,9 +111,9 @@ class RideController extends GetxController {
     }
   }
 
-   socketConntect() async {
+  socketConntect() async {
     var token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
-  await  SocketService().connect(token);
+    await SocketService().connect(token);
     listenTripAndParcel();
   }
 
@@ -183,10 +183,10 @@ class RideController extends GetxController {
       isLoading(false);
     } else {
       isLoading(false);
-      ApiChecker.checkApi(response);
+      //ApiChecker.checkApi(response);
     }
     isLoading(false);
-    ApiChecker.checkApi(response);
+    //ApiChecker.checkApi(response);
   }
 
   /// =================== CANCEL PARCEL ==================
@@ -222,6 +222,8 @@ class RideController extends GetxController {
 
     final response = await ApiClient.getData(ApiConstant.recoverTripUrl);
 
+    debugPrint("test Response==========> : ${response.body}");
+
     if (response.statusCode == 200 || response.statusCode == 201) {
       if (response.body["kind"] == "TRIP") {
         setTripStatus(TripResponseModel.fromJson(response.body));
@@ -232,7 +234,7 @@ class RideController extends GetxController {
       }
     } else {
       isLoading(false);
-      ApiChecker.checkApi(response);
+      // ApiChecker.checkApi(response);
     }
     isLoading(false);
   }

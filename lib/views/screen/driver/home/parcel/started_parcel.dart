@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
-import 'package:flutter_extension/controller/driver/home_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
@@ -9,7 +8,6 @@ import 'package:flutter_extension/views/screen/driver/home/custom_map_view.dart'
 import 'package:flutter_extension/views/screen/driver/home/parcel/end_parcel_confirmation_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class StartedParcel extends StatefulWidget {
   const StartedParcel({super.key});

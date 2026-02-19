@@ -35,7 +35,7 @@ class _DriverLoginScreenState extends State<DriverLoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 50),
+                const SizedBox(height: 40),
 
                 Text(
                   "login".tr,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_extension/controller/driver/driver_profile_controller.dart';
 import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/util/app_colors.dart';
@@ -73,6 +72,7 @@ class _RatingForUserState extends State<RatingForUser> {
                   ],
                 ),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Center(
                       child: CustomNetworkImage(
