@@ -37,7 +37,7 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 50),
+                const SizedBox(height: 30),
                 Text(
                   "signup".tr,
                   style: TextStyle(
@@ -63,7 +63,7 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                 const SizedBox(height: 12),
                 CustomTextField(
                   controller: passwordTextController,
-               
+
                   isPassword: true,
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -78,7 +78,7 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                 const SizedBox(height: 12),
                 CustomTextField(
                   controller: confirmPasswordController,
-                  keyboardType: TextInputType.number,
+               
                   isPassword: true,
                   validator: (value) {
                     if (value!.isEmpty) {

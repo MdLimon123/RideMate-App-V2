@@ -44,6 +44,11 @@ class SplashController extends GetxController {
     final role = _dataController.role.value;
     final isActive = _dataController.isActive.value;
 
+    print("token ====> $token");
+    print("role ====> $role");
+    print("isActive ====> $isActive");
+    print("selectRole ====> ${_dataController.name.value}");
+
     if (token.isEmpty) {
       Get.offAllNamed(AppRoutes.selectRoleScreen);
       return;

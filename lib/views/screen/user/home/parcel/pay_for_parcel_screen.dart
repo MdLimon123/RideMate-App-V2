@@ -38,8 +38,8 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
     _homeController.calculateDriverETA(
       driverLat: driverLat!,
       driverLng: driverLng!,
-      userLat: userLat!,
-      userLng: userLng!,
+      userLat: userLat ?? 0.0,
+      userLng: userLng ?? 0.0,
     );
     super.initState();
   }

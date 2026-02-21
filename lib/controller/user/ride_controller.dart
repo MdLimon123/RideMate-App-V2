@@ -31,6 +31,12 @@ class RideController extends GetxController {
 
   var isLoading = false.obs;
 
+  @override
+  void onInit() {
+    listenTripAndParcel();
+    super.onInit();
+  }
+
   void setTripStatus(TripResponseModel tripResponseModel) {
     activeStatus.value = tripResponseModel.kind!;
     tripStatus.value = tripResponseModel.data!.status;
@@ -114,11 +120,11 @@ class RideController extends GetxController {
   socketConntect() async {
     var token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
     await SocketService().connect(token);
-    listenTripAndParcel();
   }
 
   /// ============= listen trip/parcel ==================
-  listenTripAndParcel() {
+  listenTripAndParcel() async {
+    await socketConntect();
     SocketService().on("user-trip", (data) {
       debugPrint("test Data : $data");
       final response = data is String ? jsonDecode(data) : data;
