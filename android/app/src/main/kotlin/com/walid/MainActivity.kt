@@ -1,4 +1,4 @@
-package com.walid
+package com.walid.radeef
 
 import io.flutter.embedding.android.FlutterActivity
 

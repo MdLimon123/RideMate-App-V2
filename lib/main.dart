@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/data/api/one_signla_helper.dart';
 import 'package:flutter_extension/theme/dark_theme.dart';
 import 'package:flutter_extension/theme/light_theme.dart';
 import 'package:flutter_extension/util/app_constants.dart';
@@ -13,6 +14,8 @@ import 'helper/route_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await OneSignalHelper.initialize();
 
   await GetStorage.init();
 

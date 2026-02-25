@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/data/api/one_signla_helper.dart';
 import 'package:flutter_extension/data/model/user/recent_destinations.dart';
 import 'package:flutter_extension/views/base/custom_snackbar.dart';
 import 'package:flutter_extension/views/screen/user/home/parcel/show_parcel_amount_screen.dart';
@@ -313,4 +314,25 @@ class UserHomeController extends GetxController {
       driverEta.value = "Unknown";
     }
   }
+
+
+  Future<void> subscribleId() async {
+    String? subscriptionId = await OneSignalHelper.getSubscriptionId();
+
+    if (subscriptionId == null || subscriptionId.isEmpty) {
+      print("OneSignal ID not available");
+    }
+
+    final response = await ApiClient.postData("/profile/onesignal-id", {
+      "onesignal_id": subscriptionId,
+    });
+    if (response.statusCode == 200 || response.statusCode == 201) {
+    } else {
+      showCustomSnackBar(response.statusText, isError: true);
+    }
+
+    print("OneSignal ID: $subscriptionId");
+  }
+
+
 }

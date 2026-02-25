@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/data_controller.dart';
 import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
+import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/data/model/driver/driver_info_model.dart';
 import 'package:flutter_extension/helper/prefs_helper.dart';
 import 'package:flutter_extension/util/app_constants.dart';
@@ -54,6 +56,7 @@ class DriverAuthController extends GetxController {
   }
 
   /// Login
+  ///
   Future<void> login({required String email, required String password}) async {
     isLoading(true);
 
@@ -95,9 +98,16 @@ class DriverAuthController extends GetxController {
 
       showCustomSnackBar(response.statusText, isError: false);
 
-      Future.delayed(const Duration(milliseconds: 300), () async{
+      try {
+        await SocketService().connect(token);
+        debugPrint('✅ Socket connected successfully');
+      } catch (e) {
+        debugPrint('⚠️ Socket connection failed, but continuing login: $e');
+      }
+
+      Future.delayed(const Duration(milliseconds: 300), () async {
         if (driverInfo.driver.isActive) {
-       await  _driverRideController.socketConntect();
+          await _driverRideController.socketConntect();
           Get.offAll(() => const MainDriver());
         } else {
           Get.offAll(() => const DriverVerifyScreen());

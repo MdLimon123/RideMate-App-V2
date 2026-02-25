@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/controller/driver/home_controller.dart';
+import 'package:flutter_extension/data/api/one_signla_helper.dart';
 import 'package:flutter_extension/views/screen/driver/home/finding_request.dart';
 import 'package:flutter_extension/views/screen/driver/home/payment_orver_view.dart';
 import 'package:flutter_extension/views/screen/driver/home/trip/waiting_for_payment.dart';
@@ -22,8 +23,13 @@ class _HomeDriverState extends State<HomeDriver> {
 
   @override
   void initState() {
-  
+    subscribleId();
     super.initState();
+  }
+
+  void subscribleId() async {
+    await _homeController.subscribleId();
+    OneSignalHelper.optIn();
   }
 
   @override

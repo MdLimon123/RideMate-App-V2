@@ -133,6 +133,7 @@ class DriverRideController extends GetxController {
 
   socketConntect() async {
     var token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
+    print("token ====> $token");
     await SocketService().connect(token);
   }
 

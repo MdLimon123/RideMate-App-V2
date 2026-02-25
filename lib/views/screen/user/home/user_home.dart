@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/user/chat_controller.dart';
-import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/controller/user/user_home_controller.dart';
 import 'package:flutter_extension/controller/user/user_profile_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
-import 'package:flutter_extension/data/api/socket_manager.dart';
-import 'package:flutter_extension/util/app_constants.dart';
+import 'package:flutter_extension/data/api/one_signla_helper.dart';
 import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_extension/views/base/get_greeting.dart';
 import 'package:flutter_extension/views/screen/notification/notification_screen.dart';
@@ -15,7 +13,6 @@ import 'package:flutter_extension/views/screen/user/profile/user_profile_screen.
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-import '../../../../helper/prefs_helper.dart';
 
 class UserHome extends StatefulWidget {
   const UserHome({super.key});
@@ -27,20 +24,18 @@ class UserHome extends StatefulWidget {
 class _UserHomeState extends State<UserHome> {
   final _userHomeController = Get.put(UserHomeController());
   final _userProfileController = Get.put(UserProfileController());
-  final _rideController = Get.put(RideController(), permanent: true);
   final _chatController = Get.put(ChatController());
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _userHomeController.subscribleId();
+      OneSignalHelper.optIn();
       _userProfileController.fetchUserInfo();
     });
-  
 
     super.initState();
   }
-
- 
 
   @override
   Widget build(BuildContext context) {
@@ -263,7 +258,8 @@ class _UserHomeState extends State<UserHome> {
                         () => ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: _userHomeController.recentDestinations.length,
+                          itemCount:
+                              _userHomeController.recentDestinations.length,
                           separatorBuilder: (_, _) => const SizedBox(height: 6),
                           itemBuilder: (context, index) {
                             final dest =
@@ -313,7 +309,6 @@ class _UserHomeState extends State<UserHome> {
                           },
                         ),
                       ),
-
 
                       const SizedBox(height: 129),
                       InkWell(
