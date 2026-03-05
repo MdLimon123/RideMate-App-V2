@@ -108,7 +108,7 @@ class SocketService {
   /// ✅ CONNECT (ASYNC SAFE)
   Future<void> connect(String token) async {
     // Prevent duplicate connection
-    final cleanToken = token.trim();
+    //final cleanToken = token.trim();
     if (socket != null && socket!.connected) {
       debugPrint('⚠️ Socket already connected');
       return;
@@ -126,8 +126,7 @@ class SocketService {
           .setReconnectionAttempts(20)
           .setReconnectionDelay(2000)
           .setReconnectionDelayMax(8000)
-          //.setAuth({"token": token})
-          .setAuth({"token": "Bearer $cleanToken"})
+          .setAuth({"token": "$token"})
           .build(),
     );
 

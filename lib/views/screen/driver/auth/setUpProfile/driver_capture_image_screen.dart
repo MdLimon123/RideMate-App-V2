@@ -7,6 +7,7 @@ import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_loading.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class DriverCaptureImageScreen extends StatefulWidget {
   const DriverCaptureImageScreen({super.key});
@@ -50,15 +51,44 @@ class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Obx(() {
-          // if (_driverSetupController.isPermissionGranted.value) {
-          //   return Center(
-          //     child: Text(
-          //       "Camera permission required to continue.",
-          //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          //       textAlign: TextAlign.center,
-          //     ),
-          //   );
-          // }
+          // Permission denied state
+          if (_driverSetupController.isPermissionDenied.value) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.camera_alt_outlined,
+                      size: 64, color: Color(0xFF676769)),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Camera permission is required to verify your identity.",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  CustomButton(
+                    onTap: () {
+                      _driverSetupController.requestCameraPermission();
+                    },
+                    text: "Allow Camera Access",
+                    width: 220,
+                  ),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () => openAppSettings(),
+                    child: const Text(
+                      "Open Settings",
+                      style: TextStyle(
+                        color: Colors.indigo,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
 
           // Camera initializing
           if (_driverSetupController.isCameraInitialized.value) {

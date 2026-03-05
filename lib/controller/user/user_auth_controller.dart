@@ -72,16 +72,7 @@ class UserAuthController extends GetxController {
       await PrefsHelper.setString(AppConstants.bearerTokenKEN, token);
       await PrefsHelper.setUserInfo(response.body);
 
-      /// Socket connection
-      // SocketService().connect(token);
-      // TripStateController.to.setRole(driver: false);
-
-      // // Init socket (if not already)
-      // var tripSocketController = Get.put(TripSocketController());
-      // var parcelController = Get.put(ParcelController());
-
-      // tripSocketController.allUserListeners();
-      // parcelController.allParcelUserListeners();
+      
 
       _dataController.setProfileData(
         isActiveD: response.body['user']['is_active'],
