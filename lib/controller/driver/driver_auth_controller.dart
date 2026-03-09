@@ -78,17 +78,7 @@ class DriverAuthController extends GetxController {
       await PrefsHelper.setString(AppConstants.bearerTokenKEN, token);
       await PrefsHelper.setUserInfo(response.body);
 
-      /// Socket connection
-      // SocketService().connect(token);
-      // TripStateController.to.setRole(driver: false);
-
-      // // Init socket (if not already)
-      // var tripSocketController = Get.put(TripSocketController());
-      // var parcelController = Get.put(ParcelController());
-
-      // tripSocketController.allUserListeners();
-      // parcelController.allParcelUserListeners();
-
+    
       _dataController.setProfileData(
         isActiveD: response.body['user']['is_active'],
         idD: response.body['user']['id'],
@@ -99,7 +89,7 @@ class DriverAuthController extends GetxController {
       showCustomSnackBar(response.statusText, isError: false);
 
       try {
-        await SocketService().connect(token);
+        //await SocketService().connect(token);
         debugPrint('✅ Socket connected successfully');
       } catch (e) {
         debugPrint('⚠️ Socket connection failed, but continuing login: $e');

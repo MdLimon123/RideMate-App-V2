@@ -83,10 +83,10 @@ class UserAuthController extends GetxController {
 
       showCustomSnackBar(response.statusText, isError: false);
 
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(const Duration(milliseconds: 300), () async{
         if (userInfo.user.isActive) {
           Get.offAll(() => const UserHome());
-          _rideController.socketConntect();
+        await  _rideController.socketConntect();
         } else {
           Get.offAll(() => const UserVerifyScreen());
         }

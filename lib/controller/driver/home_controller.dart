@@ -188,13 +188,12 @@ class DriverHomeController extends GetxController {
     debugPrint('📍 LocationController FULLY DISPOSED');
   }
 
-
-
   Future<void> subscribleId() async {
     String? subscriptionId = await OneSignalHelper.getSubscriptionId();
 
     if (subscriptionId == null || subscriptionId.isEmpty) {
       print("OneSignal ID not available");
+      return;
     }
 
     final response = await ApiClient.postData("/profile/onesignal-id", {
@@ -207,6 +206,4 @@ class DriverHomeController extends GetxController {
 
     print("OneSignal ID: $subscriptionId");
   }
-
-
 }

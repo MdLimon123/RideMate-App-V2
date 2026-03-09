@@ -171,12 +171,17 @@ class ApiClient extends GetxService {
       debugPrint('====> API Body: $body with ${multipartBody.length} picture');
       var request = http.MultipartRequest('PUT', Uri.parse(baseUrl + uri));
       request.headers.addAll(headers ?? _mainHeaders!);
+      // for (MultipartBody element in multipartBody) {
+      //   for (MultipartBody element in multipartBody) {
+      //     request.files.add(
+      //       await http.MultipartFile.fromPath(element.key, element.file.path),
+      //     );
+      //   }
+      // }
       for (MultipartBody element in multipartBody) {
-        for (MultipartBody element in multipartBody) {
-          request.files.add(
-            await http.MultipartFile.fromPath(element.key, element.file.path),
-          );
-        }
+        request.files.add(
+          await http.MultipartFile.fromPath(element.key, element.file.path),
+        );
       }
       request.fields.addAll(body);
       http.Response response = await http.Response.fromStream(

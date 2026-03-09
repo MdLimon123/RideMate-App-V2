@@ -129,9 +129,11 @@ class RideController extends GetxController {
       debugPrint("test Data : $data");
       final response = data is String ? jsonDecode(data) : data;
       if (response["kind"] == "TRIP") {
-        setTripStatus(TripResponseModel.fromJson(data));
+        //setTripStatus(TripResponseModel.fromJson(data));
+        setTripStatus(TripResponseModel.fromJson(response));
       } else if (response["kind"] == "PARCEL") {
-        setParcelStatus(ParcelResponseModel.fromJson(data));
+        //setParcelStatus(ParcelResponseModel.fromJson(data));
+        setParcelStatus(ParcelResponseModel.fromJson(response));
       }
     });
   }
