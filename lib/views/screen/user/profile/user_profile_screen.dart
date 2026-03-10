@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/user/user_profile_controller.dart';
+import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/helper/prefs_helper.dart';
 import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
@@ -258,12 +260,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         Expanded(
                                           child: InkWell(
                                             onTap: () async {
+                                              SocketService().disconnect();
                                               await PrefsHelper.remove(
                                                 AppConstants.bearerTokenKEN,
                                               );
                                               await PrefsHelper.remove("id");
                                               await PrefsHelper.remove("role");
-                                              Get.to(
+                                              await PrefsHelper.remove("user");
+                                              await PrefsHelper.remove("is_active");
+                                              await PrefsHelper.remove("name");
+                                              await ApiClient.refreshToken();
+                                              Get.offAll(
                                                 () => const SelectRoleScreen(),
                                               );
                                             },

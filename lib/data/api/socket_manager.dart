@@ -122,6 +122,8 @@ class SocketService {
       'https://v2.radeefz.com',
       IO.OptionBuilder()
           .setTransports(['websocket'])
+          .disableAutoConnect()
+          .enableForceNewConnection()
           .enableReconnection()
           .setReconnectionAttempts(20)
           .setReconnectionDelay(2000)

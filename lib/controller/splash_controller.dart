@@ -67,7 +67,9 @@ class SplashController extends GetxController {
 
     if (role == 'USER') {
       await _rideController.recoverTrip();
-      await _rideController.socketConntect();
+      /// add new condition
+      await _rideController.listenTripAndParcel();
+      
 
       /// add new condition
 
@@ -80,7 +82,7 @@ class SplashController extends GetxController {
         return;
       }
     } else if (role == 'DRIVER') {
-      await _driverRideController.socketConntect();
+      await _driverRideController.listenDriverRide();
       Get.offAll(() => const MainDriver());
     }
   }

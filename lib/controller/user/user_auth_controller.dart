@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/data_controller.dart';
 import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
@@ -72,7 +73,8 @@ class UserAuthController extends GetxController {
       await PrefsHelper.setString(AppConstants.bearerTokenKEN, token);
       await PrefsHelper.setUserInfo(response.body);
 
-      
+      /// Force refresh ApiClient headers with new token
+      await ApiClient.refreshToken();
 
       _dataController.setProfileData(
         isActiveD: response.body['user']['is_active'],
@@ -86,7 +88,11 @@ class UserAuthController extends GetxController {
       Future.delayed(const Duration(milliseconds: 300), () async{
         if (userInfo.user.isActive) {
           Get.offAll(() => const UserHome());
-        await  _rideController.socketConntect();
+          try {
+            await _rideController.listenTripAndParcel();
+          } catch (e) {
+            debugPrint('⚠️ Socket connection failed, but continuing: $e');
+          }
         } else {
           Get.offAll(() => const UserVerifyScreen());
         }

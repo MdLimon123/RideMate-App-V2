@@ -164,7 +164,7 @@ class _RequestedTripState extends State<RequestedTrip> {
               ),
             ),
 
-            const SizedBox(height: 120),
+            const SizedBox(height: 100),
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),

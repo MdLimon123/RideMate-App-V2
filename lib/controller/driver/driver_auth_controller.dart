@@ -78,7 +78,9 @@ class DriverAuthController extends GetxController {
       await PrefsHelper.setString(AppConstants.bearerTokenKEN, token);
       await PrefsHelper.setUserInfo(response.body);
 
-    
+      /// Force refresh ApiClient headers with new token
+      await ApiClient.refreshToken();
+
       _dataController.setProfileData(
         isActiveD: response.body['user']['is_active'],
         idD: response.body['user']['id'],
@@ -88,16 +90,13 @@ class DriverAuthController extends GetxController {
 
       showCustomSnackBar(response.statusText, isError: false);
 
-      try {
-        //await SocketService().connect(token);
-        debugPrint('✅ Socket connected successfully');
-      } catch (e) {
-        debugPrint('⚠️ Socket connection failed, but continuing login: $e');
-      }
-
       Future.delayed(const Duration(milliseconds: 300), () async {
         if (driverInfo.driver.isActive) {
-          await _driverRideController.socketConntect();
+          try {
+            await _driverRideController.listenDriverRide();
+          } catch (e) {
+            debugPrint('⚠️ Socket connection failed, but continuing: $e');
+          }
           Get.offAll(() => const MainDriver());
         } else {
           Get.offAll(() => const DriverVerifyScreen());

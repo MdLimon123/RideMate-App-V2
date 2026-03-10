@@ -263,7 +263,7 @@ class _StartedTripState extends State<StartedTrip> {
                   ],
                 ),
               ),
-              const SizedBox(height: 120),
+              const SizedBox(height: 100),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(

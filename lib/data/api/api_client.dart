@@ -24,11 +24,20 @@ class ApiClient extends GetxService {
   static Map<String, String>? _mainHeaders;
 
   static Future<void> loadPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
     token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
     _mainHeaders = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
+  }
+
+  /// Force reload token and headers (call after login/logout)
+  static Future<void> refreshToken() async {
+    _prefs = null;
+    token = null;
+    _mainHeaders = null;
+    await loadPrefs();
   }
 
   static Future<Response> getData(
