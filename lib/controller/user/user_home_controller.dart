@@ -139,6 +139,8 @@ class UserHomeController extends GetxController {
 
         pickController.text =
             "${place.street}, ${place.locality}, ${place.administrativeArea}";
+        pickAddress.value = pickController.text;
+        pickCoordinates.value = [position.latitude, position.longitude];
       }
     }
   }

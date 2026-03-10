@@ -201,7 +201,7 @@ class DriverHomeController extends GetxController {
     });
     if (response.statusCode == 200 || response.statusCode == 201) {
     } else {
-      showCustomSnackBar(response.statusText, isError: true);
+     // showCustomSnackBar(response.statusText, isError: true);
     }
 
     print("OneSignal ID: $subscriptionId");

@@ -43,6 +43,7 @@ class UserAuthController extends GetxController {
         AppConstants.bearerTokenKEN,
         response.body['access_token'],
       );
+      await ApiClient.refreshToken();
       print("status text ====> ${response.statusText}");
       showCustomSnackBar(response.statusText, isError: false);
       Get.to(() => const UserTermsComditionScreen());
@@ -146,6 +147,7 @@ class UserAuthController extends GetxController {
         AppConstants.bearerTokenKEN,
         response.body['reset_token'],
       );
+      await ApiClient.refreshToken();
       showCustomSnackBar(response.statusText, isError: false);
       Get.to(() => const UserResetPasswordScreen());
     } else {
