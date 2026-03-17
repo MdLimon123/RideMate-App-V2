@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
-import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
@@ -42,8 +41,9 @@ class _LiveTripMapState extends State<LiveTripMap> {
     _drawPickupToDestination();
     _listenDriverLocation();
 
-    if (_rideController.tripResponse.value.data!.status != TripStatus.STARTED)
+    if (_rideController.tripResponse.value.data!.status != TripStatus.STARTED) {
       _drawDriverToPickup();
+    }
     handleTripStart();
     super.initState();
   }

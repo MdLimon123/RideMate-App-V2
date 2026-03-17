@@ -10,7 +10,6 @@ import 'package:flutter_extension/views/base/custom_loading.dart';
 import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_extension/views/screen/Splash/select_role_screen.dart';
 import 'package:flutter_extension/views/screen/driver/profile/about_us_screen.dart';
-import 'package:flutter_extension/views/screen/driver/profile/change_password_screen.dart';
 import 'package:flutter_extension/views/screen/driver/profile/driver_change_password.dart';
 import 'package:flutter_extension/views/screen/driver/profile/edit_profile_screen.dart';
 import 'package:flutter_extension/views/screen/driver/profile/privacy_policy_screen.dart';

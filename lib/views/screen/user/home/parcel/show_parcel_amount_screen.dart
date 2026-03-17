@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
-
-import 'package:flutter_extension/views/screen/user/home/parcel/pay_for_parcel_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 

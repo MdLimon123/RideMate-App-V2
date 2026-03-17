@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_extension/data/api/api_checker.dart';
 import 'package:flutter_extension/data/api/api_client.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/driver/parcel_end_controller.dart';
-import 'package:flutter_extension/controller/user/user_profile_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_loading.dart';

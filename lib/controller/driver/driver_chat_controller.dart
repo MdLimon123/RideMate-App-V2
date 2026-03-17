@@ -3,7 +3,6 @@ import 'package:flutter_extension/controller/data_controller.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/data/model/message_model.dart';
-import 'package:flutter_extension/data/model/terms_model.dart';
 import 'package:flutter_extension/views/screen/driver/chat/driver_inbox_screen.dart'
     hide Message;
 import 'package:get/get.dart';

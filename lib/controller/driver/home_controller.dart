@@ -3,11 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/api/one_signla_helper.dart';
-
 import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/data/model/driver/home_model.dart';
-import 'package:flutter_extension/views/base/custom_snackbar.dart';
-
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
