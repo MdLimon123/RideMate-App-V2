@@ -10,7 +10,6 @@ import 'package:flutter_extension/views/screen/user/auth/user_login_screen.dart'
 import 'package:flutter_extension/views/screen/user/home/user_home.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class SplashController extends GetxController {
   var selectRole = "".obs;
@@ -100,23 +99,36 @@ class SplashController extends GetxController {
   }
 
   Future<Position?> getCurrentLocation() async {
-    PermissionStatus permission = await Permission.location.status;
-
-    if (permission.isDenied || permission.isPermanentlyDenied) {
-      permission = await Permission.location.request();
-      if (!permission.isGranted) {
+    try {
+      // Step 1: Check if location service is enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        await Geolocator.openLocationSettings();
         return null;
       }
-    }
 
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      await Geolocator.openLocationSettings();
+      // Step 2: Check permission
+      LocationPermission permission = await Geolocator.checkPermission();
+
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return null;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        await Geolocator.openAppSettings();
+        return null;
+      }
+
+      // Step 3: Get current position
+      return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+    } catch (e) {
+      print("Location error: $e");
       return null;
     }
-
-    return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
   }
 }

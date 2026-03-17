@@ -126,8 +126,9 @@ class SocketService {
           .setReconnectionAttempts(20)
           .setReconnectionDelay(2000)
           .setReconnectionDelayMax(8000)
-          //.setAuth({"token": token})
-          .setAuth({"token": "Bearer $cleanToken"})
+          .setExtraHeaders({
+            'Authorization': 'Bearer $cleanToken',
+          })
           .build(),
     );
 

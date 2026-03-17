@@ -51,6 +51,7 @@ class UserSetupProfileController extends GetxController {
     }
   }
 
+ 
   Future<bool> requestCameraPermission() async {
     var status = await Permission.camera.status;
 
@@ -119,6 +120,8 @@ class UserSetupProfileController extends GetxController {
     }
   }
 
+
+  
   ///  Step 3: Capture selfie safely
   Future<void> captureSelfie() async {
     final controller = cameraController;

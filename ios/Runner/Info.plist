@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>radeef</string>
+	<string>Radeef</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -26,25 +26,22 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>GMSApiKey</key>
 	<string>AIzaSyBRiTsXAZERl87rSPcgdqw3R-EOAcJ-ehw</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>http</string>
-		<string>https</string>
-		<string>mailto</string>
-		<string>tel</string>
-	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to the camera to take photos and videos.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app uses your location to enable core functionality, including background location access.</string>
+	<string>This app needs location access for better experience.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs location access even in the background.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>This app needs location access to function properly.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to your location to provide location-based services.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires access to the microphone to record audio.</string>
+	<string>This app needs location access to show maps.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to capture photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your photo library to select images.</string>
+	<string>This app needs access to your photo library.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to save photos to your gallery.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -64,7 +61,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>io.flutter.embedded_views_preview</key>
-	<true/>
 </dict>
 </plist>

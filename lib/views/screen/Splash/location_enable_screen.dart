@@ -56,6 +56,7 @@ class _LocationEnableScreenState extends State<LocationEnableScreen> {
             Obx(
               () => CustomButton(
                 loading: _splashController.isLoading.value,
+              
                 onTap: () async {
                   final position = await _splashController
                       .getLocationWithLoading();

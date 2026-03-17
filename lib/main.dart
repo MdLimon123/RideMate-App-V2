@@ -4,6 +4,8 @@ import 'package:flutter_extension/theme/dark_theme.dart';
 import 'package:flutter_extension/theme/light_theme.dart';
 import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/util/message.dart';
+import 'package:flutter_extension/views/screen/driver/auth/setUpProfile/driver_capture_image_screen.dart';
+import 'package:flutter_extension/views/screen/user/auth/setUpProfile/user_capture_image_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -53,6 +55,7 @@ class MyApp extends StatelessWidget {
                   transitionDuration: const Duration(milliseconds: 500),
                   getPages: AppRoutes.page,
                   initialRoute: AppRoutes.splashScreen,
+              
                 );
               },
             );

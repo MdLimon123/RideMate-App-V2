@@ -77,7 +77,7 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
               ),
               Positioned(
                 bottom: 5,
-                right: 100,
+                right: 140,
                 child: InkWell(
                   onTap: () {
                     _driverSetupController.pickDriverImage();

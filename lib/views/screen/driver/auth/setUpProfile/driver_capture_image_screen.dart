@@ -30,36 +30,29 @@ class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Row(
-          children: [
-            const Icon(Icons.arrow_back_ios, color: Color(0xFF676769)),
-            Image.asset('assets/images/logo.png'),
-            const Spacer(),
-            const Text(
-              "4 Of 4",
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Get.back(),
+        ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: Text(
+              '3 Of 3',
               style: TextStyle(
                 color: Color(0xFF012F64),
-                fontSize: 16,
                 fontWeight: FontWeight.w500,
+                fontSize: 16,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Obx(() {
-          // if (_driverSetupController.isPermissionGranted.value) {
-          //   return Center(
-          //     child: Text(
-          //       "Camera permission required to continue.",
-          //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          //       textAlign: TextAlign.center,
-          //     ),
-          //   );
-          // }
-
           // Camera initializing
           if (_driverSetupController.isCameraInitialized.value) {
             return Column(
@@ -88,7 +81,9 @@ class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
                 const SizedBox(height: 20),
               ],
             );
-          } else if (_driverSetupController.capturedImage != null) {
+          }
+          /// Selfie captured ✅
+          else if (_driverSetupController.capturedImage != null) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

@@ -249,6 +249,7 @@ class DriverProfileSetupController extends GetxController {
     isLoading(false);
   }
 
+   
   Future<bool> requestCameraPermission() async {
     var status = await Permission.camera.status;
 
@@ -316,6 +317,9 @@ class DriverProfileSetupController extends GetxController {
       Get.snackbar("Camera Error", e.toString());
     }
   }
+
+
+
 
   ///  Step 3: Capture selfie safely
   Future<void> captureSelfie() async {
