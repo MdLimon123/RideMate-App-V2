@@ -248,42 +248,46 @@ class DriverProfileSetupController extends GetxController {
     isLoading(false);
   }
 
-Future<bool> requestCameraPermission() async {
-  var status = await Permission.camera.status;
+  Future<bool> requestCameraPermission() async {
+    var status = await Permission.camera.status;
 
-  // ✅ iOS ও Android উভয়ের জন্য একই লজিক
-  if (status.isGranted) {
-    isPermissionGranted.value = true;
-    await initCamera();
-    return true;
-  } 
-  else if (status.isDenied || status.isLimited) {
-    status = await Permission.camera.request();
-    if (status.isGranted) {
-      isPermissionGranted.value = true;
-      await Future.delayed(const Duration(milliseconds: 200)); // iOS-এর জন্য ছোট ডিলে
+    if (Platform.isIOS) {
       await initCamera();
-      return true;
     } else {
-      Get.snackbar(
-        "Permission Denied",
-        "Camera permission is required to verify your identity.",
-      );
-      return false;
+      if (status.isGranted) {
+        isPermissionGranted.value = true;
+        // if (Platform.isIOS) {
+        //   await Future.delayed(const Duration(milliseconds: 200));
+        // }
+        await initCamera();
+        return true;
+      } else if (status.isDenied) {
+        status = await Permission.camera.request();
+        if (status.isGranted) {
+          isPermissionGranted.value = true;
+          if (Platform.isAndroid) {
+            await Future.delayed(const Duration(milliseconds: 200));
+          }
+          await initCamera();
+          return true;
+        } else {
+          Get.snackbar(
+            "Permission Denied",
+            "Camera permission is required to verify your identity.",
+          );
+          return false;
+        }
+      } else if (status.isPermanentlyDenied) {
+        Get.snackbar(
+          "Permission Denied",
+          "Please enable camera permission from iOS settings.",
+        );
+        return false;
+      }
     }
-  } 
-  else if (status.isPermanentlyDenied) {
-    Get.snackbar(
-      "Permission Required",
-      "Please enable camera permission from Settings > Your App > Camera",
-    );
-    // Optional: Open app settings
-    // await openAppSettings();
+
     return false;
   }
-
-  return false;
-}
 
   Future<void> initCamera() async {
     try {
@@ -313,7 +317,14 @@ Future<bool> requestCameraPermission() async {
   }
 
 
-  
+
+
+@override
+void onClose() {
+  cameraController?.dispose();
+  cameraController = null;
+  super.onClose();
+}
   
   ///  Step 3: Capture selfie safely
   Future<void> captureSelfie() async {
@@ -358,9 +369,5 @@ Future<bool> requestCameraPermission() async {
     }
   }
 
-  @override
-  void onClose() {
-    cameraController?.dispose();
-    super.onClose();
-  }
+ 
 }

@@ -52,43 +52,44 @@ class UserSetupProfileController extends GetxController {
     }
   }
 
- 
-  Future<bool> requestCameraPermission() async {
-    isPermissionDenied.value = false;
+ Future<bool> requestCameraPermission() async {
     var status = await Permission.camera.status;
 
-    if (status.isGranted) {
-      isPermissionGranted.value = true;
+    if (Platform.isIOS) {
       await initCamera();
-      return true;
-    }
-
-    if (status.isDenied) {
-      status = await Permission.camera.request();
+    } else {
       if (status.isGranted) {
         isPermissionGranted.value = true;
-        if (Platform.isAndroid) {
-          await Future.delayed(const Duration(milliseconds: 200));
-        }
+        // if (Platform.isIOS) {
+        //   await Future.delayed(const Duration(milliseconds: 200));
+        // }
         await initCamera();
         return true;
+      } else if (status.isDenied) {
+        status = await Permission.camera.request();
+        if (status.isGranted) {
+          isPermissionGranted.value = true;
+          if (Platform.isAndroid) {
+            await Future.delayed(const Duration(milliseconds: 200));
+          }
+          await initCamera();
+          return true;
+        } else {
+          Get.snackbar(
+            "Permission Denied",
+            "Camera permission is required to verify your identity.",
+          );
+          return false;
+        }
+      } else if (status.isPermanentlyDenied) {
+        Get.snackbar(
+          "Permission Denied",
+          "Please enable camera permission from iOS settings.",
+        );
+        return false;
       }
     }
 
-    if (status.isPermanentlyDenied) {
-      isPermissionDenied.value = true;
-      Get.snackbar(
-        "Permission Denied",
-        "Please enable camera permission from settings.",
-      );
-      return false;
-    }
-
-    isPermissionDenied.value = true;
-    Get.snackbar(
-      "Permission Denied",
-      "Camera permission is required to verify your identity.",
-    );
     return false;
   }
 

@@ -223,6 +223,120 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/delete.svg",
+                                      height: 48,
+                                      width: 48,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    const Center(
+                                      child: Text(
+                                        "Delete Account",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFF333333),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Center(
+                                      child: Text(
+                                        "Are you sure you want to delete your account? This action cannot be undone.",
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color(0xFF87878A),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: InkWell(
+                                            onTap: () async {
+                                              Get.back();
+                                            },
+                                            child: Container(
+                                              width: double.infinity,
+                                              height: 52,
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFE6E6E6),
+                                                borderRadius:
+                                                    BorderRadius.circular(24),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "cancel".tr,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: Color(0xFF333333),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 33),
+                                        Expanded(
+                                          child: CustomButton(
+                                            onTap: () async {
+                                              final isDeleted =
+                                                  await _driverProfileController
+                                                      .deleteUserAccount();
+                                              if (isDeleted) {
+                                                Get.back();
+                                                SocketService().disconnect();
+                                                await PrefsHelper.remove(
+                                                  AppConstants.bearerTokenKEN,
+                                                );
+                                                await PrefsHelper.remove("id");
+                                                await PrefsHelper.remove("role");
+                                                await PrefsHelper.remove("user");
+                                                await PrefsHelper.remove(
+                                                  "is_active",
+                                                );
+                                                await PrefsHelper.remove("name");
+                                                await ApiClient.refreshToken();
+                                                Get.offAll(
+                                                  () =>
+                                                      const SelectRoleScreen(),
+                                                );
+                                              }
+                                            },
+                                            text: "Delete",
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                          image: "assets/icons/delete.svg",
+                          title: "Delete Account",
+                        ),
+
+                        _customTile(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 32,
+                                ),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFFFFFFF),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
                                     Center(
                                       child: Text(
                                         "doYouHaveLogOut".tr,
@@ -246,7 +360,9 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                                               await PrefsHelper.remove("id");
                                               await PrefsHelper.remove("role");
                                               await PrefsHelper.remove("user");
-                                              await PrefsHelper.remove("is_active");
+                                              await PrefsHelper.remove(
+                                                "is_active",
+                                              );
                                               await PrefsHelper.remove("name");
                                               await ApiClient.refreshToken();
                                               Get.offAll(
