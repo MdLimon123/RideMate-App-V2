@@ -108,7 +108,7 @@ class SocketService {
   /// ✅ CONNECT (ASYNC SAFE)
   Future<void> connect(String token) async {
     // Prevent duplicate connection
-    final cleanToken = token.trim();
+    //final cleanToken = token.trim();
     if (socket != null && socket!.connected) {
       debugPrint('⚠️ Socket already connected');
       return;
@@ -122,13 +122,15 @@ class SocketService {
       'https://v2.radeefz.com',
       IO.OptionBuilder()
           .setTransports(['websocket'])
+          .disableAutoConnect()
+          .enableForceNewConnection()
           .enableReconnection()
           .setReconnectionAttempts(20)
           .setReconnectionDelay(2000)
           .setReconnectionDelayMax(8000)
-          .setExtraHeaders({
-            'Authorization': 'Bearer $cleanToken',
-          })
+
+          .setAuth({"token": "$token"})
+
           .build(),
     );
 

@@ -1,14 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/model/driver/driver_profile_model.dart';
 import 'package:flutter_extension/data/model/privacy_police_model.dart';
 import 'package:flutter_extension/data/model/terms_model.dart';
 import 'package:flutter_extension/util/image_utils.dart';
 import 'package:flutter_extension/views/base/custom_snackbar.dart';
-import 'package:flutter_extension/views/screen/driver/main/main_driver.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -31,7 +29,7 @@ class DriverProfileController extends GetxController {
 
   final RxDouble rating = 0.0.obs;
 
-  final _rideController = Get.find<DriverRideController>();
+
 
   Rx<File?> driverProfileImage = Rx<File?>(null);
 

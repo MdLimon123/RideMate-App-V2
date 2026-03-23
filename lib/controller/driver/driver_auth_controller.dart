@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/data_controller.dart';
 import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
-import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/data/model/driver/driver_info_model.dart';
 import 'package:flutter_extension/helper/prefs_helper.dart';
 import 'package:flutter_extension/util/app_constants.dart';
@@ -45,6 +44,7 @@ class DriverAuthController extends GetxController {
         AppConstants.bearerTokenKEN,
         response.body['access_token'],
       );
+      await ApiClient.refreshToken();
       print("status text ====> ${response.statusText}");
       showCustomSnackBar(response.statusText, isError: false);
       Get.to(() => const DriverTermsConditionScreen());
@@ -78,7 +78,10 @@ class DriverAuthController extends GetxController {
       await PrefsHelper.setString(AppConstants.bearerTokenKEN, token);
       await PrefsHelper.setUserInfo(response.body);
 
-      
+
+      /// Force refresh ApiClient headers with new token
+      await ApiClient.refreshToken();
+
 
       _dataController.setProfileData(
         isActiveD: response.body['user']['is_active'],
@@ -89,16 +92,13 @@ class DriverAuthController extends GetxController {
 
       showCustomSnackBar(response.statusText, isError: false);
 
-      try {
-        await SocketService().connect(token);
-        debugPrint('✅ Socket connected successfully');
-      } catch (e) {
-        debugPrint('⚠️ Socket connection failed, but continuing login: $e');
-      }
-
       Future.delayed(const Duration(milliseconds: 300), () async {
         if (driverInfo.driver.isActive) {
-          await _driverRideController.socketConntect();
+          try {
+            await _driverRideController.listenDriverRide();
+          } catch (e) {
+            debugPrint('⚠️ Socket connection failed, but continuing: $e');
+          }
           Get.offAll(() => const MainDriver());
         } else {
           Get.offAll(() => const DriverVerifyScreen());
@@ -153,6 +153,7 @@ class DriverAuthController extends GetxController {
         AppConstants.bearerTokenKEN,
         response.body['reset_token'],
       );
+      await ApiClient.refreshToken();
       showCustomSnackBar(response.statusText, isError: false);
       Get.to(() => const ResetPasswordScreen());
     } else {

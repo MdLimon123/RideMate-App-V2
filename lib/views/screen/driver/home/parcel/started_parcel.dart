@@ -278,7 +278,7 @@ class _StartedParcelState extends State<StartedParcel> {
                 ],
               ),
             ),
-            const SizedBox(height: 120),
+            const SizedBox(height: 100),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
@@ -336,7 +336,7 @@ class _StartedParcelState extends State<StartedParcel> {
                         },
                         text: "Delived Parcel",
                         loading: _driverRideController.isLoading.value,
-                        textStyle: TextStyle(
+                        textStyle: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: Colors.white,
@@ -353,64 +353,68 @@ class _StartedParcelState extends State<StartedParcel> {
     );
   }
 
-  void _showEndTripDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          title: const Text(
-            "End Trip",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: const Text(
-            "Are you sure you want to end this trip?",
-            style: TextStyle(fontSize: 16),
-          ),
-          actionsPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
-          ),
-          actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.grey[700],
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-              ),
-              child: const Text("Cancel"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryColor,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Text(
-                "End Trip",
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                // Get.find<DriverRideController>().endParcel();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _showEndTripDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(20.0),
+  //         ),
+  //         title: const Text(
+  //           "End Trip",
+  //           style: TextStyle(fontWeight: FontWeight.bold),
+  //         ),
+  //         content: const Text(
+  //           "Are you sure you want to end this trip?",
+  //           style: TextStyle(fontSize: 16),
+  //         ),
+  //         actionsPadding: const EdgeInsets.symmetric(
+  //           horizontal: 16,
+  //           vertical: 8,
+  //         ),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             style: TextButton.styleFrom(
+  //               foregroundColor: Colors.grey[700],
+  //               padding: const EdgeInsets.symmetric(
+  //                 horizontal: 20,
+  //                 vertical: 12,
+  //               ),
+  //             ),
+  //             child: const Text("Cancel"),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //           ElevatedButton(
+  //             style: ElevatedButton.styleFrom(
+  //               backgroundColor: AppColors.primaryColor,
+  //               padding: const EdgeInsets.symmetric(
+  //                 horizontal: 20,
+  //                 vertical: 12,
+  //               ),
+  //               shape: RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.circular(10),
+  //               ),
+  //             ),
+  //             child: const Text(
+  //               "End Trip",
+  //               style: TextStyle(color: Colors.white),
+  //             ),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //               // Get.find<DriverRideController>().endParcel();
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+
+
+
+
 }

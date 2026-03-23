@@ -24,11 +24,20 @@ class ApiClient extends GetxService {
   static Map<String, String>? _mainHeaders;
 
   static Future<void> loadPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
     token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
     _mainHeaders = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
+  }
+
+  /// Force reload token and headers (call after login/logout)
+  static Future<void> refreshToken() async {
+    _prefs = null;
+    token = null;
+    _mainHeaders = null;
+    await loadPrefs();
   }
 
   static Future<Response> getData(
@@ -171,12 +180,17 @@ class ApiClient extends GetxService {
       debugPrint('====> API Body: $body with ${multipartBody.length} picture');
       var request = http.MultipartRequest('PUT', Uri.parse(baseUrl + uri));
       request.headers.addAll(headers ?? _mainHeaders!);
+      // for (MultipartBody element in multipartBody) {
+      //   for (MultipartBody element in multipartBody) {
+      //     request.files.add(
+      //       await http.MultipartFile.fromPath(element.key, element.file.path),
+      //     );
+      //   }
+      // }
       for (MultipartBody element in multipartBody) {
-        for (MultipartBody element in multipartBody) {
-          request.files.add(
-            await http.MultipartFile.fromPath(element.key, element.file.path),
-          );
-        }
+        request.files.add(
+          await http.MultipartFile.fromPath(element.key, element.file.path),
+        );
       }
       request.fields.addAll(body);
       http.Response response = await http.Response.fromStream(

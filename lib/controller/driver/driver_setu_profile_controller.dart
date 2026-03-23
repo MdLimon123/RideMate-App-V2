@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
@@ -29,6 +28,7 @@ class DriverProfileSetupController extends GetxController {
   RxBool isCameraInitialized = false.obs;
   XFile? capturedImage;
   RxBool isPermissionGranted = false.obs;
+  RxBool isPermissionDenied = false.obs;
 
   var selectedGender = ''.obs;
 
@@ -55,7 +55,6 @@ class DriverProfileSetupController extends GetxController {
   }
 
   /// Pick nid image front camera or gallery
-  ///
 
   Future<void> pickVFrontImage({bool fromCamera = false}) async {
     final pickedFile = await ImageUtils.pickAndCropImage(
@@ -249,47 +248,42 @@ class DriverProfileSetupController extends GetxController {
     isLoading(false);
   }
 
-   
-  Future<bool> requestCameraPermission() async {
-    var status = await Permission.camera.status;
+Future<bool> requestCameraPermission() async {
+  var status = await Permission.camera.status;
 
-    if (Platform.isIOS) {
+  // ✅ iOS ও Android উভয়ের জন্য একই লজিক
+  if (status.isGranted) {
+    isPermissionGranted.value = true;
+    await initCamera();
+    return true;
+  } 
+  else if (status.isDenied || status.isLimited) {
+    status = await Permission.camera.request();
+    if (status.isGranted) {
+      isPermissionGranted.value = true;
+      await Future.delayed(const Duration(milliseconds: 200)); // iOS-এর জন্য ছোট ডিলে
       await initCamera();
+      return true;
     } else {
-      if (status.isGranted) {
-        isPermissionGranted.value = true;
-        // if (Platform.isIOS) {
-        //   await Future.delayed(const Duration(milliseconds: 200));
-        // }
-        await initCamera();
-        return true;
-      } else if (status.isDenied) {
-        status = await Permission.camera.request();
-        if (status.isGranted) {
-          isPermissionGranted.value = true;
-          if (Platform.isAndroid) {
-            await Future.delayed(const Duration(milliseconds: 200));
-          }
-          await initCamera();
-          return true;
-        } else {
-          Get.snackbar(
-            "Permission Denied",
-            "Camera permission is required to verify your identity.",
-          );
-          return false;
-        }
-      } else if (status.isPermanentlyDenied) {
-        Get.snackbar(
-          "Permission Denied",
-          "Please enable camera permission from iOS settings.",
-        );
-        return false;
-      }
+      Get.snackbar(
+        "Permission Denied",
+        "Camera permission is required to verify your identity.",
+      );
+      return false;
     }
-
+  } 
+  else if (status.isPermanentlyDenied) {
+    Get.snackbar(
+      "Permission Required",
+      "Please enable camera permission from Settings > Your App > Camera",
+    );
+    // Optional: Open app settings
+    // await openAppSettings();
     return false;
   }
+
+  return false;
+}
 
   Future<void> initCamera() async {
     try {
@@ -319,8 +313,8 @@ class DriverProfileSetupController extends GetxController {
   }
 
 
-
-
+  
+  
   ///  Step 3: Capture selfie safely
   Future<void> captureSelfie() async {
     final controller = cameraController;

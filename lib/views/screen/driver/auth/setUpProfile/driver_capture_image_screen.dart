@@ -8,6 +8,167 @@ import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_loading.dart';
 import 'package:get/get.dart';
 
+// class DriverCaptureImageScreen extends StatefulWidget {
+//   const DriverCaptureImageScreen({super.key});
+
+//   @override
+//   State<DriverCaptureImageScreen> createState() =>
+//       _DriverCaptureImageScreenState();
+// }
+
+// class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
+//   final _driverSetupController = Get.put(DriverProfileSetupController());
+
+//   @override
+//   void initState() {
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       _driverSetupController.requestCameraPermission();
+//     });
+//     super.initState();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       appBar: AppBar(
+//         elevation: 0,
+//         backgroundColor: Colors.white,
+//         leading: IconButton(
+//           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+//           onPressed: () => Get.back(),
+//         ),
+//         actions: const [
+//           Padding(
+//             padding: EdgeInsets.only(right: 16.0),
+//             child: Text(
+//               '3 Of 3',
+//               style: TextStyle(
+//                 color: Color(0xFF012F64),
+//                 fontWeight: FontWeight.w500,
+//                 fontSize: 16,
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.symmetric(horizontal: 20.0),
+//         child: Obx(() {
+//           // if (_driverSetupController.isPermissionGranted.value) {
+//           //   return Center(
+//           //     child: Text(
+//           //       "Camera permission required to continue.",
+//           //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+//           //       textAlign: TextAlign.center,
+//           //     ),
+//           //   );
+//           // }
+
+//           // Camera initializing
+//           if (_driverSetupController.isCameraInitialized.value) {
+//             return Column(
+//               crossAxisAlignment: CrossAxisAlignment.center,
+//               children: [
+//                 Expanded(
+//                   child: Stack(
+//                     alignment: Alignment.bottomCenter,
+//                     children: [
+//                       CameraPreview(_driverSetupController.cameraController!),
+//                       Padding(
+//                         padding: const EdgeInsets.only(bottom: 20.0),
+//                         child: FloatingActionButton(
+//                           backgroundColor: Colors.white,
+//                           onPressed: _driverSetupController.captureSelfie,
+//                           child: const Icon(
+//                             Icons.camera_alt,
+//                             color: Colors.black,
+//                             size: 30,
+//                           ),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 const SizedBox(height: 20),
+//               ],
+//             );
+//           }
+//           /// Selfie captured ✅
+//           else if (_driverSetupController.capturedImage != null) {
+//             return Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Container(
+//                   width: 140,
+//                   height: 140,
+//                   decoration: BoxDecoration(
+//                     shape: BoxShape.circle,
+//                     image: DecorationImage(
+//                       image: FileImage(
+//                         File(_driverSetupController.capturedImage!.path),
+//                       ),
+//                       fit: BoxFit.cover,
+//                     ),
+//                   ),
+//                 ),
+//                 const SizedBox(height: 24),
+//                 Text(
+//                   "Verify Your Identity",
+//                   style: TextStyle(
+//                     fontSize: 24,
+//                     fontWeight: FontWeight.w500,
+//                     color: AppColors.textColor,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 16),
+//                 Text(
+//                   "Take a quick selfie to complete your profile",
+//                   style: TextStyle(
+//                     fontSize: 16,
+//                     color: AppColors.textColor,
+//                     fontWeight: FontWeight.w400,
+//                   ),
+//                   textAlign: TextAlign.center,
+//                 ),
+//                 const SizedBox(height: 240),
+
+//                 Obx(
+//                   () => CustomButton(
+//                     loading: _driverSetupController.isLoading.value,
+//                     onTap: () {
+//                       _driverSetupController.uploadCaptureImage(
+//                         imagePath: _driverSetupController.capturedImage!.path,
+//                       );
+//                     },
+//                     text: "Confirm & Continue",
+//                   ),
+//                 ),
+
+//                 const SizedBox(height: 16),
+
+//                 TextButton(
+//                   onPressed: _driverSetupController.retakeSelfie,
+//                   child: const Text(
+//                     "Retake Selfie",
+//                     style: TextStyle(
+//                       color: Colors.indigo,
+//                       fontSize: 15,
+//                       fontWeight: FontWeight.w500,
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             );
+//           } else {
+//             return const Center(child: CustomLoading());
+//           }
+//         }),
+//       ),
+//     );
+//   }
+// }
+
 class DriverCaptureImageScreen extends StatefulWidget {
   const DriverCaptureImageScreen({super.key});
 
@@ -16,7 +177,8 @@ class DriverCaptureImageScreen extends StatefulWidget {
       _DriverCaptureImageScreenState();
 }
 
-class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
+class _DriverCaptureImageScreenState
+    extends State<DriverCaptureImageScreen> {
   final _driverSetupController = Get.put(DriverProfileSetupController());
 
   @override
@@ -36,7 +198,7 @@ class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () => Get.back(),
         ),
-        actions: [
+        actions: const [
           Padding(
             padding: EdgeInsets.only(right: 16.0),
             child: Text(
@@ -149,7 +311,7 @@ class _DriverCaptureImageScreenState extends State<DriverCaptureImageScreen> {
               ],
             );
           } else {
-            return const Center(child: CustomLoading());
+            return const Center(child: CircularProgressIndicator());
           }
         }),
       ),

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_extension/data/api/api_checker.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
@@ -26,8 +25,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DriverRideController extends GetxController {
   var activeStatus = ActiveStatus.NONE.obs;
-  var tripStatus = TripStatus.REQUESTED.obs;
-  var parcelStatus = ParcelStatus.ACCEPTED.obs;
+  //var tripStatus = TripStatus.REQUESTED.obs;
+  //var parcelStatus = ParcelStatus.ACCEPTED.obs;
+
+  var tripStatus = TripStatus.idle.obs;
+  var parcelStatus = ParcelStatus.idle.obs;
+  
   Rx<TripResponseModel> tripResponse = TripResponseModel().obs;
 
   @override

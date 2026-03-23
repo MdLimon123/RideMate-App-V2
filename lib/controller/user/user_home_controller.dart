@@ -40,8 +40,7 @@ class UserHomeController extends GetxController {
 
   var pickCoordinates = <double>[].obs;
   var dropCoordinates = <double>[].obs;
-    final box = GetStorage();
-
+  final box = GetStorage();
 
   var pickAddress = ''.obs;
   var dropAddress = ''.obs;
@@ -76,7 +75,7 @@ class UserHomeController extends GetxController {
     );
   }
 
-    void loadRecentDestinations() {
+  void loadRecentDestinations() {
     final data = box.read<List>('recent_destinations') ?? [];
 
     recentDestinations.value = data
@@ -85,7 +84,6 @@ class UserHomeController extends GetxController {
   }
 
   void saveRecentDestination(RecentDestination dest) {
-
     recentDestinations.removeWhere((e) => e.address == dest.address);
 
     recentDestinations.insert(0, dest);
@@ -141,6 +139,8 @@ class UserHomeController extends GetxController {
 
         pickController.text =
             "${place.street}, ${place.locality}, ${place.administrativeArea}";
+        pickAddress.value = pickController.text;
+        pickCoordinates.value = [position.latitude, position.longitude];
       }
     }
   }
@@ -315,12 +315,12 @@ class UserHomeController extends GetxController {
     }
   }
 
-
   Future<void> subscribleId() async {
     String? subscriptionId = await OneSignalHelper.getSubscriptionId();
 
     if (subscriptionId == null || subscriptionId.isEmpty) {
       print("OneSignal ID not available");
+      return;
     }
 
     final response = await ApiClient.postData("/profile/onesignal-id", {
@@ -333,6 +333,4 @@ class UserHomeController extends GetxController {
 
     print("OneSignal ID: $subscriptionId");
   }
-
-
 }

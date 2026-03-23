@@ -3,11 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/api/one_signla_helper.dart';
-
 import 'package:flutter_extension/data/api/socket_manager.dart';
 import 'package:flutter_extension/data/model/driver/home_model.dart';
-import 'package:flutter_extension/views/base/custom_snackbar.dart';
-
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -188,13 +185,12 @@ class DriverHomeController extends GetxController {
     debugPrint('📍 LocationController FULLY DISPOSED');
   }
 
-
-
   Future<void> subscribleId() async {
     String? subscriptionId = await OneSignalHelper.getSubscriptionId();
 
     if (subscriptionId == null || subscriptionId.isEmpty) {
       print("OneSignal ID not available");
+      return;
     }
 
     final response = await ApiClient.postData("/profile/onesignal-id", {
@@ -202,11 +198,9 @@ class DriverHomeController extends GetxController {
     });
     if (response.statusCode == 200 || response.statusCode == 201) {
     } else {
-      showCustomSnackBar(response.statusText, isError: true);
+     // showCustomSnackBar(response.statusText, isError: true);
     }
 
     print("OneSignal ID: $subscriptionId");
   }
-
-
 }

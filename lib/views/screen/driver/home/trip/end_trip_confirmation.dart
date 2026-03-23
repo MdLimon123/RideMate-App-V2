@@ -198,7 +198,7 @@ class _EndTripConfirmationState extends State<EndTripConfirmation> {
                   ],
                 ),
               ),
-              const SizedBox(height: 120),
+              const SizedBox(height: 100),
           
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),

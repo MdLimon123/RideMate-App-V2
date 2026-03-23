@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/data_controller.dart';
 import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
@@ -42,6 +43,7 @@ class UserAuthController extends GetxController {
         AppConstants.bearerTokenKEN,
         response.body['access_token'],
       );
+      await ApiClient.refreshToken();
       print("status text ====> ${response.statusText}");
       showCustomSnackBar(response.statusText, isError: false);
       Get.to(() => const UserTermsComditionScreen());
@@ -72,16 +74,8 @@ class UserAuthController extends GetxController {
       await PrefsHelper.setString(AppConstants.bearerTokenKEN, token);
       await PrefsHelper.setUserInfo(response.body);
 
-      /// Socket connection
-      // SocketService().connect(token);
-      // TripStateController.to.setRole(driver: false);
-
-      // // Init socket (if not already)
-      // var tripSocketController = Get.put(TripSocketController());
-      // var parcelController = Get.put(ParcelController());
-
-      // tripSocketController.allUserListeners();
-      // parcelController.allParcelUserListeners();
+      /// Force refresh ApiClient headers with new token
+      await ApiClient.refreshToken();
 
       _dataController.setProfileData(
         isActiveD: response.body['user']['is_active'],
@@ -92,10 +86,14 @@ class UserAuthController extends GetxController {
 
       showCustomSnackBar(response.statusText, isError: false);
 
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(const Duration(milliseconds: 300), () async{
         if (userInfo.user.isActive) {
           Get.offAll(() => const UserHome());
-          _rideController.socketConntect();
+          try {
+            await _rideController.listenTripAndParcel();
+          } catch (e) {
+            debugPrint('⚠️ Socket connection failed, but continuing: $e');
+          }
         } else {
           Get.offAll(() => const UserVerifyScreen());
         }
@@ -149,6 +147,7 @@ class UserAuthController extends GetxController {
         AppConstants.bearerTokenKEN,
         response.body['reset_token'],
       );
+      await ApiClient.refreshToken();
       showCustomSnackBar(response.statusText, isError: false);
       Get.to(() => const UserResetPasswordScreen());
     } else {
