@@ -14,7 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 class UserProfileController extends GetxController {
   var userProfileModel = UserProfileModel().obs;
 
-    var aboutUsModel = AboutUsModel().obs;
+  var aboutUsModel = AboutUsModel().obs;
 
   final RxDouble rating = 0.0.obs;
 
@@ -89,7 +89,7 @@ class UserProfileController extends GetxController {
     changePasswordLoading(false);
   }
 
-    Future<void> fetchAboutUsInfo() async {
+  Future<void> fetchAboutUsInfo() async {
     isLaoding(true);
 
     final response = await ApiClient.getData("/context-pages/about-us");
@@ -255,5 +255,20 @@ class UserProfileController extends GetxController {
       showCustomSnackBar(response.statusText, isError: true);
     }
     isLaoding(false);
+  }
+
+  Future<bool> deleteUserAccount() async {
+    isLaoding(true);
+
+    final response = await ApiClient.deleteData("/profile/delete");
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      showCustomSnackBar(response.statusText, isError: false);
+      isLaoding(false);
+      return true;
+    } else {
+      showCustomSnackBar(response.statusText, isError: true);
+      isLaoding(false);
+      return false;
+    }
   }
 }

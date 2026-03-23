@@ -177,4 +177,22 @@ class DriverProfileController extends GetxController {
     }
     isLaoding(false);
   }
+
+
+  Future<bool> deleteUserAccount() async {
+    isLaoding(true);
+
+    final response = await ApiClient.deleteData("/profile/delete");
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      showCustomSnackBar(response.statusText, isError: false);
+      isLaoding(false);
+      return true;
+    } else {
+      showCustomSnackBar(response.statusText, isError: true);
+      isLaoding(false);
+      return false;
+    }
+  }
+
+
 }
