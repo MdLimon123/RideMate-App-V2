@@ -7,7 +7,6 @@ import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_loading.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 // class DriverCaptureImageScreen extends StatefulWidget {
 //   const DriverCaptureImageScreen({super.key});
