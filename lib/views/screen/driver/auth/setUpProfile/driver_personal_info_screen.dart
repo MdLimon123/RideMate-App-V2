@@ -148,7 +148,7 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "National ID / Passport",
+                  "National ID",
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
@@ -344,7 +344,7 @@ class _DriverPersonalInfoScreenState extends State<DriverPersonalInfoScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Driving License (Optional)",
+                  "Driving License",
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
