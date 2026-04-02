@@ -21,190 +21,190 @@ class _RequestedTripState extends State<RequestedTrip> {
     var trip = _driverRideController.tripResponse.value.data;
     return SafeArea(
       child: Scaffold(
-        body: Column(
-          children: [
-            SizedBox(
-              height: 500,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  const CustomMapView(),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 500,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    const CustomMapView(),
 
-                
-                  Positioned(
-                    bottom: -60,
-                    left: 20,
-                    right: 20,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 30,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF345983),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, -3),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Center(
-                            child: Text(
-                              "newRideRequest".tr,
-                              style: const TextStyle(
+                    Positioned(
+                      bottom: -60,
+                      left: 20,
+                      right: 20,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 30,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF345983),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, -3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Text(
+                                "newRideRequest".tr,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Center(
+                              child: Text(
+                                "Static (5 min ETA)",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFFFFFFFF),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
                                 color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.w500,
+                                borderRadius: BorderRadius.circular(16),
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Center(
-                            child: Text(
-                              "Static (5 min ETA)",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFFFFFFFF),
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 20),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    SvgPicture.asset('assets/icons/pick.svg'),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Text(
-                                        trip!.pickupAddress,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400,
-                                          color: AppColors.textColor,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      SvgPicture.asset('assets/icons/pick.svg'),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Text(
+                                          trip!.pickupAddress,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColors.textColor,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icons/location.svg',
-                                      color: AppColors.textColor,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Text(
-                                        trip.dropoffAddress,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400,
-                                          color: AppColors.textColor,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-
-                                Row(
-                                  children: [
-                                    SvgPicture.asset('assets/icons/dollar.svg'),
-                                    const SizedBox(width: 12),
-                                    Text(
-                                      "${trip.totalCost}",
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF012F64),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      "(£)",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w200,
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/icons/location.svg',
                                         color: AppColors.textColor,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Text(
+                                          trip.dropoffAddress,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColors.textColor,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+
+                                  Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/icons/dollar.svg',
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Text(
+                                        "${trip.totalCost}",
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFF012F64),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        "(£)",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w200,
+                                          color: AppColors.textColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            const SizedBox(height: 100),
+              const SizedBox(height: 100),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Row(
-                children: [
-                
-                  Expanded(
-                    child: Obx(
-                      () => CustomButton(
-                        loading: _driverRideController.cancelLoading.value,
-                        onTap: () {
-                          _driverRideController.cancelTripRequest();
-                        },
-                        text: "Decline",
-                        color: const Color(0xFFE6E6E6),
-                        textStyle: const TextStyle(color: Colors.black),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Obx(
+                        () => CustomButton(
+                          loading: _driverRideController.cancelLoading.value,
+                          onTap: () {
+                            _driverRideController.cancelTripRequest();
+                          },
+                          text: "Decline",
+                          color: const Color(0xFFE6E6E6),
+                          textStyle: const TextStyle(color: Colors.black),
+                        ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(width: 22),
-                  Expanded(
-                    child: Obx(
-                      () => CustomButton(
-                        loading: _driverRideController.acceptedLoading.value,
-                        onTap: () {
-                          _driverRideController.acceptTripRequest();
-                        },
-                        text: "accept".tr,
+                    const SizedBox(width: 22),
+                    Expanded(
+                      child: Obx(
+                        () => CustomButton(
+                          loading: _driverRideController.acceptedLoading.value,
+                          onTap: () {
+                            _driverRideController.acceptTripRequest();
+                          },
+                          text: "accept".tr,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
-  
-  
   }
 }

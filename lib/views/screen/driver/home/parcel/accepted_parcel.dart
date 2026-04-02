@@ -25,7 +25,9 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
+
+        child:SingleChildScrollView(
+          child:  Column(
           children: [
             SizedBox(
               height: 500,
@@ -370,6 +372,9 @@ class _AcceptedParcelState extends State<AcceptedParcel> {
             ),
           ],
         ),
+     
+     
+        )
       ),
     );
   }

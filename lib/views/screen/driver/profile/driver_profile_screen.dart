@@ -49,7 +49,8 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                 ? const Center(child: CustomLoading())
                 : Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 28.0),
-                    child: Column(
+                    child: SingleChildScrollView(
+                      child: Column(
                       children: [
                         Row(
                           children: [
@@ -411,6 +412,10 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         ),
                       ],
                     ),
+                 
+                 
+                    ),
+                 
                   ),
           ),
         ),

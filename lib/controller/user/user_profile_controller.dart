@@ -101,6 +101,7 @@ class UserProfileController extends GetxController {
     isLaoding(false);
   }
 
+
   Future<void> topUpWallet({required String amount}) async {
     isTopUpLoading(true);
 
