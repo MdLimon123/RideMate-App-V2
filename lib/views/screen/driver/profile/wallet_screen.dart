@@ -19,7 +19,9 @@ class _WalletScreenState extends State<WalletScreen> {
 
   @override
   void initState() {
-    _driverProfileController.fetchDriverProfile();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _driverProfileController.fetchDriverProfile();
+    });
     super.initState();
   }
 

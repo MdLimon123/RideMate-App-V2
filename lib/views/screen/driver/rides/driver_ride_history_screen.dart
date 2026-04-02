@@ -161,7 +161,7 @@ class _DriverRideHistoryScreenState extends State<DriverRideHistoryScreen> {
                               ),
                               const Spacer(),
                               Text(
-                                "\$${item.totalCost}",
+                                "${item.totalCost} £",
                                 style: const TextStyle(
                                   fontSize: 16,
                                   color: Color(0xFF012F64),

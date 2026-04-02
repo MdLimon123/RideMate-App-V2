@@ -252,6 +252,8 @@ class _FindingRequestState extends State<FindingRequest>
                                 }
                               }),
 
+
+
                               const SizedBox(height: 20),
 
                               // Tips / Earnings Row

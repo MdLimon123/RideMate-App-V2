@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_chat_controller.dart';
 import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/util/app_colors.dart';
@@ -19,6 +20,7 @@ class StartedTrip extends StatefulWidget {
 
 class _StartedTripState extends State<StartedTrip> {
   final _driverRideController = Get.put(DriverRideController());
+   final _driverChatController = Get.put(DriverChatController());
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -270,7 +272,21 @@ class _StartedTripState extends State<StartedTrip> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () async{
+                            print(
+                            "User ID=========>: ${_driverRideController.tripResponse.value.data!.user.id}",
+                          );
+
+                          await _driverChatController.createChatRoom(
+                            userId: _driverRideController
+                                .tripResponse
+                                .value
+                                .data!
+                                .user
+                                .id
+                                .toString(),
+                          );
+                      },
                       child: Container(
                         height: 40,
                         width: 40,

@@ -157,8 +157,8 @@ class _DriverEarnScreenState extends State<DriverEarnScreen>
                     const SizedBox(height: 4),
                     Text(
                       tab == 'trip'
-                          ? "\$${_earingController.tripList.fold<num>(0, (sum, item) => sum + item.totalCost)}"
-                          : "\$${_earingController.parcelMeta!.totalEarnings}",
+                          ? "${_earingController.tripList.fold<num>(0, (sum, item) => sum + item.totalCost)} £"
+                          : "${_earingController.parcelMeta!.totalEarnings} £",
                       style: const TextStyle(
                         color: Color(0xFF012F64),
                         fontWeight: FontWeight.w600,
@@ -178,7 +178,7 @@ class _DriverEarnScreenState extends State<DriverEarnScreen>
                     icon: 'assets/icons/cycle.svg',
                     title: "Total Trips",
                     value: tab == 'trip'
-                        ? "${_earingController.tripList.fold<int>(0, (sum, item) => sum + item.totalCount)}"
+                        ? "${_earingController.tripList.fold<int>(0, (sum, item) => sum + item.totalCount)} "
                         : "${_earingController.parcelMeta!.totalCount}",
                   ),
                   const SizedBox(width: 12),
@@ -291,7 +291,7 @@ class _DriverEarnScreenState extends State<DriverEarnScreen>
           ),
           const Spacer(),
           Text(
-            "\$$cost",
+            "$cost £",
             style: const TextStyle(
               color: Color(0xFF012F64),
               fontWeight: FontWeight.w500,

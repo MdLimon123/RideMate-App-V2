@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_chat_controller.dart';
 import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/util/app_colors.dart';
@@ -18,6 +19,7 @@ class StartedParcel extends StatefulWidget {
 
 class _StartedParcelState extends State<StartedParcel> {
   final _driverRideController = Get.find<DriverRideController>();
+  final _driverChatController = Get.put(DriverChatController());
 
   @override
   Widget build(BuildContext context) {
@@ -288,7 +290,16 @@ class _StartedParcelState extends State<StartedParcel> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () async {
+                        await _driverChatController.createChatRoom(
+                          userId: _driverRideController
+                              .parcelResponse
+                              .value
+                              .data!
+                              .userId
+                              .toString(),
+                        );
+                      },
                       child: Container(
                         height: 40,
                         width: 40,

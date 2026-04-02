@@ -277,12 +277,17 @@ class _AcceptedTripState extends State<AcceptedTrip> {
                     children: [
                       InkWell(
                         onTap: () async {
+                          print(
+                            "User ID=========>: ${_driverRideController.tripResponse.value.data!.user.id}",
+                          );
+
                           await _driverChatController.createChatRoom(
                             userId: _driverRideController
-                                .parcelResponse
+                                .tripResponse
                                 .value
                                 .data!
-                                .userId
+                                .user
+                                .id
                                 .toString(),
                           );
                         },
