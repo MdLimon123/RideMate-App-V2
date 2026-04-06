@@ -279,7 +279,7 @@ class _EndParcelConfirmationScreenState
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            "(kg)",
+                            "(kg/pound)",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w200,

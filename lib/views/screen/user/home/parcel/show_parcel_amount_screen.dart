@@ -15,7 +15,7 @@ class ShowParcelAmountScreen extends StatefulWidget {
   final String pickLocation;
   final String dropLocation;
 
-  final int? weight;
+  final double? weight;
   final double? amount;
 
   const ShowParcelAmountScreen({

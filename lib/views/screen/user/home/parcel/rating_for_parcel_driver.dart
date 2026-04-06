@@ -193,7 +193,7 @@ class _RatingForParcelDriverState extends State<RatingForParcelDriver> {
                   ),
                 ),
 
-                const SizedBox(height: 150),
+                const SizedBox(height: 140),
 
                 Row(
                   children: [

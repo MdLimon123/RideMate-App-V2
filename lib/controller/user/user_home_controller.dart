@@ -221,7 +221,9 @@ class UserHomeController extends GetxController {
       Get.to(
         () => ShowParcelAmountScreen(
           showAmount: response.body['estimated_fare'].toDouble(),
-          weight: response.body['query']['weight'],
+          weight: response.body['query']['weight'].runtimeType == int
+              ? response.body['query']['weight'].toDouble()
+              : response.body['query']['weight'],
           amount: response.body['query']['amount'].runtimeType == int
               ? response.body['query']['amount'].toDouble()
               : response.body['query']['amount'],
