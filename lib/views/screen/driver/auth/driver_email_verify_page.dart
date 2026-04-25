@@ -1,25 +1,22 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_extension/controller/user/user_auth_controller.dart';
+import 'package:flutter_extension/controller/driver/driver_auth_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 
-class UserOtpVerifyScreen extends StatefulWidget {
+class DriverEmailVerifyPage extends StatefulWidget {
   final String email;
-
-  const UserOtpVerifyScreen({super.key, required this.email});
+  const DriverEmailVerifyPage({super.key, required this.email});
 
   @override
-  State<UserOtpVerifyScreen> createState() => _UserOtpVerifyScreenState();
+  State<DriverEmailVerifyPage> createState() => _DriverEmailVerifyPageState();
 }
 
-class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
-
-
-  final _userAuthController = Get.put(UserAuthController());
+class _DriverEmailVerifyPageState extends State<DriverEmailVerifyPage> {
+  final _driverAuthController = Get.put(DriverAuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +28,7 @@ class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 100),
+            const SizedBox(height: 80),
             Text(
               "enterOTP".tr,
               style: TextStyle(
@@ -54,7 +51,7 @@ class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
               fillColor: const Color(0xFFE6E6E6),
               onCodeChanged: (String code) {},
               onSubmit: (String verificationCode) {
-                _userAuthController.isForgetOtp.value = verificationCode;
+                _driverAuthController.isForgetOtp.value = verificationCode;
               },
             ),
             const SizedBox(height: 32),
@@ -79,7 +76,7 @@ class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          _userAuthController.resendOtpVerify(
+                          _driverAuthController.resendEmailVerify(
                             email: widget.email,
                           );
                         },
@@ -91,9 +88,9 @@ class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
             const Spacer(),
             Obx(
               () => CustomButton(
-                loading: _userAuthController.isVerify.value,
+                loading: _driverAuthController.isVerify.value,
                 onTap: () {
-                  _userAuthController.otpForgetVerify(email: widget.email);
+                  _driverAuthController.otpEmailVerify(email: widget.email);
                 },
                 text: "verify".tr,
               ),
@@ -103,7 +100,4 @@ class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
       ),
     );
   }
-
-
-
 }

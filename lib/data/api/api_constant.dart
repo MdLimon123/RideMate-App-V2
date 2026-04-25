@@ -1,7 +1,9 @@
 class ApiConstant {
-  static const String BASE_URL = 'https://v2.radeefz.com/api/v1';
+  static const String BASE_URL = 'https://v2.radeefz.com/api/v1'; // live
 
-  static const String imageBaseUrl = 'https://v2.radeefz.com/';
+  static const String imageBaseUrl = "https://v2.radeefz.com/";
+
+  ///'https://v2.radeefz.com/';
 
   static const String googleApiKey = "AIzaSyBRiTsXAZERl87rSPcgdqw3R-EOAcJ-ehw";
 

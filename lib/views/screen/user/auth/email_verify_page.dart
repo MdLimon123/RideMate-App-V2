@@ -7,17 +7,15 @@ import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 
-class UserOtpVerifyScreen extends StatefulWidget {
+class EmailVerifyPage extends StatefulWidget {
   final String email;
-
-  const UserOtpVerifyScreen({super.key, required this.email});
+  const EmailVerifyPage({super.key, required this.email});
 
   @override
-  State<UserOtpVerifyScreen> createState() => _UserOtpVerifyScreenState();
+  State<EmailVerifyPage> createState() => _EmailVerifyPageState();
 }
 
-class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
-
+class _EmailVerifyPageState extends State<EmailVerifyPage> {
 
   final _userAuthController = Get.put(UserAuthController());
 
@@ -31,7 +29,7 @@ class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 100),
+            const SizedBox(height: 80),
             Text(
               "enterOTP".tr,
               style: TextStyle(
@@ -79,7 +77,7 @@ class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          _userAuthController.resendOtpVerify(
+                          _userAuthController.resendEmailVerify(
                             email: widget.email,
                           );
                         },
@@ -93,7 +91,7 @@ class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
               () => CustomButton(
                 loading: _userAuthController.isVerify.value,
                 onTap: () {
-                  _userAuthController.otpForgetVerify(email: widget.email);
+                  _userAuthController.otpEmailVerify(email:widget.email);
                 },
                 text: "verify".tr,
               ),
@@ -103,6 +101,7 @@ class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
       ),
     );
   }
+
 
 
 

@@ -6,6 +6,7 @@ import 'package:flutter_extension/data/model/user/user_info_model.dart';
 import 'package:flutter_extension/helper/prefs_helper.dart';
 import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/views/base/custom_snackbar.dart';
+import 'package:flutter_extension/views/screen/user/auth/email_verify_page.dart';
 import 'package:flutter_extension/views/screen/user/auth/setUpProfile/user_verify_screen.dart';
 import 'package:flutter_extension/views/screen/user/auth/user_login_screen.dart';
 import 'package:flutter_extension/views/screen/user/auth/user_otp_verify_screen.dart';
@@ -22,14 +23,23 @@ class UserAuthController extends GetxController {
 
   var isResetLoading = false.obs;
   final _dataController = Get.put(DataController());
-  final _rideController = Get.put(RideController(), permanent: true );
+  final _rideController = Get.put(RideController(), permanent: true);
 
   /// Signup
 
-  Future<void> signup({required String email, required String password}) async {
+  Future<void> signup({
+    required String email,
+    required String password,
+    required String phone,
+  }) async {
     isLoading(true);
 
-    final body = {"email": email, "password": password, "role": "USER"};
+    final body = {
+      "email": email,
+      "password": password,
+      "role": "USER",
+      "phone": phone,
+    };
     var headers = {'Content-Type': 'application/json'};
 
     final response = await ApiClient.postData(
@@ -37,6 +47,7 @@ class UserAuthController extends GetxController {
       body,
       headers: headers,
     );
+
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       await PrefsHelper.setString(
@@ -46,7 +57,7 @@ class UserAuthController extends GetxController {
       await ApiClient.refreshToken();
       print("status text ====> ${response.statusText}");
       showCustomSnackBar(response.statusText, isError: false);
-      Get.to(() => const UserTermsComditionScreen());
+      Get.to(() => EmailVerifyPage(email: email));
     } else {
       print("status text ====> ${response.statusText}");
       showCustomSnackBar(response.statusText, isError: true);
@@ -86,7 +97,7 @@ class UserAuthController extends GetxController {
 
       showCustomSnackBar(response.statusText, isError: false);
 
-      Future.delayed(const Duration(milliseconds: 300), () async{
+      Future.delayed(const Duration(milliseconds: 300), () async {
         if (userInfo.user.isActive) {
           Get.offAll(() => const UserHome());
           try {
@@ -130,6 +141,32 @@ class UserAuthController extends GetxController {
 
   /// otp
 
+  Future<void> otpEmailVerify({required String email}) async {
+    isVerify(true);
+    final body = {"email": email, "otp": isForgetOtp.value};
+
+    var headers = {'Content-Type': 'application/json'};
+
+    final response = await ApiClient.postData(
+      "/auth/account-verify",
+      body,
+      headers: headers,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      await PrefsHelper.setString(
+        AppConstants.bearerTokenKEN,
+        response.body['access_token'],
+      );
+      await ApiClient.refreshToken();
+      showCustomSnackBar(response.statusText, isError: false);
+      Get.to(() => const UserTermsComditionScreen());
+    } else {
+      showCustomSnackBar(response.statusText, isError: true);
+    }
+    isVerify(false);
+  }
+
   Future<void> otpForgetVerify({required String email}) async {
     isVerify(true);
     final body = {"email": email, "otp": isForgetOtp.value};
@@ -155,6 +192,24 @@ class UserAuthController extends GetxController {
     }
     isVerify(false);
   }
+
+  Future<void> resendEmailVerify({required String email}) async {
+    final body = {"email": email};
+    var headers = {'Content-Type': 'application/json'};
+
+    final response = await ApiClient.postData(
+      "/auth/account-verify/otp-send",
+      body,
+      headers: headers,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      showCustomSnackBar(response.statusText, isError: false);
+    } else {
+      showCustomSnackBar(response.statusText, isError: true);
+    }
+  }
+
 
   Future<void> resendOtpVerify({required String email}) async {
     final body = {"email": email};

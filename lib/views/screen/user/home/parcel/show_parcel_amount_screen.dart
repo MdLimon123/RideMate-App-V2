@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class ShowParcelAmountScreen extends StatefulWidget {
+  final String parcelType;
   final double showAmount;
   final double pickLat;
   final double pickLng;
@@ -21,6 +22,7 @@ class ShowParcelAmountScreen extends StatefulWidget {
   const ShowParcelAmountScreen({
     super.key,
     required this.showAmount,
+    required this.parcelType,
     required this.pickLat,
     required this.pickLng,
     required this.dropLat,
@@ -207,6 +209,7 @@ class _ShowParcelAmountScreenState extends State<ShowParcelAmountScreen> {
                               loading: rideController.isLoading.value,
                               onTap: () {
                                 var body = {
+                                  "parcel_type": widget.parcelType,
                                   "weight": widget.weight,
                                   "amount": widget.showAmount,
                                   "pickup_lat": widget.pickLat,

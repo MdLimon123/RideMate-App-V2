@@ -30,7 +30,7 @@ class DriverRideController extends GetxController {
 
   var tripStatus = TripStatus.idle.obs;
   var parcelStatus = ParcelStatus.idle.obs;
-  
+
   Rx<TripResponseModel> tripResponse = TripResponseModel().obs;
 
   @override
@@ -88,7 +88,8 @@ class DriverRideController extends GetxController {
         return const StartedTrip();
       case TripStatus.ARRIVED:
         // go to waiting for payment screen
-        return const WaitingForPayment();
+          return const StartedTrip(); /// todo: add this
+        /// return const WaitingForPayment(); //// todo: remove this
 
       case TripStatus.COMPLETED:
         return const PaymentOrverView();
@@ -113,7 +114,8 @@ class DriverRideController extends GetxController {
         return const StartedParcel();
       case ParcelStatus.DELIVERED:
         //go to started screen
-        return const WaitingForPayment();
+          return const StartedParcel(); /// todo: add this
+       /// return const WaitingForPayment(); /// todo: remove this
 
       case ParcelStatus.COMPLETED:
         //go to completed screen

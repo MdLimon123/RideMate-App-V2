@@ -38,6 +38,10 @@ class UserHomeController extends GetxController {
   final parcelWeightController = TextEditingController();
   final parcelAmount = TextEditingController();
 
+  final RxString weightUnit = 'kg'.obs;
+
+  String get parcelWeightValue => parcelWeightController.text;
+
   var pickCoordinates = <double>[].obs;
   var dropCoordinates = <double>[].obs;
   final box = GetStorage();
@@ -221,6 +225,7 @@ class UserHomeController extends GetxController {
       Get.to(
         () => ShowParcelAmountScreen(
           showAmount: response.body['estimated_fare'].toDouble(),
+          parcelType: selectedParcelType.value,
           weight: response.body['query']['weight'].runtimeType == int
               ? response.body['query']['weight'].toDouble()
               : response.body['query']['weight'],

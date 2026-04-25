@@ -184,7 +184,7 @@ class _RatingForUserState extends State<RatingForUser> {
                   ),
                 ),
               ),
-              const SizedBox(height: 200),
+              const SizedBox(height: 190),
               Obx(
                 () => CustomButton(
                   loading: _rideController.isLoading.value,

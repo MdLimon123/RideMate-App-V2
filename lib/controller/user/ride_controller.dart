@@ -80,7 +80,8 @@ class RideController extends GetxController {
         Get.off(() => const AcceptedTripForDriver());
         break;
       case TripStatus.ARRIVED:
-        Get.off(() => const PayForTripScreen());
+        Get.off(() => const AcceptedTripForDriver()); /// todo: add this
+        /// Get.off(() => const PayForTripScreen()); //// todo: remove this
         break;
       case TripStatus.COMPLETED:
         Get.off(() => const RatingForTripDriver());
@@ -106,7 +107,8 @@ class RideController extends GetxController {
         Get.off(() => const AcceptedParcelForDriver());
         break;
       case ParcelStatus.DELIVERED:
-        Get.off(() => const PayForParcelScreen());
+      Get.off(() => const AcceptedParcelForDriver()); /// todo: add this
+       /// Get.off(() => const PayForParcelScreen()); //// todo: remove this
 
         break;
       case ParcelStatus.COMPLETED:

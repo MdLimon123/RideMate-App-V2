@@ -380,7 +380,7 @@ class _EndParcelConfirmationScreenState
             ),
           ),
           actionsAlignment: MainAxisAlignment.center,
-          actions: [],
+     
         );
       },
     );

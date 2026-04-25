@@ -120,6 +120,7 @@ class SocketService {
 
     socket = IO.io(
       'https://v2.radeefz.com',
+
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()
@@ -128,9 +129,7 @@ class SocketService {
           .setReconnectionAttempts(20)
           .setReconnectionDelay(2000)
           .setReconnectionDelayMax(8000)
-
           .setAuth({"token": "$token"})
-
           .build(),
     );
 

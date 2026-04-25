@@ -65,6 +65,7 @@ class ApiClient extends GetxService {
   }) async {
     try {
       if (_prefs == null) await loadPrefs();
+      print("base url ====> ${ApiConstant.BASE_URL}");
       debugPrint(
         '====> API Call: $uri\nHeader: ${headers ?? _mainHeaders} \nBody: $body',
       );

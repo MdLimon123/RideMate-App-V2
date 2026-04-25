@@ -171,7 +171,7 @@ class _RatingForTripDriverState extends State<RatingForTripDriver> {
                   ),
                 ),
 
-                const SizedBox(height: 145),
+                const SizedBox(height: 135),
 
                 Row(
                   children: [

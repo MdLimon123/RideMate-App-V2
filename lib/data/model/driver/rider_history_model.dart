@@ -1,3 +1,12 @@
+/// JSON often decodes numbers as [double]; model fields use [int?].
+int? _intFromJson(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is double) return value.toInt();
+  if (value is num) return value.toInt();
+  return int.tryParse(value.toString());
+}
+
 class RiderHistoryModel {
   final Meta? meta;
   final List<RiderHistoryItem> data;
@@ -47,10 +56,10 @@ class Pagination {
 
   factory Pagination.fromJson(Map<String, dynamic> json) {
     return Pagination(
-      page: json['page'],
-      limit: json['limit'],
-      total: json['total'],
-      totalPages: json['totalPages'],
+      page: _intFromJson(json['page']),
+      limit: _intFromJson(json['limit']),
+      total: _intFromJson(json['total']),
+      totalPages: _intFromJson(json['totalPages']),
     );
   }
 }
@@ -102,19 +111,19 @@ class RiderHistoryItem {
     return RiderHistoryItem(
       id: json['id'],
       slug: json['slug'],
-      time: json['time'],
+      time: _intFromJson(json['time']),
       date: json['date'],
       userId: json['user_id'],
       driverId: json['driver_id'],
       pickupAddress: json['pickup_address'],
       dropoffAddress: json['dropoff_address'],
       status: json['status'],
-      totalCost: json['total_cost'],
+      totalCost: _intFromJson(json['total_cost']),
       isProcessing: json['is_processing'] ?? false,
       isParcel: json['is_parcel'] ?? false,
       parcelType: json['parcel_type'],
-      weight: json['weight'],
-      amount: json['amount'],
+      weight: _intFromJson(json['weight']),
+      amount: _intFromJson(json['amount']),
       deliveryProofFiles: json['delivery_proof_files'] != null
           ? List<String>.from(json['delivery_proof_files'])
           : [],

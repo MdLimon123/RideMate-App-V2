@@ -182,11 +182,68 @@ class _ParcleInputDetailsState extends State<ParcleInputDetails> {
                     ),
 
                     const SizedBox(height: 12),
-                    CustomTextField(
-                      controller: _userHomeController.parcelWeightController,
-                      hintText: "Parcels Weight",
-                      keyboardType: TextInputType.number,
+
+                    // CustomTextField(
+                    //   controller: _userHomeController.parcelWeightController,
+                    //   hintText: "Parcels Weight",
+                    //   keyboardType: TextInputType.number,
+                    // ),
+                    Stack(
+                      alignment: Alignment.centerRight,
+                      children: [
+                        CustomTextField(
+                          controller:
+                              _userHomeController.parcelWeightController,
+                          hintText: "Parcel Weight",
+                          keyboardType: TextInputType.number,
+                        ),
+                        Positioned(
+                          right: 8,
+                          child: Obx(
+                            () => GestureDetector(
+                              onTap: () {
+                                _userHomeController.weightUnit.value =
+                                    _userHomeController.weightUnit.value == 'kg'
+                                    ? 'pound'
+                                    : 'kg';
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      _userHomeController.weightUnit.value,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 3),
+                                    const Icon(
+                                      Icons.unfold_more,
+                                      size: 13,
+                                      color: Colors.grey,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+
                     const SizedBox(height: 12),
                     CustomTextField(
                       controller: _userHomeController.parcelAmount,
