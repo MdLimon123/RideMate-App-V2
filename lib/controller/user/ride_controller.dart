@@ -1,12 +1,23 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_checker.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/data/api/socket_manager.dart';
+import 'package:flutter_extension/data/model/user/parcel_response_model.dart';
 import 'package:flutter_extension/data/model/user/user_trip_model.dart';
-import 'package:flutter_extension/helper/route_helper.dart';
+import 'package:flutter_extension/helper/prefs_helper.dart';
+
 import 'package:flutter_extension/util/app_constants.dart';
+import 'package:flutter_extension/views/screen/user/home/parcel/accepted_parcel_for_driver.dart';
+import 'package:flutter_extension/views/screen/user/home/parcel/finding_for_parcel_request.dart';
+import 'package:flutter_extension/views/screen/user/home/parcel/pay_for_parcel_screen.dart';
+import 'package:flutter_extension/views/screen/user/home/parcel/rating_for_parcel_driver.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/accepted_trip_for_driver.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/finding_driver.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/pay_for_trip_screen.dart';
+import 'package:flutter_extension/views/screen/user/home/trip/rating_for_trip_driver.dart';
 import 'package:flutter_extension/views/screen/user/home/user_home.dart';
 import 'package:get/get.dart';
 
@@ -14,15 +25,32 @@ class RideController extends GetxController {
   var activeStatus = ActiveStatus.NONE.obs;
   var tripStatus = TripStatus.idle.obs;
   var parcelStatus = ParcelStatus.idle.obs;
-  TripResponseModel? tripResponse;
+  Rx<TripResponseModel> tripResponse = TripResponseModel().obs;
+
+  Rx<ParcelResponseModel> parcelResponse = ParcelResponseModel().obs;
 
   var isLoading = false.obs;
+
+  @override
+  void onInit() {
+    listenTripAndParcel();
+    super.onInit();
+  }
 
   void setTripStatus(TripResponseModel tripResponseModel) {
     activeStatus.value = tripResponseModel.kind!;
     tripStatus.value = tripResponseModel.data!.status;
-    tripResponse = tripResponseModel;
+    tripResponse.value = tripResponseModel;
     tripFlow(tripStatus.value);
+    update();
+  }
+
+  void setParcelStatus(ParcelResponseModel parcelResponseModel) {
+    activeStatus.value = parcelResponseModel.kind!;
+    parcelStatus.value = parcelResponseModel.data!.status;
+    parcelResponse.value = parcelResponseModel;
+    parcelFlow(parcelStatus.value);
+    update();
   }
 
   // ========== CLEAR TRIP =================
@@ -38,17 +66,25 @@ class RideController extends GetxController {
   tripFlow(TripStatus tripStatus) {
     switch (tripStatus) {
       case TripStatus.REQUESTED:
-        Get.offAll(() => const FindingDriver());
+        Get.off(
+          () => FindingDriver(
+            pickLocation: tripResponse.value.data!.pickupAddress,
+            dropLocation: tripResponse.value.data!.dropoffAddress,
+          ),
+        );
         break;
       case TripStatus.ACCEPTED:
-        Get.offAll(() => const AcceptedTripForDriver());
+        Get.off(() => const AcceptedTripForDriver());
         break;
       case TripStatus.STARTED:
-        Get.offAll(() => const AcceptedTripForDriver());
+        Get.off(() => const AcceptedTripForDriver());
         break;
       case TripStatus.ARRIVED:
-        Get.offAll(() => const PayForTripScreen());
+        Get.off(() => const AcceptedTripForDriver()); /// todo: add this
+        /// Get.off(() => const PayForTripScreen()); //// todo: remove this
         break;
+      case TripStatus.COMPLETED:
+        Get.off(() => const RatingForTripDriver());
       default:
         Get.offAll(() => const UserHome());
     }
@@ -57,20 +93,51 @@ class RideController extends GetxController {
   parcelFlow(ParcelStatus parcelStatus) {
     switch (parcelStatus) {
       case ParcelStatus.REQUESTED:
+        Get.off(
+          () => FindingForParcelRewuest(
+            pickLocation: parcelResponse.value.data!.pickupAddress,
+            dropLocation: parcelResponse.value.data!.dropoffAddress,
+          ),
+        );
         break;
       case ParcelStatus.ACCEPTED:
+        Get.off(() => const AcceptedParcelForDriver());
         break;
       case ParcelStatus.STARTED:
+        Get.off(() => const AcceptedParcelForDriver());
         break;
       case ParcelStatus.DELIVERED:
+      Get.off(() => const AcceptedParcelForDriver()); /// todo: add this
+       /// Get.off(() => const PayForParcelScreen()); //// todo: remove this
+
         break;
       case ParcelStatus.COMPLETED:
+        Get.off(() => const RatingForParcelDriver());
         break;
-      case ParcelStatus.CANCELLED:
-        break;
-      case ParcelStatus.idle:
-        throw UnimplementedError();
+      default:
+        Get.offAll(() => const UserHome());
     }
+  }
+
+  socketConntect() async {
+    var token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
+    await SocketService().connect(token);
+  }
+
+  /// ============= listen trip/parcel ==================
+  listenTripAndParcel() async {
+    await socketConntect();
+    SocketService().on("user-trip", (data) {
+      debugPrint("test Data : $data");
+      final response = data is String ? jsonDecode(data) : data;
+      if (response["kind"] == "TRIP") {
+        //setTripStatus(TripResponseModel.fromJson(data));
+        setTripStatus(TripResponseModel.fromJson(response));
+      } else if (response["kind"] == "PARCEL") {
+        //setParcelStatus(ParcelResponseModel.fromJson(data));
+        setParcelStatus(ParcelResponseModel.fromJson(response));
+      }
+    });
   }
 
   /// ================= REQUEST TRIP =================
@@ -79,7 +146,9 @@ class RideController extends GetxController {
     isLoading(true);
     var response = await ApiClient.postData(ApiConstant.requestTripUrl, body);
     if (response.statusCode == 200 || response.statusCode == 201) {
+      debugPrint("test Response : $body");
       setTripStatus(TripResponseModel.fromJson(response.body));
+      isLoading(false);
     } else {
       isLoading(false);
       ApiChecker.checkApi(response);
@@ -98,16 +167,85 @@ class RideController extends GetxController {
       isLoading(false);
       ApiChecker.checkApi(response);
     }
+    isLoading(false);
   }
 
   payForTrip() async {
     isLoading(true);
-    var response = await ApiClient.postData(ApiConstant.payForTrip, {});
+    var body = {"trip_id": tripResponse.value.data!.id};
+    var response = await ApiClient.postData(ApiConstant.payForTrip, body);
     if (response.statusCode == 200 || response.statusCode == 201) {
       setTripStatus(TripResponseModel.fromJson(response.body));
     } else {
       isLoading(false);
       ApiChecker.checkApi(response);
     }
+    isLoading(false);
+  }
+
+  /// =================== REQUEST PARCEL ==================
+  requestParcel(Map<String, dynamic> body) async {
+    isLoading(true);
+    var response = await ApiClient.postData(ApiConstant.requestParcelUrl, body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      debugPrint("test Response : $body");
+      setParcelStatus(ParcelResponseModel.fromJson(response.body));
+      isLoading(false);
+    } else {
+      isLoading(false);
+      //ApiChecker.checkApi(response);
+    }
+    isLoading(false);
+    //ApiChecker.checkApi(response);
+  }
+
+  /// =================== CANCEL PARCEL ==================
+  cancelParcel(String parcelId) async {
+    isLoading(true);
+    var body = {"parcel_id": parcelId};
+    var response = await ApiClient.postData(ApiConstant.cancelParcelUrl, body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      Get.offAll(const UserHome());
+      clearStates();
+    } else {
+      isLoading(false);
+      ApiChecker.checkApi(response);
+    }
+    isLoading(false);
+  }
+
+  payForParcel() async {
+    isLoading(true);
+    var body = {"parcel_id": parcelResponse.value.data!.id};
+    var response = await ApiClient.postData(ApiConstant.payForParcel, body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      setParcelStatus(ParcelResponseModel.fromJson(response.body));
+    } else {
+      isLoading(false);
+      ApiChecker.checkApi(response);
+    }
+    isLoading(false);
+  }
+
+  recoverTrip() async {
+    isLoading(true);
+
+    final response = await ApiClient.getData(ApiConstant.recoverTripUrl);
+
+    debugPrint("test Response==========> : ${response.body}");
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.body["kind"] == "TRIP") {
+        setTripStatus(TripResponseModel.fromJson(response.body));
+      } else if (response.body["kind"] == "PARCEL") {
+        setParcelStatus(ParcelResponseModel.fromJson(response.body));
+      } else {
+        clearStates();
+      }
+    } else {
+      isLoading(false);
+      // ApiChecker.checkApi(response);
+    }
+    isLoading(false);
   }
 }

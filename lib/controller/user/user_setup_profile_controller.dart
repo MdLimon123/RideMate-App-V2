@@ -23,6 +23,7 @@ class UserSetupProfileController extends GetxController {
   RxBool isCameraInitialized = false.obs;
   XFile? capturedImage;
   RxBool isPermissionGranted = false.obs;
+  RxBool isPermissionDenied = false.obs;
 
   Future<void> pickNIDFrontImage({bool fromCamera = false}) async {
     final pickedFile = await ImageUtils.pickAndCropImage(
@@ -51,7 +52,7 @@ class UserSetupProfileController extends GetxController {
     }
   }
 
-  Future<bool> requestCameraPermission() async {
+ Future<bool> requestCameraPermission() async {
     var status = await Permission.camera.status;
 
     if (Platform.isIOS) {
@@ -119,6 +120,8 @@ class UserSetupProfileController extends GetxController {
     }
   }
 
+
+  
   ///  Step 3: Capture selfie safely
   Future<void> captureSelfie() async {
     final controller = cameraController;

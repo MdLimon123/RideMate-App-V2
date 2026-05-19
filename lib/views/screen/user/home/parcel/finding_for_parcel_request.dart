@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/ride_controller.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
 class FindingForParcelRewuest extends StatefulWidget {
-  const FindingForParcelRewuest({super.key});
+  final String pickLocation;
+  final String dropLocation;
+  const FindingForParcelRewuest({
+    super.key,
+    required this.pickLocation,
+    required this.dropLocation,
+  });
 
   @override
   State<FindingForParcelRewuest> createState() =>
@@ -15,13 +21,16 @@ class FindingForParcelRewuest extends StatefulWidget {
 
 class _FindingForParcelRewuestState extends State<FindingForParcelRewuest>
     with TickerProviderStateMixin {
-  late AnimationController _xController;
-  late AnimationController _yController;
-  late AnimationController _rotationController;
+  final RideController _rideController = Get.find<RideController>();
 
-  late Animation<double> _xScale;
-  late Animation<double> _yScale;
-  late Animation<double> _rotation;
+  final pickupLocationController = TextEditingController();
+  final dropLocationController = TextEditingController();
+
+  late AnimationController _pulseController;
+  late AnimationController _rotateController;
+  late Animation<double> _scaleAnim;
+  late Animation<double> _opacityAnim;
+
 
   @override
   void initState() {
@@ -30,41 +39,30 @@ class _FindingForParcelRewuestState extends State<FindingForParcelRewuest>
   }
 
   void setupAnimation() {
-    _xController = AnimationController(
+    _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
 
-    _yController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..repeat(reverse: true);
-
-    _rotationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 5),
-    )..repeat();
-
-    _xScale = Tween<double>(
-      begin: 0.9,
-      end: 1.15,
-    ).animate(CurvedAnimation(parent: _xController, curve: Curves.easeInOut));
-
-    _yScale = Tween<double>(
-      begin: 0.9,
-      end: 1.15,
-    ).animate(CurvedAnimation(parent: _yController, curve: Curves.easeInOut));
-
-    _rotation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _rotationController, curve: Curves.linear),
+    _scaleAnim = Tween<double>(begin: 1.0, end: 1.3).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+
+    _opacityAnim = Tween<double>(
+      begin: 0.4,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _pulseController, curve: Curves.easeOut));
+
+    _rotateController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat();
   }
 
   @override
   void dispose() {
-    _xController.dispose();
-    _yController.dispose();
-    _rotationController.dispose();
+    _pulseController.dispose();
+    _rotateController.dispose();
 
     //SocketService().socket?.disconnect();
     super.dispose();
@@ -72,6 +70,8 @@ class _FindingForParcelRewuestState extends State<FindingForParcelRewuest>
 
   @override
   Widget build(BuildContext context) {
+    pickupLocationController.text = widget.pickLocation;
+    dropLocationController.text = widget.dropLocation;
     return Scaffold(
       appBar: const CustomAppbar(title: "Searching"),
       body: SafeArea(
@@ -82,6 +82,7 @@ class _FindingForParcelRewuestState extends State<FindingForParcelRewuest>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
+                controller: pickupLocationController,
                 readOnly: true,
                 decoration: InputDecoration(
                   prefixIcon: Padding(
@@ -112,7 +113,7 @@ class _FindingForParcelRewuestState extends State<FindingForParcelRewuest>
 
               TextFormField(
                 readOnly: true,
-
+                controller: dropLocationController,
                 decoration: InputDecoration(
                   prefixIcon: Padding(
                     padding: const EdgeInsets.all(12.0),
@@ -155,40 +156,76 @@ class _FindingForParcelRewuestState extends State<FindingForParcelRewuest>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    AnimatedBuilder(
-                      animation: Listenable.merge([
-                        _xController,
-                        _yController,
-                        _rotationController,
-                      ]),
-                      builder: (context, child) {
-                        return Transform.scale(
-                          scaleX: _xScale.value,
-                          scaleY: _yScale.value,
-                          child: Transform.rotate(
-                            angle: _rotation.value * 6.28319,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.white.withValues(alpha: 0.4),
-                                    blurRadius: 30,
-                                    spreadRadius: 4,
+
+
+               
+                    SizedBox(
+                      width: 120,
+                      height: 120,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          AnimatedBuilder(
+                            animation: _pulseController,
+                            builder: (context, child) {
+                              return Transform.scale(
+                                scale: _scaleAnim.value * 1.2,
+                                child: Container(
+                                  width: 72,
+                                  height: 72,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white.withOpacity(
+                                      _opacityAnim.value * 0.5,
+                                    ),
                                   ),
-                                ],
+                                ),
+                              );
+                            },
+                          ),
+
+                          AnimatedBuilder(
+                            animation: _pulseController,
+                            builder: (context, child) {
+                              return Transform.scale(
+                                scale: _scaleAnim.value,
+                                child: Container(
+                                  width: 72,
+                                  height: 72,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white.withOpacity(
+                                      _opacityAnim.value,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+
+                          AnimatedBuilder(
+                            animation: _rotateController,
+                            builder: (context, child) {
+                              return Transform.rotate(
+                                angle: _rotateController.value * 2 * 3.14159,
+                                child: child,
+                              );
+                            },
+                            child: SvgPicture.asset(
+                              'assets/icons/search_fill.svg',
+                              colorFilter: ColorFilter.mode(
+                                Colors.white.withOpacity(0.9),
+                                BlendMode.srcIn,
                               ),
-                              child: child,
+                              width: 72,
+                              height: 72,
                             ),
                           ),
-                        );
-                      },
-                      child: SvgPicture.asset(
-                        'assets/icons/search_fill.svg',
-                        color: Colors.white,
-                        width: 72,
-                        height: 72,
+                        ],
                       ),
                     ),
+
+
 
                     const SizedBox(height: 15),
 
@@ -205,13 +242,22 @@ class _FindingForParcelRewuestState extends State<FindingForParcelRewuest>
                 ),
               ),
 
-              const SizedBox(height: 189),
+              const SizedBox(height: 100),
 
-              CustomButton(
-                onTap: () {
-                  Get.back();
-                },
-                text: "cancel".tr,
+              Obx(
+                () => CustomButton(
+                  loading: _rideController.isLoading.value,
+                  onTap: () {
+                    final parcelData =
+                        _rideController.parcelResponse.value.data;
+                    if (parcelData != null) {
+                      _rideController.cancelParcel(parcelData.id);
+                    } else {
+                      print("No trip data available yet.");
+                    }
+                  },
+                  text: "cancel".tr,
+                ),
               ),
             ],
           ),

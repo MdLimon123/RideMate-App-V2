@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
@@ -29,6 +28,7 @@ class DriverProfileSetupController extends GetxController {
   RxBool isCameraInitialized = false.obs;
   XFile? capturedImage;
   RxBool isPermissionGranted = false.obs;
+  RxBool isPermissionDenied = false.obs;
 
   var selectedGender = ''.obs;
 
@@ -55,7 +55,6 @@ class DriverProfileSetupController extends GetxController {
   }
 
   /// Pick nid image front camera or gallery
-  ///
 
   Future<void> pickVFrontImage({bool fromCamera = false}) async {
     final pickedFile = await ImageUtils.pickAndCropImage(
@@ -317,6 +316,16 @@ class DriverProfileSetupController extends GetxController {
     }
   }
 
+
+
+
+@override
+void onClose() {
+  cameraController?.dispose();
+  cameraController = null;
+  super.onClose();
+}
+  
   ///  Step 3: Capture selfie safely
   Future<void> captureSelfie() async {
     final controller = cameraController;
@@ -360,9 +369,5 @@ class DriverProfileSetupController extends GetxController {
     }
   }
 
-  @override
-  void onClose() {
-    cameraController?.dispose();
-    super.onClose();
-  }
+ 
 }

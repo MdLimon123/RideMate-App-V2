@@ -53,25 +53,30 @@ class _LocationEnableScreenState extends State<LocationEnableScreen> {
 
             const Spacer(),
 
-            CustomButton(
-              onTap: () async {
-                final position = await _splashController.getCurrentLocation();
+            Obx(
+              () => CustomButton(
+                loading: _splashController.isLoading.value,
+              
+                onTap: () async {
+                  final position = await _splashController
+                      .getLocationWithLoading();
 
-                if (position == null) {
-                  showCustomSnackBar(
-                    "Please enable location to continue",
-                    isError: true,
-                  );
-                  return;
-                }
+                  if (position == null) {
+                    showCustomSnackBar(
+                      "Please enable location to continue",
+                      isError: true,
+                    );
+                    return;
+                  }
 
-                if (widget.role == "USER") {
-                  Get.offAll(() => const UserSelectedLanguageScreen());
-                } else if (widget.role == "DRIVER") {
-                  Get.offAll(() => const DriverSelectedLangugeScreen());
-                }
-              },
-              text: "Enable Location",
+                  if (widget.role == "USER") {
+                    Get.offAll(() => const UserSelectedLanguageScreen());
+                  } else if (widget.role == "DRIVER") {
+                    Get.offAll(() => const DriverSelectedLangugeScreen());
+                  }
+                },
+                text: "Next",
+              ),
             ),
             const SizedBox(height: 20),
           ],

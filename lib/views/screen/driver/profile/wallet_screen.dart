@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_profile_controller.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
+import 'package:get/get.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -11,10 +13,15 @@ class WalletScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<WalletScreen> {
+  final _driverProfileController = Get.put(DriverProfileController());
+
   final amountController = TextEditingController();
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _driverProfileController.fetchDriverProfile();
+    });
     super.initState();
   }
 
@@ -32,13 +39,15 @@ class _WalletScreenState extends State<WalletScreen> {
               color: const Color(0xFFE6EAF0),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Center(
-              child: Text(
-                " + 100000 £",
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF012F64),
+            child: Center(
+              child: Obx(
+                () => Text(
+                  "  + ${_driverProfileController.driverProfileModel.value.wallet!.balance} £",
+                  style: const TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF012F64),
+                  ),
                 ),
               ),
             ),
@@ -88,12 +97,35 @@ class _WalletScreenState extends State<WalletScreen> {
             ),
           ),
           const SizedBox(height: 112),
-
-          CustomButton(onTap: () {}, text: "Connect Stripe Account"),
+          _driverProfileController.driverProfileModel.value.isStripeConnected ==
+                  true
+              ? const SizedBox.shrink()
+              : Obx(
+                  () => CustomButton(
+                    loading: _driverProfileController.isConnectLoading.value,
+                    onTap: () {
+                      _driverProfileController.connectStripeAccount();
+                    },
+                    text: "Connect Stripe Account",
+                  ),
+                ),
 
           const SizedBox(height: 16),
 
-          CustomButton(onTap: () {}, text: "Withdraw Now"),
+          _driverProfileController.driverProfileModel.value.isStripeConnected ==
+                  false
+              ? const SizedBox.shrink()
+              : Obx(
+                  () => CustomButton(
+                    loading: _driverProfileController.isWithdrawLoading.value,
+                    onTap: () {
+                      _driverProfileController.withdrawFunds(
+                        amount: amountController.text,
+                      );
+                    },
+                    text: "Withdraw Now",
+                  ),
+                ),
         ],
       ),
     );

@@ -16,11 +16,12 @@ class UserCaptureImageScreen extends StatefulWidget {
 }
 
 class _UserCaptureImageScreenState extends State<UserCaptureImageScreen> {
-  final _userSetupController = Get.put(UserSetupProfileController());
+  
+   final _userProfileSetupController = Get.put(UserSetupProfileController());
 
   @override
   void initState() {
-    _userSetupController.requestCameraPermission();
+    _userProfileSetupController.requestCameraPermission();
     super.initState();
   }
 
@@ -29,38 +30,31 @@ class _UserCaptureImageScreenState extends State<UserCaptureImageScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Row(
-          children: [
-            const Icon(Icons.arrow_back_ios, color: Color(0xFF676769)),
-            Image.asset('assets/images/logo.png'),
-            const Spacer(),
-            const Text(
-              "3 Of 3",
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Get.back(),
+        ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: Text(
+              '3 Of 3',
               style: TextStyle(
                 color: Color(0xFF012F64),
-                fontSize: 16,
                 fontWeight: FontWeight.w500,
+                fontSize: 16,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Obx(() {
-          // if (_driverSetupController.isPermissionGranted.value) {
-          //   return Center(
-          //     child: Text(
-          //       "Camera permission required to continue.",
-          //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          //       textAlign: TextAlign.center,
-          //     ),
-          //   );
-          // }
-
           // Camera initializing
-          if (_userSetupController.isCameraInitialized.value) {
+          if (_userProfileSetupController.isCameraInitialized.value) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -68,12 +62,12 @@ class _UserCaptureImageScreenState extends State<UserCaptureImageScreen> {
                   child: Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
-                      CameraPreview(_userSetupController.cameraController!),
+                      CameraPreview(_userProfileSetupController.cameraController!),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20.0),
                         child: FloatingActionButton(
                           backgroundColor: Colors.white,
-                          onPressed: _userSetupController.captureSelfie,
+                          onPressed: _userProfileSetupController.captureSelfie,
                           child: const Icon(
                             Icons.camera_alt,
                             color: Colors.black,
@@ -87,7 +81,9 @@ class _UserCaptureImageScreenState extends State<UserCaptureImageScreen> {
                 const SizedBox(height: 20),
               ],
             );
-          } else if (_userSetupController.capturedImage != null) {
+          }
+          /// Selfie captured ✅
+          else if (_userProfileSetupController.capturedImage != null) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -98,7 +94,7 @@ class _UserCaptureImageScreenState extends State<UserCaptureImageScreen> {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       image: FileImage(
-                        File(_userSetupController.capturedImage!.path),
+                        File(_userProfileSetupController.capturedImage!.path),
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -127,10 +123,10 @@ class _UserCaptureImageScreenState extends State<UserCaptureImageScreen> {
 
                 Obx(
                   () => CustomButton(
-                    loading: _userSetupController.isLoading.value,
+                    loading: _userProfileSetupController.isLoading.value,
                     onTap: () {
-                      _userSetupController.uploadCaptureImage(
-                        imagePath: _userSetupController.capturedImage!.path,
+                      _userProfileSetupController.uploadCaptureImage(
+                        imagePath: _userProfileSetupController.capturedImage!.path,
                       );
                     },
                     text: "Confirm & Continue",
@@ -140,7 +136,7 @@ class _UserCaptureImageScreenState extends State<UserCaptureImageScreen> {
                 const SizedBox(height: 16),
 
                 TextButton(
-                  onPressed: _userSetupController.retakeSelfie,
+                  onPressed: _userProfileSetupController.retakeSelfie,
                   child: const Text(
                     "Retake Selfie",
                     style: TextStyle(
@@ -159,4 +155,6 @@ class _UserCaptureImageScreenState extends State<UserCaptureImageScreen> {
       ),
     );
   }
+
+
 }

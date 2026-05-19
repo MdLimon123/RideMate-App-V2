@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_extension/controller/user/chat_controller.dart';
+import 'package:flutter_extension/controller/user/ride_controller.dart';
+import 'package:flutter_extension/controller/user/user_home_controller.dart';
+import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
-import 'package:flutter_extension/views/screen/user/home/parcel/rating_for_parcel_driver.dart';
+import 'package:flutter_extension/views/base/custom_button.dart';
+import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -13,8 +19,34 @@ class PayForParcelScreen extends StatefulWidget {
 }
 
 class _PayForParcelScreenState extends State<PayForParcelScreen> {
+  final RideController rideController = Get.put(RideController());
+  final codeController = TextEditingController(text: "");
+  final _chatController = Get.put(ChatController());
+
+  final _homeController = Get.put(UserHomeController());
+
+  @override
+  void initState() {
+    final driverLat =
+        rideController.parcelResponse.value.data!.driver!.locationLat;
+    final driverLng =
+        rideController.parcelResponse.value.data!.driver!.locationLng;
+
+    final userLat = rideController.parcelResponse.value.data!.user.locationLat;
+    final userLng = rideController.parcelResponse.value.data!.user.locationLng;
+
+    _homeController.calculateDriverETA(
+      driverLat: driverLat!,
+      driverLng: driverLng!,
+      userLat: userLat ?? 0.0,
+      userLng: userLng ?? 0.0,
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    codeController.text = rideController.tripResponse.value.data?.slug ?? "";
     return Scaffold(
       appBar: const CustomAppbar(title: "Driver Assigned"),
       body: SafeArea(
@@ -42,24 +74,25 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Center(
-                            child: Container(
+                            child: CustomNetworkImage(
+                              imageUrl:
+                                  "${ApiConstant.imageBaseUrl}${rideController.parcelResponse.value.data!.driver!.avatar}",
                               height: 48,
                               width: 48,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: AssetImage('assets/images/demo.png'),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+                              boxShape: BoxShape.circle,
                             ),
                           ),
 
                           const SizedBox(height: 12),
-                          const Center(
+                          Center(
                             child: Text(
-                              "Harry Potter",
-                              style: TextStyle(
+                              rideController
+                                  .parcelResponse
+                                  .value
+                                  .data!
+                                  .driver!
+                                  .name,
+                              style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFFFFFFFF),
@@ -67,22 +100,22 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          const Row(
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                "Hyundai, 2022 Model",
-                                style: TextStyle(
+                                "${rideController.parcelResponse.value.data!.driver!.vehicleBrand}, ${rideController.parcelResponse.value.data!.driver!.vehicleModel}",
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xFFFFFFFF),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Text(
-                                " 10 min away",
-                                style: TextStyle(
+                                " ${_homeController.driverEta.value} away",
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xFFFFFFFF),
@@ -113,9 +146,15 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  const Text(
-                                    "11",
-                                    style: TextStyle(
+                                  Text(
+                                    rideController
+                                        .parcelResponse
+                                        .value
+                                        .data!
+                                        .driver!
+                                        .tripGivenCount
+                                        .toString(),
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF333333),
@@ -127,9 +166,15 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
                                     color: Color(0xFF012F64),
                                   ),
                                   const SizedBox(width: 4),
-                                  const Text(
-                                    "4.5",
-                                    style: TextStyle(
+                                  Text(
+                                    rideController
+                                        .parcelResponse
+                                        .value
+                                        .data!
+                                        .driver!
+                                        .rating
+                                        .toString(),
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF333333),
@@ -156,10 +201,14 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
                                   children: [
                                     SvgPicture.asset('assets/icons/pick.svg'),
                                     const SizedBox(width: 12),
-                                    const Expanded(
+                                    Expanded(
                                       child: Text(
-                                        "Pizza Burge Main St, Maintown ",
-                                        style: TextStyle(
+                                        rideController
+                                            .parcelResponse
+                                            .value
+                                            .data!
+                                            .pickupAddress,
+                                        style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xFF333333),
@@ -176,10 +225,14 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
                                       'assets/icons/location.svg',
                                     ),
                                     const SizedBox(width: 12),
-                                    const Expanded(
+                                    Expanded(
                                       child: Text(
-                                        "Pizza Burge Main St, Maintown ",
-                                        style: TextStyle(
+                                        rideController
+                                            .parcelResponse
+                                            .value
+                                            .data!
+                                            .dropoffAddress,
+                                        style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xFF333333),
@@ -194,9 +247,14 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
                                   children: [
                                     SvgPicture.asset('assets/icons/dollar.svg'),
                                     const SizedBox(width: 12),
-                                    const Text(
-                                      "20",
-                                      style: TextStyle(
+                                    Text(
+                                      rideController
+                                          .parcelResponse
+                                          .value
+                                          .data!
+                                          .totalCost
+                                          .toString(),
+                                      style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w400,
                                         color: Color(0xFF333333),
@@ -223,6 +281,7 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
                     const SizedBox(height: 17),
                     TextFormField(
                       readOnly: true,
+                      controller: codeController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -237,7 +296,16 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
                           borderSide: BorderSide.none,
                         ),
                         suffixIcon: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Clipboard.setData(
+                              ClipboardData(text: codeController.text),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Copied to clipboard!'),
+                              ),
+                            );
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: SvgPicture.asset('assets/icons/copy.svg'),
@@ -246,9 +314,9 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
 
                         fillColor: const Color(0xFFE6EAF0),
                         filled: true,
-                        hint: const Text(
-                          "sdfwepoew",
-                          style: TextStyle(
+                        hint: Text(
+                          rideController.parcelResponse.value.data!.slug,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
                             color: Color(0xFF333333),
@@ -262,7 +330,17 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         InkWell(
-                          onTap: () async {},
+                          onTap: () async {
+                            await _chatController.createChatRoom(
+                              userId: rideController
+                                  .parcelResponse
+                                  .value
+                                  .data!
+                                  .driver!
+                                  .id
+                                  .toString(),
+                            );
+                          },
                           child: Container(
                             height: 40,
                             width: 40,
@@ -276,31 +354,20 @@ class _PayForParcelScreenState extends State<PayForParcelScreen> {
                         ),
                         const SizedBox(width: 22),
                         Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              Get.to(() => const RatingForParcelDriver());
-                            },
-
-                            child: Container(
-                              height: 46,
-
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
+                          child: Obx(
+                            () => CustomButton(
+                              loading: rideController.isLoading.value,
+                              onTap: () {
+                                rideController.payForParcel();
+                              },
+                              text: "Pay Now",
+                              textStyle: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
                               ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(24),
-                                color: const Color(0xFFE6EAF0),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Pay Now",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.textColor,
-                                  ),
-                                ),
-                              ),
+                              color: const Color(0xFFE6EAF0),
+                              circleColor: AppColors.primaryColor,
                             ),
                           ),
                         ),

@@ -16,6 +16,8 @@ class DriverOtpVerifyScreen extends StatefulWidget {
 }
 
 class _DriverOtpVerifyScreenState extends State<DriverOtpVerifyScreen> {
+
+
   final _driverAuthController = Get.put(DriverAuthController());
 
   @override
@@ -100,4 +102,7 @@ class _DriverOtpVerifyScreenState extends State<DriverOtpVerifyScreen> {
       ),
     );
   }
+
+
+
 }
