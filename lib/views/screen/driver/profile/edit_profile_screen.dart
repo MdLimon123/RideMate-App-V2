@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/driver/driver_profile_controller.dart';
+import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
+import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -15,16 +17,20 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final nameController = TextEditingController();
-
   final _driverProfileController = Get.put(DriverProfileController());
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _driverProfileController.fetchDriverProfile();
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    nameController.text =
+        _driverProfileController.driverProfileModel.value.name ?? "";
     return Scaffold(
       appBar: const CustomAppbar(title: "Edit Profile"),
       body: ListView(
@@ -55,20 +61,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                         ),
                       )
-                    : Container(
+                    : CustomNetworkImage(
+                        imageUrl:
+                            "${ApiConstant.imageBaseUrl}${_driverProfileController.driverProfileModel.value.avatar}",
                         height: 110,
-                        width: 110,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: const AssetImage('assets/images/demo.png'),
-                            fit: BoxFit.cover,
-                            colorFilter: ColorFilter.mode(
-                              Colors.black.withValues(alpha: 0.30),
-                              BlendMode.darken,
-                            ),
-                          ),
+                        boxShape: BoxShape.circle,
+                        colorFilter: ColorFilter.mode(
+                          Colors.black.withValues(alpha: 0.30),
+                          BlendMode.darken,
                         ),
+                        width: 110,
                       ),
               ),
               Positioned(
@@ -100,7 +102,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             hintText: "Enter full name",
           ),
           const SizedBox(height: 62),
-          CustomButton(onTap: () {}, text: "save".tr),
+          Obx(
+            () => CustomButton(
+              loading: _driverProfileController.uploadProfileLoading.value,
+              onTap: () {
+                _driverProfileController.updateProfile(
+                  imagePath:
+                      _driverProfileController.driverProfileImage.value!.path,
+                  name: nameController.text,
+                );
+              },
+              text: "save".tr,
+            ),
+          ),
         ],
       ),
     );

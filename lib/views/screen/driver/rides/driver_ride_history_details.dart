@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/data/model/driver/rider_history_model.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
+import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_svg/svg.dart';
 
 class DriverRideHistoryDetails extends StatefulWidget {
-  const DriverRideHistoryDetails({super.key});
+  final bool isParcel;
+  final RiderHistoryItem? riderHistoryItem;
+
+  const DriverRideHistoryDetails({
+    super.key,
+    required this.isParcel,
+    required this.riderHistoryItem,
+  });
 
   @override
   State<DriverRideHistoryDetails> createState() =>
@@ -12,59 +22,56 @@ class DriverRideHistoryDetails extends StatefulWidget {
 }
 
 class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
-  bool isParcel = true;
 
   @override
   Widget build(BuildContext context) {
+    final totalCost = widget.riderHistoryItem?.totalCost ?? 0;
+    final radeefFee = (totalCost * 0.02).toInt();
+    final driverEarn = totalCost - radeefFee;
+
     return Scaffold(
+      backgroundColor: const Color(0xFFE6EAF0),
       appBar: const CustomAppbar(title: "Ride Details"),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
-          const SizedBox(height: 10),
-          isParcel
+          widget.isParcel ? const SizedBox(height: 10) : const SizedBox(height: 186),
+          widget.isParcel
               ? Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 20,
                     vertical: 30,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE6EAF0),
+                    color: const Color(0xFF345983),
                     borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, -3),
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
-                        child: Container(
+                        child: CustomNetworkImage(
+                          imageUrl:
+                              "${ApiConstant.imageBaseUrl}${widget.riderHistoryItem?.user?.avatar}",
                           height: 48,
                           width: 48,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: AssetImage("assets/images/demo.png"),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                          boxShape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
                         ),
                       ),
-
-                      // Center(
-                      //   child: CustomNetworkImage(
-                      //     imageUrl:
-                      //         "${ApiConstant.imageBaseUrl}${widget.riderHistoryItem?.user?.avatar}",
-                      //     height: 48,
-                      //     width: 48,
-                      //     boxShape: BoxShape.circle,
-                      //     border: Border.all(color: Colors.white, width: 2),
-                      //   ),
-                      // ),
                       const SizedBox(height: 12),
-                      const Center(
+                      Center(
                         child: Text(
-                          "Walid",
-                          style: TextStyle(
-                            color: Color(0xFF333333),
+                          "${widget.riderHistoryItem?.user?.name}",
+                          style: const TextStyle(
+                            color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.w500,
                           ),
@@ -72,55 +79,8 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                         ),
                       ),
 
-                      const SizedBox(height: 16),
-
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset("assets/icons/cycle.svg"),
-                              const SizedBox(width: 4),
-                              const Text(
-                                "Trip",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF333333),
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              const Text(
-                                "5",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF333333),
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-                              const Icon(Icons.star, color: Color(0xFF012F64)),
-                              const SizedBox(width: 4),
-                              const Text(
-                                "4.5",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF333333),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      isParcel
+                      const SizedBox(height: 34),
+                      widget.isParcel
                           ? Container(
                               width: double.infinity,
                               padding: const EdgeInsets.symmetric(
@@ -144,36 +104,17 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                                     ),
                                   ),
 
-                                  Container(
-                                    height: 28,
-                                    width: 28,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(
-                                        color: const Color(0xFF11DF7F),
-                                        width: 0.5,
-                                      ),
-                                      image: const DecorationImage(
-                                        image: AssetImage(
-                                          "assets/images/demo.png",
-                                        ),
-                                        fit: BoxFit.cover,
-                                      ),
+                                  CustomNetworkImage(
+                                    imageUrl:
+                                        "${ApiConstant.imageBaseUrl}${widget.riderHistoryItem?.deliveryProofFiles}",
+                                    border: Border.all(
+                                      color: const Color(0xFF11DF7F),
+                                      width: 0.5,
                                     ),
+                                    height: 28,
+                                    borderRadius: BorderRadius.circular(4),
+                                    width: 28,
                                   ),
-
-                                  //   CustomNetworkImage(
-                                  //     imageUrl:
-                                  //         "${ApiConstant.imageBaseUrl}${widget.riderHistoryItem?.deliveryProofFiles}",
-                                  //     border: Border.all(
-                                  //       color: Color(0xFF11DF7F),
-                                  //       width: 0.5,
-                                  //     ),
-                                  //     height: 28,
-                                  //     borderRadius: BorderRadius.circular(4),
-                                  //     width: 28,
-                                  //   ),
-                                  // ],
                                 ],
                               ),
                             )
@@ -198,7 +139,8 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
-                                    "Pizza Burge Main St, Maintown ",
+                                    widget.riderHistoryItem?.pickupAddress ??
+                                        "",
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,
@@ -219,7 +161,8 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
-                                    "456 Oak Ave, Sometown (7.00 km)",
+                                    widget.riderHistoryItem?.dropoffAddress ??
+                                        "",
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,
@@ -231,14 +174,14 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                               ],
                             ),
                             const SizedBox(height: 12),
-                            isParcel
+                            widget.isParcel
                                 ? Row(
                                     children: [
                                       SvgPicture.asset("assets/icons/box.svg"),
                                       const SizedBox(width: 12),
-                                      const Text(
-                                        "10",
-                                        style: TextStyle(
+                                      Text(
+                                        "\$${widget.riderHistoryItem?.totalCost}",
+                                        style: const TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.w500,
                                           color: Color(0xFF012F64),
@@ -264,9 +207,9 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                                   color: AppColors.textColor,
                                 ),
                                 const SizedBox(width: 12),
-                                const Text(
-                                  "10",
-                                  style: TextStyle(
+                                Text(
+                                  "${widget.riderHistoryItem?.amount}",
+                                  style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w500,
                                     color: Color(0xFF012F64),
@@ -296,43 +239,38 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                       vertical: 30,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE6EAF0),
+                      color: const Color(0xFF345983),
                       borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, -3),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Container(
-                              height: 48,
-                              width: 48,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: AssetImage("assets/images/demo.png"),
-                                  fit: BoxFit.cover,
-                                ),
+                            CustomNetworkImage(
+                              imageUrl:
+                                  "${ApiConstant.imageBaseUrl}${widget.riderHistoryItem?.user?.avatar}",
+                              border: Border.all(
+                                color: const Color(0xFF11DF7F),
+                                width: 0.5,
                               ),
+                              height: 48,
+                              borderRadius: BorderRadius.circular(4),
+                              width: 48,
                             ),
-
-                            // CustomNetworkImage(
-                            //   imageUrl:
-                            //       "${ApiConstant.imageBaseUrl}${widget.riderHistoryItem?.user?.avatar}",
-                            //   border: Border.all(
-                            //     color: Color(0xFF11DF7F),
-                            //     width: 0.5,
-                            //   ),
-                            //   height: 48,
-                            //   borderRadius: BorderRadius.circular(4),
-                            //   width: 48,
-                            // ),
                             const SizedBox(width: 12),
-                            const Center(
+                            Center(
                               child: Text(
-                                "Walid",
-                                style: TextStyle(
-                                  color: Color(0xFF333333),
+                                "${widget.riderHistoryItem?.user?.name}",
+                                style: const TextStyle(
+                                  color: Colors.white,
                                   fontSize: 24,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -342,7 +280,7 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                           ],
                         ),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 34),
 
                         Container(
                           width: double.infinity,
@@ -362,7 +300,8 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
-                                      "Pizza Burge Main St, Maintown ",
+                                      widget.riderHistoryItem?.pickupAddress ??
+                                          "",
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w400,
@@ -383,7 +322,8 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
-                                      "456 Oak Ave, Sometown (6.00 km) ",
+                                      widget.riderHistoryItem?.dropoffAddress ??
+                                          "",
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w400,
@@ -403,9 +343,11 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                                     color: AppColors.textColor,
                                   ),
                                   const SizedBox(width: 12),
-                                  const Text(
-                                    "100",
-                                    style: TextStyle(
+                                  Text(
+                                    widget.riderHistoryItem?.totalCost
+                                            .toString() ??
+                                        "",
+                                    style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w500,
                                       color: Color(0xFF012F64),
@@ -433,13 +375,13 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFFFFF),
+              color: const Color(0xFF345983),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.8),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, -3),
                 ),
               ],
             ),
@@ -450,7 +392,7 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                   child: Text(
                     "Your earn of this trip",
                     style: TextStyle(
-                      color: Color(0xFF333333),
+                      color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.w500,
                     ),
@@ -463,13 +405,13 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                     width: 187,
                     height: 56,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE6EAF0),
+                      color: const Color(0xFFFFFFFF),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Text(
-                        "10 (£)",
-                        style: TextStyle(
+                        "$driverEarn (£)",
+                        style: const TextStyle(
                           fontWeight: FontWeight.w500,
                           color: Color(0xFF012F64),
                           fontSize: 40,
@@ -487,21 +429,18 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF333333),
+                        color: Color(0xFFFFFFFF),
                       ),
                     ),
                     const SizedBox(width: 6),
-                    SvgPicture.asset(
-                      "assets/icons/percentige.svg",
-                      color: const Color(0xFF333333),
-                    ),
+                    SvgPicture.asset("assets/icons/percentige.svg"),
                     const SizedBox(width: 4),
-                    const Text(
-                      "2",
-                      style: TextStyle(
+                    Text(
+                      "$radeefFee",
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF333333),
+                        color: Color(0xFFFFFFFF),
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -510,7 +449,7 @@ class _DriverRideHistoryDetailsState extends State<DriverRideHistoryDetails> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w200,
-                        color: Color(0xFF333333),
+                        color: Color(0xFFFFFFFF),
                       ),
                     ),
                   ],

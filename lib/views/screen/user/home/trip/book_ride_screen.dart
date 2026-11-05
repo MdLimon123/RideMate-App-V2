@@ -17,6 +17,17 @@ class _BookRideScreenState extends State<BookRideScreen> {
   final _userHomeController = Get.put(UserHomeController());
 
   @override
+  void dispose() {
+    _userHomeController.pickController.clear();
+    _userHomeController.dropController.clear();
+    _userHomeController.suggestions.clear();
+    _userHomeController.pickAddress.value = '';
+    _userHomeController.dropAddress.value = '';
+    _userHomeController.dropCoordinates.clear();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppbar(title: "Trip Request"),
@@ -141,42 +152,58 @@ class _BookRideScreenState extends State<BookRideScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
+                    Obx(
+                      () => ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount:
+                            _userHomeController.recentDestinations.length,
+                        separatorBuilder: (_, _) => const SizedBox(height: 6),
+                        itemBuilder: (context, index) {
+                          final dest =
+                              _userHomeController.recentDestinations[index];
 
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: 5,
-                      separatorBuilder: (_, __) => const SizedBox(height: 6),
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {},
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE6E6E6).withOpacity(0.24),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset('assets/icons/location.svg'),
-                                const SizedBox(width: 12),
-                                const Expanded(
-                                  child: Text(
-                                    "2972 Westheimer Rd. Santa ",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFF8A8A8A),
+                          return InkWell(
+                            onTap: () {
+                              _userHomeController.dropController.text =
+                                  dest.address;
+                              _userHomeController.dropAddress.value =
+                                  dest.address;
+                              _userHomeController.dropCoordinates.value = [
+                                dest.lat,
+                                dest.lng,
+                              ];
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: const Color(
+                                  0xFFE6E6E6,
+                                ).withValues(alpha: 0.24),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset('assets/icons/location.svg'),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      dest.address,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xFF8A8A8A),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
 
                     const SizedBox(height: 140),

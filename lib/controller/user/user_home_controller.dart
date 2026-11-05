@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/data/api/one_signla_helper.dart';
+import 'package:flutter_extension/data/model/user/recent_destinations.dart';
 import 'package:flutter_extension/views/base/custom_snackbar.dart';
+import 'package:flutter_extension/views/screen/user/home/parcel/show_parcel_amount_screen.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/show_trip_amount_screen.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -22,6 +26,8 @@ class UserHomeController extends GetxController {
 
   RxString selectedParcelType = "".obs;
 
+  var recentDestinations = <RecentDestination>[].obs;
+
   var currentLatLng = Rxn<LatLng>();
   GoogleMapController? mapController;
 
@@ -29,9 +35,16 @@ class UserHomeController extends GetxController {
 
   final pickController = TextEditingController();
   final dropController = TextEditingController();
+  final parcelWeightController = TextEditingController();
+  final parcelAmount = TextEditingController();
+
+  final RxString weightUnit = 'kg'.obs;
+
+  String get parcelWeightValue => parcelWeightController.text;
 
   var pickCoordinates = <double>[].obs;
   var dropCoordinates = <double>[].obs;
+  final box = GetStorage();
 
   var pickAddress = ''.obs;
   var dropAddress = ''.obs;
@@ -61,9 +74,32 @@ class UserHomeController extends GetxController {
 
     dropCoordinates.value = coords;
 
-    // saveRecentDestination(
-    //   RecentDestination(address: location, lat: coords[0], lng: coords[1]),
-    // );
+    saveRecentDestination(
+      RecentDestination(address: location, lat: coords[0], lng: coords[1]),
+    );
+  }
+
+  void loadRecentDestinations() {
+    final data = box.read<List>('recent_destinations') ?? [];
+
+    recentDestinations.value = data
+        .map((e) => RecentDestination.fromJson(e))
+        .toList();
+  }
+
+  void saveRecentDestination(RecentDestination dest) {
+    recentDestinations.removeWhere((e) => e.address == dest.address);
+
+    recentDestinations.insert(0, dest);
+
+    if (recentDestinations.length > 5) {
+      recentDestinations.removeLast();
+    }
+
+    box.write(
+      'recent_destinations',
+      recentDestinations.map((e) => e.toJson()).toList(),
+    );
   }
 
   Future<void> getCurrentLocation({bool setToTextField = false}) async {
@@ -107,6 +143,8 @@ class UserHomeController extends GetxController {
 
         pickController.text =
             "${place.street}, ${place.locality}, ${place.administrativeArea}";
+        pickAddress.value = pickController.text;
+        pickCoordinates.value = [position.latitude, position.longitude];
       }
     }
   }
@@ -158,6 +196,57 @@ class UserHomeController extends GetxController {
     }
   }
 
+  Future<void> calculateParcelAmount() async {
+    if (pickCoordinates.length < 2 || dropCoordinates.length < 2) {
+      showCustomSnackBar(
+        "Please select pickup and drop location",
+        isError: true,
+      );
+      return;
+    }
+
+    isShowAnountLoading(true);
+
+    final body = {
+      "pickup_lat": pickCoordinates[0],
+      "pickup_lng": pickCoordinates[1],
+      "dropoff_lat": dropCoordinates[0],
+      "dropoff_lng": dropCoordinates[1],
+      "pickup_address": pickAddress.value,
+      "dropoff_address": dropAddress.value,
+      "parcel_type": selectedParcelType.value,
+      "weight": parcelWeightController.text,
+      "amount": parcelAmount.text,
+    };
+
+    final response = await ApiClient.postData("/parcels/estimate-fare", body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      showCustomSnackBar(response.statusText, isError: false);
+      Get.to(
+        () => ShowParcelAmountScreen(
+          showAmount: response.body['estimated_fare'].toDouble(),
+          parcelType: selectedParcelType.value,
+          weight: response.body['query']['weight'].runtimeType == int
+              ? response.body['query']['weight'].toDouble()
+              : response.body['query']['weight'],
+          amount: response.body['query']['amount'].runtimeType == int
+              ? response.body['query']['amount'].toDouble()
+              : response.body['query']['amount'],
+          pickLat: pickCoordinates[0],
+          pickLng: pickCoordinates[1],
+          dropLat: dropCoordinates[0],
+          dropLan: dropCoordinates[1],
+          pickLocation: pickAddress.value,
+          dropLocation: dropAddress.value,
+        ),
+      );
+    } else {
+      showCustomSnackBar(response.statusText, isError: true);
+    }
+
+    isShowAnountLoading(false);
+  }
+
   Future<void> calculateAccount() async {
     if (pickCoordinates.length < 2 || dropCoordinates.length < 2) {
       showCustomSnackBar(
@@ -197,5 +286,58 @@ class UserHomeController extends GetxController {
       showCustomSnackBar(response.statusText, isError: true);
     }
     isShowAnountLoading(false);
+  }
+
+  RxString driverEta = "Calculating...".obs;
+
+  Future<void> calculateDriverETA({
+    required double driverLat,
+    required double driverLng,
+    required double userLat,
+    required double userLng,
+  }) async {
+    try {
+      final url =
+          "https://maps.googleapis.com/maps/api/distancematrix/json"
+          "?origins=$driverLat,$driverLng"
+          "&destinations=$userLat,$userLng"
+          "&mode=driving"
+          "&departure_time=now"
+          "&key=${ApiConstant.googleApiKey}";
+
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        final duration =
+            data['rows'][0]['elements'][0]['duration_in_traffic']['text'];
+
+        driverEta.value = duration;
+      } else {
+        driverEta.value = "Unknown";
+      }
+    } catch (e) {
+      driverEta.value = "Unknown";
+    }
+  }
+
+  Future<void> subscribleId() async {
+    String? subscriptionId = await OneSignalHelper.getSubscriptionId();
+
+    if (subscriptionId == null || subscriptionId.isEmpty) {
+      print("OneSignal ID not available");
+      return;
+    }
+
+    final response = await ApiClient.postData("/profile/onesignal-id", {
+      "onesignal_id": subscriptionId,
+    });
+    if (response.statusCode == 200 || response.statusCode == 201) {
+    } else {
+      showCustomSnackBar(response.statusText, isError: true);
+    }
+
+    print("OneSignal ID: $subscriptionId");
   }
 }

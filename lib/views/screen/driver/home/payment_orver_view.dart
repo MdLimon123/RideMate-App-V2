@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_extension/controller/driver/home_controller.dart';
+import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/screen/driver/home/rating_for_user.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/instance_manager.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PaymentOrverView extends StatefulWidget {
   const PaymentOrverView({super.key});
@@ -16,7 +14,7 @@ class PaymentOrverView extends StatefulWidget {
 }
 
 class _PaymentOrverViewState extends State<PaymentOrverView> {
-  final _homeController = Get.put(DriverHomeController());
+  final _driverRideController = Get.find<DriverRideController>();
 
   @override
   Widget build(BuildContext context) {
@@ -29,20 +27,6 @@ class _PaymentOrverViewState extends State<PaymentOrverView> {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Obx(
-                    () => GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target:
-                            _homeController.currentLatLng.value ??
-                            const LatLng(23.8103, 90.4125),
-                        zoom: 15,
-                      ),
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: true,
-                      onMapCreated: _homeController.setMapController,
-                    ),
-                  ),
-
                   Positioned(
                     bottom: -60,
                     left: 20,
@@ -79,21 +63,23 @@ class _PaymentOrverViewState extends State<PaymentOrverView> {
                           ),
                           const SizedBox(height: 20),
 
-                          Center(
-                            child: Container(
-                              width: 187,
-                              height: 57,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFE6EAF0),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "100 (£)",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: AppColors.textColor,
-                                    fontWeight: FontWeight.w500,
+                          Obx(
+                            () => Center(
+                              child: Container(
+                                width: 187,
+                                height: 57,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFE6EAF0),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "${_driverRideController.tripResponse.value.data!.totalCost}(£)",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: AppColors.textColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -121,7 +107,12 @@ class _PaymentOrverViewState extends State<PaymentOrverView> {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                "10",
+                                _driverRideController
+                                    .tripResponse
+                                    .value
+                                    .data!
+                                    .adminEarning
+                                    .toString(),
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w500,
@@ -161,4 +152,6 @@ class _PaymentOrverViewState extends State<PaymentOrverView> {
       ),
     );
   }
+
+
 }

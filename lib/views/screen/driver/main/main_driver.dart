@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
+
 import 'package:flutter_extension/views/screen/driver/earn/driver_earn_screen.dart';
 import 'package:flutter_extension/views/screen/driver/home/home_driver.dart';
 import 'package:flutter_extension/views/screen/driver/profile/driver_profile_screen.dart';
 import 'package:flutter_extension/views/screen/driver/rides/driver_ride_history_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 class MainDriver extends StatefulWidget {
   const MainDriver({super.key});
@@ -13,6 +16,17 @@ class MainDriver extends StatefulWidget {
 }
 
 class _MainDriverState extends State<MainDriver> {
+  final DriverRideController _driverRideController = Get.put(
+    DriverRideController(),
+    permanent: true,
+  );
+
+  @override
+  void initState() {
+    _driverRideController.recoverTrip();
+    super.initState();
+  }
+
   var selectedIndex = 0;
   var pages = [
     const HomeDriver(),
@@ -20,10 +34,13 @@ class _MainDriverState extends State<MainDriver> {
     const DriverEarnScreen(),
     const DriverProfileScreen(),
   ];
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: selectedIndex, children: pages),
+      body:IndexedStack(index: selectedIndex, children: pages),
+      
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,

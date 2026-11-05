@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/chat_controller.dart';
 import 'package:flutter_extension/controller/user/user_home_controller.dart';
 import 'package:flutter_extension/controller/user/user_profile_controller.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
+import 'package:flutter_extension/data/api/one_signla_helper.dart';
 import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_extension/views/base/get_greeting.dart';
+import 'package:flutter_extension/views/screen/notification/notification_screen.dart';
 import 'package:flutter_extension/views/screen/user/home/parcel/parcle_input_details.dart';
 import 'package:flutter_extension/views/screen/user/home/trip/book_ride_screen.dart';
-import 'package:flutter_extension/views/screen/user/notification/notification_screen.dart';
 import 'package:flutter_extension/views/screen/user/profile/user_profile_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
 
 class UserHome extends StatefulWidget {
   const UserHome({super.key});
@@ -21,18 +24,21 @@ class UserHome extends StatefulWidget {
 class _UserHomeState extends State<UserHome> {
   final _userHomeController = Get.put(UserHomeController());
   final _userProfileController = Get.put(UserProfileController());
+  final _chatController = Get.put(ChatController());
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _userHomeController.subscribleId();
+      OneSignalHelper.optIn();
       _userProfileController.fetchUserInfo();
     });
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -88,8 +94,6 @@ class _UserHomeState extends State<UserHome> {
                         height: 32,
                         width: 32,
                       ),
-
-                   
                     ),
                   ],
                 ),
@@ -249,49 +253,67 @@ class _UserHomeState extends State<UserHome> {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: 5,
-                        separatorBuilder: (_, _) => const SizedBox(height: 6),
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {},
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: const Color(
-                                  0xFFE6E6E6,
-                                ).withValues(alpha: 0.24),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset('assets/icons/location.svg'),
-                                  const SizedBox(width: 12),
-                                  const Expanded(
-                                    child: Text(
-                                      "2972 Westheimer Rd. Santa ",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: Color(0xFF8A8A8A),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
+
+                      Obx(
+                        () => ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount:
+                              _userHomeController.recentDestinations.length,
+                          separatorBuilder: (_, _) => const SizedBox(height: 6),
+                          itemBuilder: (context, index) {
+                            final dest =
+                                _userHomeController.recentDestinations[index];
+
+                            return InkWell(
+                              onTap: () {
+                                _userHomeController.dropController.text =
+                                    dest.address;
+                                _userHomeController.dropAddress.value =
+                                    dest.address;
+                                _userHomeController.dropCoordinates.value = [
+                                  dest.lat,
+                                  dest.lng,
+                                ];
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: const Color(
+                                    0xFFE6E6E6,
+                                  ).withValues(alpha: 0.24),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icons/location.svg',
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        dest.address,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color(0xFF8A8A8A),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
 
                       const SizedBox(height: 129),
                       InkWell(
                         onTap: () {
-                          // _chatController.createAdminChatRoom();
+                          _chatController.createAdminChatRoom();
                         },
                         child: Container(
                           width: double.infinity,

@@ -8,5 +8,10 @@ ThemeData dark({Color color = const Color(0xFF345983)}) => ThemeData(
   brightness: Brightness.dark,
   hintColor: const Color(0xFFbebebe),
   cardColor: Colors.black,
-  textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: color)), colorScheme: ColorScheme.dark(primary: color, secondary: color).copyWith(background: Color(0xFF343636)).copyWith(error: Color(0xFFdd3135)),
+  textButtonTheme: TextButtonThemeData(
+    style: TextButton.styleFrom(foregroundColor: color),
+  ),
+  colorScheme: ColorScheme.dark(primary: color, secondary: color)
+      .copyWith(surface: const Color(0xFF343636))
+      .copyWith(error: const Color(0xFFdd3135)),
 );

@@ -13,7 +13,7 @@ class SelectRoleScreen extends StatefulWidget {
 }
 
 class _SelectRoleScreenState extends State<SelectRoleScreen> {
-  final _splashController = Get.find<SplashController>();
+  final _splashController = Get.put(SplashController());
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +59,9 @@ class _SelectRoleScreenState extends State<SelectRoleScreen> {
               const SizedBox(height: 16),
               InkWell(
                 onTap: () {
+                  _splashController.setRole("DRIVER");
 
-                    _splashController.setRole("DRIVER");
-                    
                   Get.to(() => const LocationEnableScreen(role: "DRIVER"));
-                
                 },
                 child: Container(
                   height: 52,

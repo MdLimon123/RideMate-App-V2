@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/data_controller.dart';
+import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/data/api/api_client.dart';
 import 'package:flutter_extension/data/model/driver/driver_info_model.dart';
 import 'package:flutter_extension/helper/prefs_helper.dart';
 import 'package:flutter_extension/util/app_constants.dart';
 import 'package:flutter_extension/views/base/custom_snackbar.dart';
+import 'package:flutter_extension/views/screen/driver/auth/driver_email_verify_page.dart';
 import 'package:flutter_extension/views/screen/driver/auth/driver_login_screen.dart';
 import 'package:flutter_extension/views/screen/driver/auth/driver_otp_verify_screen.dart';
 import 'package:flutter_extension/views/screen/driver/auth/driver_terms_condition_screen.dart';
@@ -17,16 +20,27 @@ class DriverAuthController extends GetxController {
   var isForgetLoading = false.obs;
   var isForgetOtp = "".obs;
   var isVerify = false.obs;
-
-
+  final DriverRideController _driverRideController = Get.put(
+    DriverRideController(),
+    permanent: true,
+  );
 
   var isResetLoading = false.obs;
   final _dataController = Get.put(DataController());
 
-  Future<void> signup({required String email, required String password}) async {
+  Future<void> signup({
+    required String email,
+    required String password,
+    required String phone,
+  }) async {
     isLoading(true);
 
-    final body = {"email": email, "password": password, "role": "DRIVER"};
+    final body = {
+      "email": email,
+      "password": password,
+      "role": "DRIVER",
+      "phone": phone,
+    };
     var headers = {'Content-Type': 'application/json'};
 
     final response = await ApiClient.postData(
@@ -40,9 +54,10 @@ class DriverAuthController extends GetxController {
         AppConstants.bearerTokenKEN,
         response.body['access_token'],
       );
+      await ApiClient.refreshToken();
       print("status text ====> ${response.statusText}");
       showCustomSnackBar(response.statusText, isError: false);
-      Get.to(() => const DriverTermsConditionScreen());
+      Get.to(() => DriverEmailVerifyPage(email: email));
     } else {
       print("status text ====> ${response.statusText}");
       showCustomSnackBar(response.statusText, isError: true);
@@ -50,9 +65,8 @@ class DriverAuthController extends GetxController {
     isLoading(false);
   }
 
-
-
-   /// Login
+  /// Login
+  ///
   Future<void> login({required String email, required String password}) async {
     isLoading(true);
 
@@ -74,16 +88,8 @@ class DriverAuthController extends GetxController {
       await PrefsHelper.setString(AppConstants.bearerTokenKEN, token);
       await PrefsHelper.setUserInfo(response.body);
 
-      /// Socket connection
-      // SocketService().connect(token);
-      // TripStateController.to.setRole(driver: false);
-
-      // // Init socket (if not already)
-      // var tripSocketController = Get.put(TripSocketController());
-      // var parcelController = Get.put(ParcelController());
-
-      // tripSocketController.allUserListeners();
-      // parcelController.allParcelUserListeners();
+      /// Force refresh ApiClient headers with new token
+      await ApiClient.refreshToken();
 
       _dataController.setProfileData(
         isActiveD: response.body['user']['is_active'],
@@ -94,8 +100,13 @@ class DriverAuthController extends GetxController {
 
       showCustomSnackBar(response.statusText, isError: false);
 
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(const Duration(milliseconds: 300), () async {
         if (driverInfo.driver.isActive) {
+          try {
+            await _driverRideController.listenDriverRide();
+          } catch (e) {
+            debugPrint('⚠️ Socket connection failed, but continuing: $e');
+          }
           Get.offAll(() => const MainDriver());
         } else {
           Get.offAll(() => const DriverVerifyScreen());
@@ -107,9 +118,7 @@ class DriverAuthController extends GetxController {
     isLoading(false);
   }
 
-
-
-    /// forget
+  /// forget
   Future<void> forgetPassword({required String email}) async {
     isForgetLoading(true);
 
@@ -135,6 +144,32 @@ class DriverAuthController extends GetxController {
 
   /// otp
 
+  Future<void> otpEmailVerify({required String email}) async {
+    isVerify(true);
+    final body = {"email": email, "otp": isForgetOtp.value};
+
+    var headers = {'Content-Type': 'application/json'};
+
+    final response = await ApiClient.postData(
+      "/auth/account-verify",
+      body,
+      headers: headers,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      await PrefsHelper.setString(
+        AppConstants.bearerTokenKEN,
+        response.body['access_token'],
+      );
+      await ApiClient.refreshToken();
+      showCustomSnackBar(response.statusText, isError: false);
+      Get.to(() => const DriverTermsConditionScreen());
+    } else {
+      showCustomSnackBar(response.statusText, isError: true);
+    }
+    isVerify(false);
+  }
+
   Future<void> otpForgetVerify({required String email}) async {
     isVerify(true);
     final body = {"email": email, "otp": isForgetOtp.value};
@@ -152,12 +187,30 @@ class DriverAuthController extends GetxController {
         AppConstants.bearerTokenKEN,
         response.body['reset_token'],
       );
+      await ApiClient.refreshToken();
       showCustomSnackBar(response.statusText, isError: false);
       Get.to(() => const ResetPasswordScreen());
     } else {
       showCustomSnackBar(response.statusText, isError: true);
     }
     isVerify(false);
+  }
+
+  Future<void> resendEmailVerify({required String email}) async {
+    final body = {"email": email};
+    var headers = {'Content-Type': 'application/json'};
+
+    final response = await ApiClient.postData(
+      "/auth/account-verify/otp-send",
+      body,
+      headers: headers,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      showCustomSnackBar(response.statusText, isError: false);
+    } else {
+      showCustomSnackBar(response.statusText, isError: true);
+    }
   }
 
   Future<void> resendOtpVerify({required String email}) async {
@@ -192,6 +245,4 @@ class DriverAuthController extends GetxController {
     }
     isResetLoading(false);
   }
-
-
 }

@@ -4,7 +4,6 @@ import 'package:flutter_extension/controller/user/user_auth_controller.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
-import 'package:flutter_extension/views/screen/user/auth/user_reset_password_screen.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 
@@ -18,6 +17,8 @@ class UserOtpVerifyScreen extends StatefulWidget {
 }
 
 class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
+
+
   final _userAuthController = Get.put(UserAuthController());
 
   @override
@@ -102,4 +103,7 @@ class _UserOtpVerifyScreenState extends State<UserOtpVerifyScreen> {
       ),
     );
   }
+
+
+
 }

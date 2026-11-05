@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_chat_controller.dart';
+import 'package:flutter_extension/data/model/message_model.dart';
+import 'package:flutter_extension/views/base/custom_loading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class DriverInboxScreen extends StatefulWidget {
-  const DriverInboxScreen({super.key});
+  final String chatId;
+  const DriverInboxScreen({super.key, required this.chatId});
 
   @override
   State<DriverInboxScreen> createState() => _DriverScreenState();
 }
 
 class _DriverScreenState extends State<DriverInboxScreen> {
-  final TextEditingController messageController = TextEditingController();
+  final _chatController = Get.put(DriverChatController());
 
-  final List<Message> messages = [
-    Message(text: "Hi 👋", isMine: false),
-    Message(text: "Hello! How can I help you?", isMine: true),
-    Message(text: "I need some information about my order.", isMine: false),
-    Message(text: "Sure, please share your order ID.", isMine: true),
-  ];
+  final TextEditingController messageController = TextEditingController();
 
   @override
   void initState() {
+    _chatController.fetchMessages(chatId: widget.chatId);
+
     super.initState();
   }
 
@@ -39,24 +40,24 @@ class _DriverScreenState extends State<DriverInboxScreen> {
             ),
             const SizedBox(width: 12),
             const Text(
-              "Message",
+              "Need Help",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF333333),
               ),
             ),
-            // Spacer(),
-            // Container(
-            //   height: 40,
-            //   width: 40,
-            //   padding: EdgeInsets.all(8),
-            //   decoration: BoxDecoration(
-            //     shape: BoxShape.circle,
-            //     color: Color(0xFFE6EAF0),
-            //   ),
-            //   child: SvgPicture.asset("assets/icons/phone.svg"),
-            // ),
+            const Spacer(),
+            Container(
+              height: 40,
+              width: 40,
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xFFE6EAF0),
+              ),
+              child: SvgPicture.asset("assets/icons/phone.svg"),
+            ),
           ],
         ),
       ),
@@ -65,13 +66,29 @@ class _DriverScreenState extends State<DriverInboxScreen> {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(8),
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  return _buildMessage(messages[index]);
-                },
-              ),
+              child: Obx(() {
+                if (_chatController.isLoading.value) {
+                  return const Center(child: CustomLoading());
+                }
+
+                if (_chatController.messages.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "Start Chatting now",
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(8),
+                  itemCount: _chatController.messages.length,
+                  itemBuilder: (context, index) {
+                    final message = _chatController.messages[index];
+                    return _buildMessage(message);
+                  },
+                );
+              }),
             ),
 
             Row(
@@ -79,7 +96,13 @@ class _DriverScreenState extends State<DriverInboxScreen> {
                 Expanded(
                   child: TextFormField(
                     controller: messageController,
-                    onFieldSubmitted: (value) {},
+                    onFieldSubmitted: (value) {
+                      _chatController.sendMessage(
+                        chatId: widget.chatId,
+                        text: messageController.text,
+                      );
+                      messageController.clear();
+                    },
                     decoration: InputDecoration(
                       hintText: "Type a message...",
                       hintStyle: const TextStyle(
@@ -117,7 +140,13 @@ class _DriverScreenState extends State<DriverInboxScreen> {
                 ),
                 const SizedBox(width: 15),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    _chatController.sendMessage(
+                      chatId: widget.chatId,
+                      text: messageController.text,
+                    );
+                    messageController.clear();
+                  },
                   child: SvgPicture.asset('assets/icons/send.svg'),
                 ),
               ],
@@ -135,9 +164,7 @@ class _DriverScreenState extends State<DriverInboxScreen> {
         margin: const EdgeInsets.symmetric(vertical: 5),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: message.isMine
-              ? const Color(0xFFE6EAF0)
-              : const Color(0xFFE6E6E6),
+          color: message.isMine ? const Color(0xFFE6EAF0) : const Color(0xFFE6E6E6),
           borderRadius: message.isMine
               ? const BorderRadius.only(
                   bottomRight: Radius.circular(16),
@@ -153,9 +180,7 @@ class _DriverScreenState extends State<DriverInboxScreen> {
         child: Text(
           message.text,
           style: TextStyle(
-            color: message.isMine
-                ? const Color(0xFF0D1A3E)
-                : const Color(0xFF0D1A3E),
+            color: message.isMine ? const Color(0xFF0D1A3E) : const Color(0xFF0D1A3E),
             fontSize: 14,
             fontWeight: FontWeight.w400,
           ),
@@ -165,9 +190,4 @@ class _DriverScreenState extends State<DriverInboxScreen> {
   }
 }
 
-class Message {
-  final String text;
-  final bool isMine;
 
-  Message({required this.text, required this.isMine});
-}

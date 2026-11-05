@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/controller/driver/parcel_end_controller.dart';
+import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/util/app_colors.dart';
+import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
+import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -16,14 +20,16 @@ class EndParcelConfirmationScreen extends StatefulWidget {
 class _EndParcelConfirmationScreenState
     extends State<EndParcelConfirmationScreen> {
   final _parcelEndController = Get.put(ParcelEndController());
+  final _driverRideController = Get.find<DriverRideController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const CustomAppbar(),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
-          const SizedBox(height: 162),
+          const SizedBox(height: 40),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
             decoration: BoxDecoration(
@@ -44,16 +50,12 @@ class _EndParcelConfirmationScreenState
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
+                    CustomNetworkImage(
+                      imageUrl:
+                          "${ApiConstant.imageBaseUrl}${_driverRideController.parcelResponse.value.data!.user.avatar}",
+                      boxShape: BoxShape.circle,
                       height: 48,
                       width: 48,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage("assets/images/demo.png"),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
                     ),
 
                     const SizedBox(width: 12),
@@ -63,7 +65,12 @@ class _EndParcelConfirmationScreenState
                       children: [
                         Center(
                           child: Text(
-                            "Sergio Romasis",
+                            _driverRideController
+                                .parcelResponse
+                                .value
+                                .data!
+                                .user
+                                .name,
                             style: TextStyle(
                               color: AppColors.textColor,
                               fontSize: 24,
@@ -95,9 +102,9 @@ class _EndParcelConfirmationScreenState
                                   ),
                                 ),
                                 const SizedBox(width: 4),
-                                const Text(
-                                  "5",
-                                  style: TextStyle(
+                                Text(
+                                  "${_driverRideController.parcelResponse.value.data!.user.tripReceivedCount}",
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
                                     color: Color(0xFF333333),
@@ -109,9 +116,9 @@ class _EndParcelConfirmationScreenState
                                   color: Color(0xFF012F64),
                                 ),
                                 const SizedBox(width: 4),
-                                const Text(
-                                  "4.5",
-                                  style: TextStyle(
+                                Text(
+                                  "${_driverRideController.parcelResponse.value.data!.user.rating}",
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
                                     color: Color(0xFF333333),
@@ -121,8 +128,6 @@ class _EndParcelConfirmationScreenState
                             ),
                           ),
                         ),
-                     
-                     
                       ],
                     ),
                   ],
@@ -210,7 +215,11 @@ class _EndParcelConfirmationScreenState
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              "Pizza Burge Main St, Maintown ",
+                              _driverRideController
+                                  .parcelResponse
+                                  .value
+                                  .data!
+                                  .pickupAddress,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400,
@@ -231,7 +240,11 @@ class _EndParcelConfirmationScreenState
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              "456 Oak Ave, Sometown (6.00 km) ",
+                              _driverRideController
+                                  .parcelResponse
+                                  .value
+                                  .data!
+                                  .dropoffAddress,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400,
@@ -251,9 +264,14 @@ class _EndParcelConfirmationScreenState
                             color: AppColors.textColor,
                           ),
                           const SizedBox(width: 12),
-                          const Text(
-                            "10",
-                            style: TextStyle(
+                          Text(
+                            _driverRideController
+                                .parcelResponse
+                                .value
+                                .data!
+                                .weight
+                                .toString(),
+                            style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF012F64),
@@ -261,7 +279,7 @@ class _EndParcelConfirmationScreenState
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            "(kg)",
+                            "(kg/pound)",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w200,
@@ -280,9 +298,14 @@ class _EndParcelConfirmationScreenState
                             color: AppColors.textColor,
                           ),
                           const SizedBox(width: 12),
-                          const Text(
-                            "100",
-                            style: TextStyle(
+                          Text(
+                            _driverRideController
+                                .parcelResponse
+                                .value
+                                .data!
+                                .totalCost
+                                .toString(),
+                            style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF012F64),
@@ -309,7 +332,21 @@ class _EndParcelConfirmationScreenState
           ),
           const SizedBox(height: 50),
 
-          CustomButton(onTap: () {}, text: "Confirm"),
+          Obx(
+            () => CustomButton(
+              loading: _driverRideController.isLoading.value,
+              onTap: () async {
+                bool success = await _driverRideController.endParcel(
+                  imagePath: _parcelEndController.parcelImage.value!.path,
+                );
+
+                if (success) {
+                  Get.back();
+                }
+              },
+              text: "Confirm",
+            ),
+          ),
         ],
       ),
     );
@@ -343,7 +380,7 @@ class _EndParcelConfirmationScreenState
             ),
           ),
           actionsAlignment: MainAxisAlignment.center,
-          actions: [],
+     
         );
       },
     );

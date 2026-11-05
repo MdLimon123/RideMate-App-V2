@@ -4,7 +4,6 @@ import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar2.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
-import 'package:flutter_extension/views/screen/user/auth/user_login_screen.dart';
 import 'package:get/get.dart';
 
 class UserResetPasswordScreen extends StatefulWidget {

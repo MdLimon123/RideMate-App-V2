@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/user/chat_controller.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({super.key});
@@ -10,6 +12,8 @@ class SupportScreen extends StatefulWidget {
 }
 
 class _SupportScreenState extends State<SupportScreen> {
+  final _chatController = Get.put(ChatController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +37,7 @@ class _SupportScreenState extends State<SupportScreen> {
             const SizedBox(height: 8),
             const Text("Contact@radeefs.com", style: TextStyle(fontSize: 20)),
 
-            const Spacer(), 
+            const Spacer(),
 
             Row(
               children: [
@@ -44,7 +48,9 @@ class _SupportScreenState extends State<SupportScreen> {
             ),
             const SizedBox(height: 12),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                _chatController.createAdminChatRoom();
+              },
               child: Container(
                 height: 52,
                 decoration: BoxDecoration(

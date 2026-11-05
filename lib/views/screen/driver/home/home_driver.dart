@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_extension/controller/driver/driver_ride_controller.dart';
 import 'package:flutter_extension/controller/driver/home_controller.dart';
+import 'package:flutter_extension/data/api/one_signla_helper.dart';
 import 'package:flutter_extension/views/screen/driver/home/finding_request.dart';
 import 'package:flutter_extension/views/screen/driver/home/payment_orver_view.dart';
 import 'package:flutter_extension/views/screen/driver/home/trip/waiting_for_payment.dart';
@@ -16,16 +18,29 @@ class HomeDriver extends StatefulWidget {
 
 class _HomeDriverState extends State<HomeDriver> {
   final DriverHomeController _homeController = Get.put(DriverHomeController());
+  final DriverRideController _driverRideController =
+      Get.find<DriverRideController>();
+
+  @override
+  void initState() {
+    subscribleId();
+    super.initState();
+  }
+
+  void subscribleId() async {
+    await _homeController.subscribleId();
+    OneSignalHelper.optIn();
+  }
 
   @override
   Widget build(BuildContext context) {
-    ever(_homeController.tripStatus, (TripStatus status) {
+    ever(_driverRideController.tripStatus, (TripStatus status) {
       switch (status) {
-        case TripStatus.REQUESTED:
+        case TripStatus.ARRIVED:
           Get.to(() => const WaitingForPayment());
           break;
         case TripStatus.COMPLETED:
-          Get.to(() => PaymentOrverView());
+          Get.to(() => const PaymentOrverView());
           break;
         default:
           break;
@@ -33,7 +48,7 @@ class _HomeDriverState extends State<HomeDriver> {
     });
 
     return Scaffold(
-      body: Obx(() => _route(_homeController.activeStatus.value)),
+      body: Obx(() => _route(_driverRideController.activeStatus.value)),
     );
   }
 
@@ -41,9 +56,9 @@ class _HomeDriverState extends State<HomeDriver> {
     if (activeStatus == ActiveStatus.NONE) {
       return const FindingRequest();
     } else if (activeStatus == ActiveStatus.TRIP) {
-      return _homeController.tripFlow();
+      return _driverRideController.tripFlow();
     } else if (activeStatus == ActiveStatus.PARCEL) {
-      return _homeController.parcelFlow();
+      return _driverRideController.parcelFlow();
     }
   }
 }

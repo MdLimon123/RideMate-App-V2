@@ -5,7 +5,6 @@ import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_dropdown.dart';
 import 'package:flutter_extension/views/base/custom_loading.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
-import 'package:flutter_extension/views/screen/user/home/parcel/show_parcel_amount_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -18,6 +17,20 @@ class ParcleInputDetails extends StatefulWidget {
 
 class _ParcleInputDetailsState extends State<ParcleInputDetails> {
   final _userHomeController = Get.put(UserHomeController());
+
+  @override
+  void dispose() {
+    _userHomeController.pickController.clear();
+    _userHomeController.dropController.clear();
+    _userHomeController.suggestions.clear();
+    _userHomeController.pickAddress.value = '';
+    _userHomeController.dropAddress.value = '';
+    _userHomeController.dropCoordinates.clear();
+    _userHomeController.parcelWeightController.clear();
+    _userHomeController.parcelAmount.clear();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -169,12 +182,71 @@ class _ParcleInputDetailsState extends State<ParcleInputDetails> {
                     ),
 
                     const SizedBox(height: 12),
-                    const CustomTextField(
-                      hintText: "Parcels Weight",
-                      keyboardType: TextInputType.number,
+
+                    // CustomTextField(
+                    //   controller: _userHomeController.parcelWeightController,
+                    //   hintText: "Parcels Weight",
+                    //   keyboardType: TextInputType.number,
+                    // ),
+                    Stack(
+                      alignment: Alignment.centerRight,
+                      children: [
+                        CustomTextField(
+                          controller:
+                              _userHomeController.parcelWeightController,
+                          hintText: "Parcel Weight",
+                          keyboardType: TextInputType.number,
+                        ),
+                        Positioned(
+                          right: 8,
+                          child: Obx(
+                            () => GestureDetector(
+                              onTap: () {
+                                _userHomeController.weightUnit.value =
+                                    _userHomeController.weightUnit.value == 'kg'
+                                    ? 'pound'
+                                    : 'kg';
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      _userHomeController.weightUnit.value,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 3),
+                                    const Icon(
+                                      Icons.unfold_more,
+                                      size: 13,
+                                      color: Colors.grey,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+
                     const SizedBox(height: 12),
-                    const CustomTextField(
+                    CustomTextField(
+                      controller: _userHomeController.parcelAmount,
                       hintText: "Parcels Amount",
                       keyboardType: TextInputType.number,
                     ),
@@ -216,11 +288,14 @@ class _ParcleInputDetailsState extends State<ParcleInputDetails> {
                     //   },
                     // ),
                     const SizedBox(height: 157),
-                    CustomButton(
-                      onTap: () {
-                        Get.to(() => const ShowParcelAmountScreen());
-                      },
-                      text: "Continue",
+                    Obx(
+                      () => CustomButton(
+                        loading: _userHomeController.isShowAnountLoading.value,
+                        onTap: () {
+                          _userHomeController.calculateParcelAmount();
+                        },
+                        text: "Continue",
+                      ),
                     ),
                   ],
                 ),

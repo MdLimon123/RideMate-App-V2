@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_extension/controller/driver/driver_setu_profile_controller.dart';
 import 'package:flutter_extension/views/base/custom_button.dart';
 import 'package:flutter_extension/views/base/custom_text_field.dart';
-import 'package:flutter_extension/views/screen/driver/auth/setUpProfile/driver_capture_image_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 

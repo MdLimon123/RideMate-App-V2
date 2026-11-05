@@ -179,7 +179,7 @@ class _UserPersonalInfoScreenState extends State<UserPersonalInfoScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "National ID / Passport",
+                  "Driving license/ID",
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,

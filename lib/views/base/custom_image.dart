@@ -39,7 +39,6 @@ class CustomImage extends StatelessWidget {
         width: width,
         fit: fit,
       ),
-     
     );
   }
 }

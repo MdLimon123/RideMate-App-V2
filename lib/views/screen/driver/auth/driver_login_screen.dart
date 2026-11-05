@@ -35,7 +35,7 @@ class _DriverLoginScreenState extends State<DriverLoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 50),
+                const SizedBox(height: 40),
 
                 Text(
                   "login".tr,
@@ -66,7 +66,7 @@ class _DriverLoginScreenState extends State<DriverLoginScreen> {
                 CustomTextField(
                   controller: passwordTextController,
                   isPassword: true,
-                  keyboardType: TextInputType.number,
+                
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Please enter your password";

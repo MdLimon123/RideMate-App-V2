@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart' as Foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/helper/prefs_helper.dart';
@@ -25,12 +24,20 @@ class ApiClient extends GetxService {
   static Map<String, String>? _mainHeaders;
 
   static Future<void> loadPrefs() async {
-    _prefs ??= await SharedPreferences.getInstance();
-    token = _prefs?.getString(AppConstants.bearerTokenKEN) ?? "";
+    _prefs = await SharedPreferences.getInstance();
+    token = await PrefsHelper.getString(AppConstants.bearerTokenKEN);
     _mainHeaders = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
+  }
+
+  /// Force reload token and headers (call after login/logout)
+  static Future<void> refreshToken() async {
+    _prefs = null;
+    token = null;
+    _mainHeaders = null;
+    await loadPrefs();
   }
 
   static Future<Response> getData(
@@ -58,6 +65,7 @@ class ApiClient extends GetxService {
   }) async {
     try {
       if (_prefs == null) await loadPrefs();
+      print("base url ====> ${ApiConstant.BASE_URL}");
       debugPrint(
         '====> API Call: $uri\nHeader: ${headers ?? _mainHeaders} \nBody: $body',
       );
@@ -173,12 +181,17 @@ class ApiClient extends GetxService {
       debugPrint('====> API Body: $body with ${multipartBody.length} picture');
       var request = http.MultipartRequest('PUT', Uri.parse(baseUrl + uri));
       request.headers.addAll(headers ?? _mainHeaders!);
+      // for (MultipartBody element in multipartBody) {
+      //   for (MultipartBody element in multipartBody) {
+      //     request.files.add(
+      //       await http.MultipartFile.fromPath(element.key, element.file.path),
+      //     );
+      //   }
+      // }
       for (MultipartBody element in multipartBody) {
-        for (MultipartBody element in multipartBody) {
-          request.files.add(
-            await http.MultipartFile.fromPath(element.key, element.file.path),
-          );
-        }
+        request.files.add(
+          await http.MultipartFile.fromPath(element.key, element.file.path),
+        );
       }
       request.fields.addAll(body);
       http.Response response = await http.Response.fromStream(
@@ -246,6 +259,70 @@ class ApiClient extends GetxService {
       '====> API Response: [${response0.statusCode}] $uri\n${response0.body}',
     );
     return response0;
+  }
+
+  static Future<Response> patchMultipartData(
+    String uri,
+    Map<String, String> body, {
+    required List<MultipartBody> multipartBody,
+    Map<String, String>? headers,
+  }) async {
+    try {
+      String? bearerToken = await PrefsHelper.getString(
+        AppConstants.bearerTokenKEN,
+      );
+
+      var mainHeaders = {'Authorization': 'Bearer $bearerToken'};
+
+      var request = http.MultipartRequest('PATCH', Uri.parse(baseUrl + uri));
+      request.headers.addAll(headers ?? mainHeaders);
+
+      // Add files safely
+      for (MultipartBody element in multipartBody) {
+        if (!element.file.existsSync()) {
+          print("File not found: ${element.file.path}");
+          continue;
+        }
+
+        String extension = element.file.path.split('.').last.toLowerCase();
+        String mimeType = 'image/jpeg';
+        if (extension == 'png') mimeType = 'image/png';
+        if (extension == 'jpg' || extension == 'jpeg') mimeType = 'image/jpeg';
+        if (extension == 'avif') mimeType = 'image/avif';
+
+        try {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              element.key,
+              element.file.path,
+              contentType: http.MediaType(
+                mimeType.split('/')[0],
+                mimeType.split('/')[1],
+              ),
+            ),
+          );
+        } catch (e) {
+          print("Error adding file: $e");
+        }
+      }
+
+      request.fields.addAll(body);
+
+      // Send request
+      http.StreamedResponse streamedResponse = await request.send();
+      String responseString = await streamedResponse.stream.bytesToString();
+
+      print("Status code: ${streamedResponse.statusCode}");
+      print("Response string: $responseString");
+
+      return Response(
+        statusCode: streamedResponse.statusCode,
+        body: responseString,
+      );
+    } catch (e) {
+      print("PATCH Multipart Exception: $e");
+      return Response(statusCode: 0, body: e.toString());
+    }
   }
 }
 

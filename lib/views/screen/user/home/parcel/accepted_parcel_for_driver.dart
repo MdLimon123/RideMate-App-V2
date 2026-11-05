@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_extension/controller/user/chat_controller.dart';
+import 'package:flutter_extension/controller/user/ride_controller.dart';
+import 'package:flutter_extension/controller/user/user_home_controller.dart';
+import 'package:flutter_extension/data/api/api_constant.dart';
 import 'package:flutter_extension/util/app_colors.dart';
 import 'package:flutter_extension/views/base/custom_appbar.dart';
+import 'package:flutter_extension/views/base/custom_newtwok_image.dart';
 import 'package:flutter_extension/views/screen/user/home/parcel/live_parcel_map.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -14,8 +20,36 @@ class AcceptedParcelForDriver extends StatefulWidget {
 }
 
 class _AcceptedParcelForDriverState extends State<AcceptedParcelForDriver> {
+  final RideController _rideController = Get.find<RideController>();
+
+  final _chatController = Get.put(ChatController());
+
+  final _homeController = Get.put(UserHomeController());
+
+  final codeController = TextEditingController(text: "");
+
+  @override
+  void initState() {
+    final driverLat =
+        _rideController.parcelResponse.value.data!.driver!.locationLat;
+    final driverLng =
+        _rideController.parcelResponse.value.data!.driver!.locationLng;
+
+    final userLat = _rideController.parcelResponse.value.data!.user.locationLat;
+    final userLng = _rideController.parcelResponse.value.data!.user.locationLng;
+
+    _homeController.calculateDriverETA(
+      driverLat: driverLat!,
+      driverLng: driverLng!,
+      userLat: userLat ?? 0.0,
+      userLng: userLng ?? 0.0,
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    codeController.text = _rideController.parcelResponse.value.data!.slug;
     return Scaffold(
       appBar: const CustomAppbar(title: "Driver Assigned"),
       body: SafeArea(
@@ -43,24 +77,25 @@ class _AcceptedParcelForDriverState extends State<AcceptedParcelForDriver> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Center(
-                            child: Container(
+                            child: CustomNetworkImage(
+                              imageUrl:
+                                  "${ApiConstant.imageBaseUrl}${_rideController.parcelResponse.value.data!.driver!.avatar}",
                               height: 48,
+                              boxShape: BoxShape.circle,
                               width: 48,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: AssetImage('assets/images/demo.png'),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
                             ),
                           ),
 
                           const SizedBox(height: 12),
-                          const Center(
+                          Center(
                             child: Text(
-                              "Harry Potter",
-                              style: TextStyle(
+                              _rideController
+                                  .parcelResponse
+                                  .value
+                                  .data!
+                                  .driver!
+                                  .name,
+                              style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFFFFFFFF),
@@ -68,22 +103,22 @@ class _AcceptedParcelForDriverState extends State<AcceptedParcelForDriver> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          const Row(
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                "Hyundai, 2022 Model",
-                                style: TextStyle(
+                                "${_rideController.parcelResponse.value.data!.driver!.vehicleBrand} ${_rideController.parcelResponse.value.data!.driver!.vehicleModel}",
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xFFFFFFFF),
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Text(
-                                " 10 min away",
-                                style: TextStyle(
+                                " ${_homeController.driverEta.value} away",
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
                                   color: Color(0xFFFFFFFF),
@@ -114,9 +149,15 @@ class _AcceptedParcelForDriverState extends State<AcceptedParcelForDriver> {
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  const Text(
-                                    "11",
-                                    style: TextStyle(
+                                  Text(
+                                    _rideController
+                                        .parcelResponse
+                                        .value
+                                        .data!
+                                        .driver!
+                                        .tripGivenCount
+                                        .toString(),
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF333333),
@@ -128,9 +169,15 @@ class _AcceptedParcelForDriverState extends State<AcceptedParcelForDriver> {
                                     color: Color(0xFF012F64),
                                   ),
                                   const SizedBox(width: 4),
-                                  const Text(
-                                    "4.5",
-                                    style: TextStyle(
+                                  Text(
+                                    _rideController
+                                        .parcelResponse
+                                        .value
+                                        .data!
+                                        .driver!
+                                        .rating
+                                        .toString(),
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,
                                       color: Color(0xFF333333),
@@ -157,10 +204,14 @@ class _AcceptedParcelForDriverState extends State<AcceptedParcelForDriver> {
                                   children: [
                                     SvgPicture.asset('assets/icons/pick.svg'),
                                     const SizedBox(width: 12),
-                                    const Expanded(
+                                    Expanded(
                                       child: Text(
-                                        "Pizza Burge Main St, Maintown ",
-                                        style: TextStyle(
+                                        _rideController
+                                            .parcelResponse
+                                            .value
+                                            .data!
+                                            .pickupAddress,
+                                        style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xFF333333),
@@ -177,10 +228,14 @@ class _AcceptedParcelForDriverState extends State<AcceptedParcelForDriver> {
                                       'assets/icons/location.svg',
                                     ),
                                     const SizedBox(width: 12),
-                                    const Expanded(
+                                    Expanded(
                                       child: Text(
-                                        "Pizza Burge Main St, Maintown ",
-                                        style: TextStyle(
+                                        _rideController
+                                            .parcelResponse
+                                            .value
+                                            .data!
+                                            .dropoffAddress,
+                                        style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xFF333333),
@@ -195,9 +250,14 @@ class _AcceptedParcelForDriverState extends State<AcceptedParcelForDriver> {
                                   children: [
                                     SvgPicture.asset('assets/icons/dollar.svg'),
                                     const SizedBox(width: 12),
-                                    const Text(
-                                      "20",
-                                      style: TextStyle(
+                                    Text(
+                                      _rideController
+                                          .parcelResponse
+                                          .value
+                                          .data!
+                                          .totalCost
+                                          .toString(),
+                                      style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w400,
                                         color: Color(0xFF333333),
@@ -238,7 +298,16 @@ class _AcceptedParcelForDriverState extends State<AcceptedParcelForDriver> {
                           borderSide: BorderSide.none,
                         ),
                         suffixIcon: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Clipboard.setData(
+                              ClipboardData(text: codeController.text),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Copied to clipboard!'),
+                              ),
+                            );
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: SvgPicture.asset('assets/icons/copy.svg'),
@@ -247,9 +316,9 @@ class _AcceptedParcelForDriverState extends State<AcceptedParcelForDriver> {
 
                         fillColor: const Color(0xFFE6EAF0),
                         filled: true,
-                        hint: const Text(
-                          "sdfwepoew",
-                          style: TextStyle(
+                        hint: Text(
+                          _rideController.parcelResponse.value.data!.slug,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
                             color: Color(0xFF333333),
@@ -263,7 +332,17 @@ class _AcceptedParcelForDriverState extends State<AcceptedParcelForDriver> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         InkWell(
-                          onTap: () async {},
+                          onTap: () async {
+                            await _chatController.createChatRoom(
+                              userId: _rideController
+                                  .parcelResponse
+                                  .value
+                                  .data!
+                                  .driver!
+                                  .id
+                                  .toString(),
+                            );
+                          },
                           child: Container(
                             height: 40,
                             width: 40,
